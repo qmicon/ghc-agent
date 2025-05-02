@@ -1,0 +1,347 @@
+<div class="offer-selected-products" id="offer-selected-products">
+  <div class="offer-selected-products__container">
+    <div class="offer-selected-products__slots">
+      {% for i in (1..3) %}
+        {% render 'offer-selected-product-slot', slot_number: i, empty_slot_text: section.settings.empty_slot_text %}
+      {% endfor %}
+    </div>
+    
+    <div class="offer-selected-products__checkout">
+      <button 
+        id="offer-checkout-button" 
+        class="offer-selected-products__checkout-button" 
+        disabled
+      >
+        {{ section.settings.checkout_button_text }}
+      </button>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Selected Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "checkout_button_text",
+      "label": "Checkout button text",
+      "default": "Checkout for ₹99"
+    },
+    {
+      "type": "text",
+      "id": "empty_slot_text",
+      "label": "Empty slot text",
+      "default": "Select a product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Selected Products",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-selected-products {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  padding: 15px 0;
+}
+
+.offer-selected-products__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.offer-selected-products__slots {
+  display: flex;
+  gap: 15px;
+  flex-grow: 1;
+}
+
+.offer-selected-products__checkout {
+  margin-left: 20px;
+}
+
+.offer-selected-products__checkout-button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.offer-selected-products__checkout-button:hover:not(:disabled) {
+  background-color: #3a7bc8;
+}
+
+.offer-selected-products__checkout-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.offer-selected-products__checkout-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+@media screen and (max-width: 767px) {
+  .offer-selected-products__container {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .offer-selected-products__slots {
+    width: 100%;
+  }
+  
+  .offer-selected-products__checkout {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .offer-selected-products__checkout-button {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .offer-selected-products__slots {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .offer-selected-products {
+    padding-bottom: 20px;
+  }
+}
+</style>
+
+<script>
+  class OfferSelectedProducts {
+    constructor() {
+      this.selectedProducts = [];
+      this.maxSelection = 3;
+      this.init();
+    }
+    
+    init() {
+      // Initialize slots
+      this.updateSlots();
+      
+      // Initialize checkout button
+      this.initCheckoutButton();
+      
+      // Listen for product selection events
+      document.addEventListener('offer:product-added', (event) => {
+        const { product } = event.detail;
+        this.addProduct(product);
+      });
+      
+      document.addEventListener('offer:product-removed', (event) => {
+        const { productId } = event.detail;
+        this.removeProduct(productId);
+      });
+      
+      // Initialize remove buttons in slots
+      this.initRemoveButtons();
+    }
+    
+    updateSlots() {
+      for (let i = 0; i < this.maxSelection; i++) {
+        const slot = document.getElementById(`offer-slot-${i + 1}`);
+        if (!slot) continue;
+        
+        const product = this.selectedProducts[i];
+        
+        if (product) {
+          this.fillSlot(slot, product);
+        } else {
+          this.emptySlot(slot);
+        }
+      }
+      
+      // Update checkout button state
+      this.updateCheckoutButton();
+    }
+    
+    fillSlot(slot, product) {
+      const slotContent = slot.querySelector('.offer-selected-product-slot__content');
+      const slotImage = slot.querySelector('.offer-selected-product-slot__image');
+      const slotTitle = slot.querySelector('.offer-selected-product-slot__title');
+      const slotEmpty = slot.querySelector('.offer-selected-product-slot__empty');
+      const removeButton = slot.querySelector('.offer-selected-product-slot__remove');
+      
+      // Update slot with product info
+      if (slotImage) {
+        if (product.image) {
+          slotImage.innerHTML = `<img src="${product.image}" alt="${product.title}">`;
+        } else {
+          slotImage.innerHTML = '<div class="offer-selected-product-slot__no-image"></div>';
+        }
+      }
+      
+      if (slotTitle) {
+        slotTitle.textContent = product.title;
+      }
+      
+      // Show content, hide empty state
+      if (slotContent) slotContent.style.display = 'flex';
+      if (slotEmpty) slotEmpty.style.display = 'none';
+      if (removeButton) {
+        removeButton.style.display = 'block';
+        removeButton.dataset.productId = product.id;
+      }
+      
+      // Mark slot as filled
+      slot.classList.add('offer-selected-product-slot--filled');
+      slot.dataset.productId = product.id;
+    }
+    
+    emptySlot(slot) {
+      const slotContent = slot.querySelector('.offer-selected-product-slot__content');
+      const slotEmpty = slot.querySelector('.offer-selected-product-slot__empty');
+      const removeButton = slot.querySelector('.offer-selected-product-slot__remove');
+      
+      // Hide content, show empty state
+      if (slotContent) slotContent.style.display = 'none';
+      if (slotEmpty) slotEmpty.style.display = 'flex';
+      if (removeButton) removeButton.style.display = 'none';
+      
+      // Mark slot as empty
+      slot.classList.remove('offer-selected-product-slot--filled');
+      slot.dataset.productId = '';
+    }
+    
+    addProduct(product) {
+      // Check if product is already in the list
+      const existingIndex = this.selectedProducts.findIndex(p => p.id === product.id);
+      if (existingIndex !== -1) return;
+      
+      // Add product if we haven't reached the max
+      if (this.selectedProducts.length < this.maxSelection) {
+        this.selectedProducts.push(product);
+        this.updateSlots();
+        
+        // Dispatch event to update product selector
+        document.dispatchEvent(new CustomEvent('offer:slot-updated', {
+          detail: { 
+            action: 'add',
+            productId: product.id,
+            totalSelected: this.selectedProducts.length
+          }
+        }));
+      }
+    }
+    
+    removeProduct(productId) {
+      const index = this.selectedProducts.findIndex(product => product.id === productId);
+      if (index !== -1) {
+        this.selectedProducts.splice(index, 1);
+        this.updateSlots();
+        
+        // Dispatch event to update product selector
+        document.dispatchEvent(new CustomEvent('offer:slot-updated', {
+          detail: { 
+            action: 'remove',
+            productId: productId,
+            totalSelected: this.selectedProducts.length
+          }
+        }));
+      }
+    }
+    
+    initRemoveButtons() {
+      document.querySelectorAll('.offer-selected-product-slot__remove').forEach(button => {
+        button.addEventListener('click', (event) => {
+          const productId = event.currentTarget.dataset.productId;
+          if (productId) {
+            this.removeProduct(productId);
+          }
+        });
+      });
+    }
+    
+    initCheckoutButton() {
+      const checkoutButton = document.getElementById('offer-checkout-button');
+      if (!checkoutButton) return;
+      
+      checkoutButton.addEventListener('click', () => {
+        if (this.selectedProducts.length === this.maxSelection) {
+          this.proceedToCheckout();
+        }
+      });
+    }
+    
+    updateCheckoutButton() {
+      const checkoutButton = document.getElementById('offer-checkout-button');
+      if (!checkoutButton) return;
+      
+      if (this.selectedProducts.length === this.maxSelection) {
+        checkoutButton.disabled = false;
+      } else {
+        checkoutButton.disabled = true;
+      }
+    }
+    
+    proceedToCheckout() {
+      // Create a form to submit the selected products to cart
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = '/cart/add';
+      
+      // Add the selected products as line items
+      this.selectedProducts.forEach((product, index) => {
+        const variantInput = document.createElement('input');
+        variantInput.type = 'hidden';
+        variantInput.name = `items[${index}][id]`;
+        variantInput.value = product.variantId;
+        form.appendChild(variantInput);
+        
+        const quantityInput = document.createElement('input');
+        quantityInput.type = 'hidden';
+        quantityInput.name = `items[${index}][quantity]`;
+        quantityInput.value = '1';
+        form.appendChild(quantityInput);
+        
+        // Add a property to identify this as part of the offer
+        const propertyInput = document.createElement('input');
+        propertyInput.type = 'hidden';
+        propertyInput.name = `items[${index}][properties][_offer]`;
+        propertyInput.value = 'Buy 3 for ₹99';
+        form.appendChild(propertyInput);
+      });
+      
+      // Add a redirect to checkout parameter
+      const redirectInput = document.createElement('input');
+      redirectInput.type = 'hidden';
+      redirectInput.name = 'checkout';
+      redirectInput.value = '';
+      form.appendChild(redirectInput);
+      
+      // Append the form to the body and submit it
+      document.body.appendChild(form);
+      form.submit();
+    }
+  }
+  
+  // Initialize on DOM content loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new OfferSelectedProducts();
+  });
+</script>

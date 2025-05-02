@@ -1,0 +1,34 @@
+<div class="offer-product-card" 
+     data-product-id="{{ product.id }}" 
+     data-product-handle="{{ product.handle }}" 
+     data-product-title="{{ product.title | escape }}" 
+     data-product-price="{{ product.price | money_without_currency | replace: ',', '.' }}"
+     data-product-image="{{ product.featured_image | img_url: '300x300', crop: 'center' }}"
+     data-product-url="{{ product.url }}"
+     data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+  
+  <div class="product-card-inner {% if selected %}selected{% endif %}" style="--selected-border-color: {{ selected_border_color }};">
+    <div class="product-card-image-container">
+      <img src="{{ product.featured_image | img_url: '300x300', crop: 'center' }}" alt="{{ product.title | escape }}" class="product-card-image">
+      <div class="product-card-selection-indicator">
+        <div class="selection-circle">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <div class="product-card-info">
+      <h3 class="product-card-title">{{ product.title }}</h3>
+      
+      {% if show_vendor and product.vendor %}
+        <div class="product-card-vendor">{{ product.vendor }}</div>
+      {% endif %}
+      
+      {% if show_price %}
+        <div class="product-card-price">{{ product.price | money }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>

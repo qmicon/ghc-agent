@@ -1,0 +1,35 @@
+{
+  "sections": {
+    "offer_banner": {
+      "type": "offer-banner",
+      "settings": {
+        "heading": "Pick Any 3 Products for ₹99",
+        "subtext": "Limited time offer. Select your favorite products below.",
+        "banner_image": "",
+        "text_color": "#ffffff",
+        "overlay_opacity": 50
+      }
+    },
+    "offer_product_grid": {
+      "type": "offer-product-grid",
+      "settings": {
+        "collection": "male",
+        "products_per_row": 3,
+        "max_rows": 4,
+        "show_vendor": false
+      }
+    },
+    "offer_selected_products": {
+      "type": "offer-selected-products",
+      "settings": {
+        "checkout_button_text": "Checkout for ₹99",
+        "empty_slot_text": "Select a product"
+      }
+    }
+  },
+  "order": [
+    "offer_banner",
+    "offer_product_grid",
+    "offer_selected_products"
+  ]
+}

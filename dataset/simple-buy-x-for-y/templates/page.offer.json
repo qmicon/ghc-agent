@@ -1,0 +1,52 @@
+{
+  "sections": {
+    "offer_header": {
+      "type": "offer-header",
+      "settings": {
+        "title": "Special Offer: Buy 3 for $99",
+        "subtitle": "Select any 3 items from our collection and get them for just $99!",
+        "text_color": "#000000",
+        "background_color": "#f5f5f5"
+      }
+    },
+    "offer_countdown": {
+      "type": "offer-countdown",
+      "settings": {
+        "end_date": "2025-05-09T23:59:59",
+        "heading": "Offer Ends In:",
+        "text_color": "#000000",
+        "accent_color": "#ff4d4d",
+        "background_color": "#ffffff"
+      }
+    },
+    "offer_product_selector": {
+      "type": "offer-product-selector",
+      "settings": {
+        "collection": "male",
+        "products_per_row": 3,
+        "max_rows": 4,
+        "show_vendor": false,
+        "show_price": true,
+        "text_color": "#000000",
+        "background_color": "#ffffff",
+        "selected_border_color": "#ff4d4d"
+      }
+    },
+    "offer_cta": {
+      "type": "offer-cta",
+      "settings": {
+        "button_text": "Add 3 Items to Cart for $99",
+        "button_color": "#ff4d4d",
+        "button_text_color": "#ffffff",
+        "disabled_button_color": "#cccccc",
+        "background_color": "#f5f5f5"
+      }
+    }
+  },
+  "order": [
+    "offer_header",
+    "offer_countdown",
+    "offer_product_selector",
+    "offer_cta"
+  ]
+}

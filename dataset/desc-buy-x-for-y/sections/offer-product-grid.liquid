@@ -1,0 +1,330 @@
+<div class="offer-product-grid" id="offer-product-grid">
+  <div class="offer-product-grid__header">
+    <h2 class="offer-product-grid__title">Select 3 Products</h2>
+    <div class="offer-product-grid__counter">
+      <span id="selected-count">0</span>/3 Selected
+    </div>
+  </div>
+  
+  <div class="offer-product-grid__container">
+    {% assign collection = collections[section.settings.collection] %}
+    
+    {% if collection.products.size > 0 %}
+      {% assign products_per_row = section.settings.products_per_row | default: 3 %}
+      {% assign max_rows = section.settings.max_rows | default: 4 %}
+      {% assign max_products = products_per_row | times: max_rows %}
+      
+      {% for product in collection.products limit: max_products %}
+        {% render 'offer-product-card', 
+          product: product,
+          index: forloop.index,
+          show_vendor: section.settings.show_vendor
+        %}
+      {% endfor %}
+    {% else %}
+      <div class="offer-product-grid__empty">
+        <p>No products found in this collection.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Offer Product Grid",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Products per row",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "max_rows",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Maximum rows",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Product Grid",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-product-grid {
+  padding: 20px 0 120px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.offer-product-grid__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.offer-product-grid__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.offer-product-grid__counter {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.offer-product-grid__counter #selected-count {
+  font-weight: 700;
+  color: #4a90e2;
+}
+
+.offer-product-grid__container {
+  display: grid;
+  grid-template-columns: repeat({{ section.settings.products_per_row | default: 3 }}, 1fr);
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.offer-product-grid__empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 0;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+@media screen and (max-width: 991px) {
+  .offer-product-grid__container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .offer-product-grid__container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .offer-product-grid__container {
+    grid-template-columns: 1fr;
+  }
+  
+  .offer-product-grid__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+</style>
+
+<script>
+  class OfferProductGrid {
+    constructor() {
+      this.selectedProducts = [];
+      this.maxSelection = 3;
+      this.init();
+    }
+    
+    init() {
+      // Update counter
+      this.updateCounter();
+      
+      // Initialize product cards
+      this.initProductCards();
+      
+      // Listen for slot update events
+      document.addEventListener('offer:slot-updated', (event) => {
+        const { action, productId, totalSelected } = event.detail;
+        if (action === 'remove') {
+          this.removeProduct(productId);
+        }
+        this.updateCounter();
+      });
+    }
+    
+    initProductCards() {
+      const productCards = document.querySelectorAll('.offer-product-card');
+      
+      productCards.forEach(card => {
+        const productId = card.dataset.productId;
+        const selectButton = card.querySelector('.offer-product-card__select-button');
+        
+        // Check if product is already selected
+        if (this.isProductSelected(productId)) {
+          this.markCardAsSelected(card);
+        }
+        
+        selectButton.addEventListener('click', () => {
+          if (this.isProductSelected(productId)) {
+            this.removeProduct(productId);
+            this.markCardAsUnselected(card);
+          } else {
+            if (this.selectedProducts.length < this.maxSelection) {
+              this.addProduct({
+                id: productId,
+                title: card.dataset.productTitle,
+                image: card.dataset.productImage,
+                url: card.dataset.productUrl,
+                variantId: card.dataset.variantId
+              });
+              this.markCardAsSelected(card);
+            } else {
+              this.showMaxSelectionAlert();
+            }
+          }
+        });
+      });
+    }
+    
+    isProductSelected(productId) {
+      return this.selectedProducts.some(product => product.id === productId);
+    }
+    
+    markCardAsSelected(card) {
+      card.classList.add('offer-product-card--selected');
+      const button = card.querySelector('.offer-product-card__select-button');
+      button.textContent = 'Selected';
+      button.classList.add('offer-product-card__select-button--selected');
+    }
+    
+    markCardAsUnselected(card) {
+      card.classList.remove('offer-product-card--selected');
+      const button = card.querySelector('.offer-product-card__select-button');
+      button.textContent = 'Select';
+      button.classList.remove('offer-product-card__select-button--selected');
+    }
+    
+    addProduct(product) {
+      if (this.selectedProducts.length < this.maxSelection) {
+        this.selectedProducts.push(product);
+        this.updateCounter();
+        this.notifyProductAdded(product);
+      }
+    }
+    
+    removeProduct(productId) {
+      const index = this.selectedProducts.findIndex(product => product.id === productId);
+      if (index !== -1) {
+        const removedProduct = this.selectedProducts.splice(index, 1)[0];
+        this.updateCounter();
+        
+        // Update UI for the product card if it exists on the page
+        const card = document.querySelector(`.offer-product-card[data-product-id="${productId}"]`);
+        if (card) {
+          this.markCardAsUnselected(card);
+        }
+
+        // Notify slots section about the removal
+        document.dispatchEvent(new CustomEvent('offer:product-removed', {
+          detail: { productId }
+        }));
+      }
+    }
+    
+    updateCounter() {
+      const counter = document.getElementById('selected-count');
+      if (counter) {
+        counter.textContent = this.selectedProducts.length;
+      }
+    }
+    
+    notifyProductAdded(product) {
+      document.dispatchEvent(new CustomEvent('offer:product-added', {
+        detail: { product }
+      }));
+    }
+    
+    showMaxSelectionAlert() {
+      // Create a floating alert
+      const alert = document.createElement('div');
+      alert.className = 'offer-max-selection-alert';
+      alert.textContent = 'You can only select 3 products. Remove a product to add a different one.';
+      
+      document.body.appendChild(alert);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        alert.classList.add('offer-max-selection-alert--hide');
+        setTimeout(() => {
+          document.body.removeChild(alert);
+        }, 300);
+      }, 3000);
+    }
+  }
+  
+  // Initialize on DOM content loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new OfferProductGrid();
+  });
+</script>
+
+<style>
+  .offer-max-selection-alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ff6b6b;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-width: 90%;
+    text-align: center;
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  .offer-max-selection-alert--hide {
+    animation: slideOut 0.3s ease-in forwards;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translate(-50%, -20px);
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOut {
+    from {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+    to {
+      transform: translate(-50%, -20px);
+      opacity: 0;
+    }
+  }
+</style>

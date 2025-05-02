@@ -1,0 +1,224 @@
+<div class="offer-cta-section" style="background-color: {{ section.settings.background_color }};">
+  <div class="page-width">
+    <div class="cta-container">
+      <button id="offer-cta-button" 
+              class="offer-cta-button disabled" 
+              disabled
+              style="--button-color: {{ section.settings.button_color }}; --button-text-color: {{ section.settings.button_text_color }}; --disabled-button-color: {{ section.settings.disabled_button_color }};">
+        {{ section.settings.button_text }}
+      </button>
+      <div id="offer-cta-message" class="offer-cta-message"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .offer-cta-section {
+    padding: 40px 20px 60px;
+    text-align: center;
+  }
+  
+  .cta-container {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .offer-cta-button {
+    background-color: var(--button-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 5px;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .offer-cta-button:hover:not(.disabled) {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  
+  .offer-cta-button.disabled {
+    background-color: var(--disabled-button-color);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .offer-cta-message {
+    margin-top: 15px;
+    min-height: 24px;
+    font-size: 16px;
+  }
+  
+  .offer-cta-message.success {
+    color: #4CAF50;
+  }
+  
+  .offer-cta-message.error {
+    color: #F44336;
+  }
+  
+  @media screen and (max-width: 749px) {
+    .offer-cta-section {
+      padding: 30px 15px 50px;
+    }
+    
+    .offer-cta-button {
+      padding: 12px 25px;
+      font-size: 16px;
+    }
+    
+    .offer-cta-message {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const ctaButton = document.getElementById('offer-cta-button');
+    const ctaMessage = document.getElementById('offer-cta-message');
+    
+    // Initialize if selectedProducts doesn't exist
+    if (!window.selectedProducts) {
+      window.selectedProducts = [];
+    }
+    
+    // Listen for selection changes
+    document.addEventListener('offer:selection-changed', function(event) {
+      const { selectedProducts, isComplete } = event.detail;
+      
+      // Update button state
+      if (isComplete) {
+        ctaButton.classList.remove('disabled');
+        ctaButton.disabled = false;
+      } else {
+        ctaButton.classList.add('disabled');
+        ctaButton.disabled = true;
+      }
+      
+      // Clear any previous messages
+      ctaMessage.textContent = '';
+      ctaMessage.className = 'offer-cta-message';
+    });
+    
+    // Handle button click
+    ctaButton.addEventListener('click', function() {
+      if (window.selectedProducts.length !== 3) {
+        showMessage('Please select exactly 3 products.', 'error');
+        return;
+      }
+      
+      // Disable button during processing
+      ctaButton.disabled = true;
+      ctaButton.classList.add('disabled');
+      ctaButton.textContent = 'Adding to cart...';
+      
+      // Prepare items for cart
+      const items = window.selectedProducts.map(product => {
+        return {
+          id: product.variantId,
+          quantity: 1
+        };
+      });
+      
+      // Add items to cart with special price
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          items: items,
+          attributes: {
+            'Special Offer': 'Buy 3 for $99'
+          }
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Success - show message and redirect to cart
+        showMessage('Products added to cart!', 'success');
+        
+        // Reset button
+        ctaButton.textContent = '{{ section.settings.button_text }}';
+        
+        // Redirect to cart after a short delay
+        setTimeout(() => {
+          window.location.href = '/cart';
+        }, 1500);
+      })
+      .catch(error => {
+        console.error('Error adding to cart:', error);
+        showMessage('There was an error adding products to cart. Please try again.', 'error');
+        
+        // Reset button
+        ctaButton.disabled = false;
+        ctaButton.classList.remove('disabled');
+        ctaButton.textContent = '{{ section.settings.button_text }}';
+      });
+    });
+    
+    // Helper function to show messages
+    function showMessage(text, type) {
+      ctaMessage.textContent = text;
+      ctaMessage.className = 'offer-cta-message ' + type;
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Offer CTA",
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Add 3 Items to Cart for $99"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Color",
+      "default": "#ff4d4d"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "disabled_button_color",
+      "label": "Disabled Button Color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f5f5f5"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer CTA",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

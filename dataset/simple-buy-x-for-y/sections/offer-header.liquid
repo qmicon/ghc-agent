@@ -1,0 +1,87 @@
+<div class="offer-header" style="background-color: {{ section.settings.background_color }};">
+  <div class="page-width">
+    <h1 style="color: {{ section.settings.text_color }};">{{ section.settings.title }}</h1>
+    {% if section.settings.subtitle != blank %}
+      <div class="offer-subtitle" style="color: {{ section.settings.text_color }};">
+        {{ section.settings.subtitle }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .offer-header {
+    padding: 40px 20px;
+    text-align: center;
+  }
+  
+  .page-width {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .offer-header h1 {
+    margin: 0 0 15px;
+    font-size: 32px;
+    font-weight: 700;
+  }
+  
+  .offer-subtitle {
+    font-size: 18px;
+    line-height: 1.5;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  @media screen and (max-width: 749px) {
+    .offer-header {
+      padding: 30px 15px;
+    }
+    
+    .offer-header h1 {
+      font-size: 24px;
+    }
+    
+    .offer-subtitle {
+      font-size: 16px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Offer Header",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Special Offer: Buy 3 for $99"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Select any 3 items from our collection and get them for just $99!"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f5f5f5"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Header",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

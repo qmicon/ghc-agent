@@ -1,0 +1,145 @@
+<div class="offer-banner" id="offer-banner">
+  <div class="offer-banner__image-container">
+    {% if section.settings.banner_image != blank %}
+      {{ section.settings.banner_image | image_url: width: 2000 | image_tag: 
+        loading: 'lazy',
+        class: 'offer-banner__image',
+        alt: section.settings.heading
+      }}
+    {% else %}
+      {{ 'lifestyle-2' | placeholder_svg_tag: 'offer-banner__placeholder' }}
+    {% endif %}
+    
+    <div class="offer-banner__overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+    
+    <div class="offer-banner__content">
+      {% if section.settings.heading != blank %}
+        <h1 class="offer-banner__heading" style="color: {{ section.settings.text_color }};">
+          {{ section.settings.heading }}
+        </h1>
+      {% endif %}
+      
+      {% if section.settings.subtext != blank %}
+        <div class="offer-banner__subtext" style="color: {{ section.settings.text_color }};">
+          {{ section.settings.subtext }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Offer Banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Pick Any 3 Products for ₹99"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Limited time offer. Select your favorite products below."
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner image"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 50
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Banner",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-banner {
+  position: relative;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.offer-banner__image-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.offer-banner__image,
+.offer-banner__placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offer-banner__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+}
+
+.offer-banner__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 90%;
+  max-width: 800px;
+  z-index: 2;
+}
+
+.offer-banner__heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.offer-banner__subtext {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@media screen and (max-width: 767px) {
+  .offer-banner__image-container {
+    height: 250px;
+  }
+  
+  .offer-banner__heading {
+    font-size: 1.8rem;
+  }
+  
+  .offer-banner__subtext {
+    font-size: 1rem;
+  }
+}
+</style>

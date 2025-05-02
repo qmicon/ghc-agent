@@ -1,0 +1,1129 @@
+# Shopify Offer Page Implementation Plan: "Buy 3 for 99"
+
+## 1. Implementation Steps
+
+### Step 1: Create the Template File
+- Create `templates/page.offer.json` to define the page structure
+- Include all required sections in the correct order
+
+### Step 2: Create the Banner Section
+- Create `sections/offer-banner.liquid` for the top promotional banner
+- Implement settings for customizable heading, subtext, and background image
+
+### Step 3: Create the Product Grid Section
+- Create `sections/offer-product-grid.liquid` to display selectable products
+- Implement product selection functionality with a limit of 3 products
+- Create visual indicators for selected products
+
+### Step 4: Create the Selected Products Section
+- Create `sections/offer-selected-products.liquid` for the sticky bottom section
+- Display selected products and implement the checkout button
+- Ensure the checkout button is disabled until 3 products are selected
+
+### Step 5: Create Supporting Snippets
+- Create `snippets/offer-product-card.liquid` for consistent product display
+- Create `snippets/offer-selected-item.liquid` for the selected product slots
+
+## 2. Required Components
+
+### Sections
+1. **offer-banner**
+   - Purpose: Display promotional heading and subtext with background image
+   - Functionality: Fully customizable through section settings
+
+2. **offer-product-grid**
+   - Purpose: Display selectable products in a grid layout
+   - Functionality: Allow product selection with a limit of 3 products
+   - Interactions: Updates the selected products section when products are selected
+
+3. **offer-selected-products**
+   - Purpose: Display selected products and checkout button
+   - Functionality: Show selected products, enable/disable checkout button
+   - Interactions: Receives updates from the product grid section
+
+### Snippets
+1. **offer-product-card**
+   - Purpose: Consistent display of products in the grid
+   - Functionality: Display product image, name, and selection button
+   - Used by: offer-product-grid section
+
+2. **offer-selected-item**
+   - Purpose: Display selected product in the bottom section
+   - Functionality: Show product image and name in a slot
+   - Used by: offer-selected-products section
+
+## 3. File Structure
+
+1. **templates/page.offer.json**
+   - Purpose: Define page structure and section order
+   - Dependencies: All sections defined in this file
+
+2. **sections/offer-banner.liquid**
+   - Purpose: Display promotional banner
+   - Dependencies: None
+
+3. **sections/offer-product-grid.liquid**
+   - Purpose: Display and manage selectable products
+   - Dependencies: offer-product-card snippet
+
+4. **sections/offer-selected-products.liquid**
+   - Purpose: Display selected products and checkout button
+   - Dependencies: offer-selected-item snippet
+
+5. **snippets/offer-product-card.liquid**
+   - Purpose: Reusable product card component
+   - Dependencies: None
+
+6. **snippets/offer-selected-item.liquid**
+   - Purpose: Reusable selected product component
+   - Dependencies: None
+
+## 4. Implementation Notes
+
+### General Architecture
+- We'll use a global state management approach using JavaScript to track selected products
+- The state will be shared between the product grid and selected products sections
+- We'll use custom events to communicate between sections
+- All components will be responsive and mobile-friendly
+
+### Error Handling Strategy
+- Validate user selections to prevent selecting more than 3 products
+- Provide clear visual feedback when the limit is reached
+- Handle edge cases like unavailable products
+- Ensure graceful degradation if JavaScript is disabled
+
+## Implementation Code
+
+---
+FILE: templates/page.offer.json
+TYPE: json
+CONTENT:
+```json
+{
+  "sections": {
+    "offer_banner": {
+      "type": "offer-banner",
+      "settings": {
+        "heading": "Pick Any 3 Products for ₹99",
+        "subtext": "Limited time offer. Select your favorite products below.",
+        "background_image": "",
+        "text_color": "#ffffff",
+        "overlay_opacity": 50
+      }
+    },
+    "offer_product_grid": {
+      "type": "offer-product-grid",
+      "settings": {
+        "collection": "male",
+        "products_per_row": 3,
+        "max_rows": 4
+      }
+    },
+    "offer_selected_products": {
+      "type": "offer-selected-products",
+      "settings": {
+        "button_text": "Checkout for ₹99",
+        "button_color": "#000000",
+        "button_text_color": "#ffffff"
+      }
+    }
+  },
+  "order": [
+    "offer_banner",
+    "offer_product_grid",
+    "offer_selected_products"
+  ]
+}
+```
+---
+
+---
+FILE: sections/offer-banner.liquid
+TYPE: liquid
+CONTENT:
+```liquid
+<div class="offer-banner" 
+     style="background-image: url('{{ section.settings.background_image | img_url: 'master' }}');">
+  <div class="offer-banner__overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+  <div class="offer-banner__content">
+    {% if section.settings.heading != blank %}
+      <h1 class="offer-banner__heading" style="color: {{ section.settings.text_color }};">
+        {{ section.settings.heading }}
+      </h1>
+    {% endif %}
+    
+    {% if section.settings.subtext != blank %}
+      <div class="offer-banner__subtext" style="color: {{ section.settings.text_color }};">
+        {{ section.settings.subtext }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Offer Banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Pick Any 3 Products for ₹99"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Limited time offer. Select your favorite products below."
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 50
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Banner",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .offer-banner {
+    position: relative;
+    width: 100%;
+    padding: 80px 20px;
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    background-color: #000;
+  }
+  
+  .offer-banner__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 1;
+  }
+  
+  .offer-banner__content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .offer-banner__heading {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  
+  .offer-banner__subtext {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  
+  @media screen and (max-width: 767px) {
+    .offer-banner {
+      padding: 60px 15px;
+    }
+    
+    .offer-banner__heading {
+      font-size: 28px;
+    }
+    
+    .offer-banner__subtext {
+      font-size: 16px;
+    }
+  }
+</style>
+```
+---
+
+---
+FILE: sections/offer-product-grid.liquid
+TYPE: liquid
+CONTENT:
+```liquid
+<div id="offer-product-grid" class="offer-product-grid">
+  <div class="offer-product-grid__header">
+    <h2 class="offer-product-grid__title">Select 3 Products</h2>
+    <div class="offer-product-grid__counter">
+      <span id="selected-count">0</span>/3 selected
+    </div>
+  </div>
+  
+  <div class="offer-product-grid__message" id="selection-message">
+    Select up to 3 products for ₹99
+  </div>
+  
+  <div class="offer-product-grid__container">
+    {% assign products_per_row_value = section.settings.products_per_row %}
+    {% assign max_rows_value = section.settings.max_rows %}
+    {% assign max_products = products_per_row_value | times: max_rows_value %}
+    
+    {% if section.settings.collection != blank %}
+      {% assign collection = collections[section.settings.collection] %}
+      {% if collection != blank %}
+        {% for product in collection.products limit: max_products %}
+          {% render 'offer-product-card', 
+            product: product,
+            index: forloop.index
+          %}
+        {% else %}
+          <div class="offer-product-grid__empty">
+            No products found in this collection.
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="offer-product-grid__empty">
+          Collection not found.
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="offer-product-grid__empty">
+        Please select a collection in the section settings.
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Offer Product Grid",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Products per row",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "max_rows",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Maximum rows",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Product Grid",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .offer-product-grid {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .offer-product-grid__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .offer-product-grid__title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .offer-product-grid__counter {
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  .offer-product-grid__message {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .offer-product-grid__container {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.products_per_row }}, 1fr);
+    gap: 20px;
+  }
+  
+  .offer-product-grid__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+  }
+  
+  @media screen and (max-width: 767px) {
+    .offer-product-grid {
+      padding: 30px 15px;
+    }
+    
+    .offer-product-grid__container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .offer-product-grid__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .offer-product-grid__container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the offer product selection functionality
+    const offerProductGrid = {
+      maxSelections: 3,
+      selectedProducts: [],
+      
+      init: function() {
+        this.setupEventListeners();
+        this.updateUI();
+      },
+      
+      setupEventListeners: function() {
+        const productCards = document.querySelectorAll('.offer-product-card');
+        
+        productCards.forEach(card => {
+          const selectButton = card.querySelector('.offer-product-card__select');
+          
+          selectButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            const productId = card.getAttribute('data-product-id');
+            const productTitle = card.getAttribute('data-product-title');
+            const productImage = card.getAttribute('data-product-image');
+            
+            this.toggleProductSelection({
+              id: productId,
+              title: productTitle,
+              image: productImage
+            }, card);
+          });
+        });
+      },
+      
+      toggleProductSelection: function(product, card) {
+        const isSelected = card.classList.contains('selected');
+        
+        if (isSelected) {
+          // Remove product from selection
+          this.selectedProducts = this.selectedProducts.filter(p => p.id !== product.id);
+          card.classList.remove('selected');
+          card.querySelector('.offer-product-card__select').textContent = 'Select';
+        } else {
+          // Add product to selection if under max limit
+          if (this.selectedProducts.length < this.maxSelections) {
+            this.selectedProducts.push(product);
+            card.classList.add('selected');
+            card.querySelector('.offer-product-card__select').textContent = 'Selected';
+          } else {
+            // Show message that max selections reached
+            const messageEl = document.getElementById('selection-message');
+            messageEl.textContent = 'Maximum 3 products already selected';
+            messageEl.classList.add('error');
+            
+            setTimeout(() => {
+              messageEl.textContent = 'Select up to 3 products for ₹99';
+              messageEl.classList.remove('error');
+            }, 3000);
+          }
+        }
+        
+        this.updateUI();
+        this.notifySelectedProductsSection();
+      },
+      
+      updateUI: function() {
+        // Update counter
+        document.getElementById('selected-count').textContent = this.selectedProducts.length;
+        
+        // Update product cards state
+        const productCards = document.querySelectorAll('.offer-product-card');
+        
+        productCards.forEach(card => {
+          const productId = card.getAttribute('data-product-id');
+          const isSelected = this.selectedProducts.some(p => p.id === productId);
+          const selectButton = card.querySelector('.offer-product-card__select');
+          
+          if (isSelected) {
+            card.classList.add('selected');
+            selectButton.textContent = 'Selected';
+          } else {
+            card.classList.remove('selected');
+            selectButton.textContent = 'Select';
+            
+            // Disable non-selected cards if max selections reached
+            if (this.selectedProducts.length >= this.maxSelections) {
+              selectButton.disabled = true;
+              card.classList.add('disabled');
+            } else {
+              selectButton.disabled = false;
+              card.classList.remove('disabled');
+            }
+          }
+        });
+      },
+      
+      notifySelectedProductsSection: function() {
+        // Create and dispatch custom event with selected products data
+        const event = new CustomEvent('offerProductsSelected', {
+          detail: {
+            selectedProducts: this.selectedProducts
+          }
+        });
+        
+        document.dispatchEvent(event);
+      }
+    };
+    
+    offerProductGrid.init();
+  });
+</script>
+```
+---
+
+---
+FILE: sections/offer-selected-products.liquid
+TYPE: liquid
+CONTENT:
+```liquid
+<div id="offer-selected-products" class="offer-selected-products">
+  <div class="offer-selected-products__container">
+    <div class="offer-selected-products__title">
+      Your Selected Products
+    </div>
+    
+    <div class="offer-selected-products__slots">
+      <div id="product-slot-1" class="offer-selected-products__slot empty">
+        <div class="offer-selected-products__placeholder">1</div>
+      </div>
+      <div id="product-slot-2" class="offer-selected-products__slot empty">
+        <div class="offer-selected-products__placeholder">2</div>
+      </div>
+      <div id="product-slot-3" class="offer-selected-products__slot empty">
+        <div class="offer-selected-products__placeholder">3</div>
+      </div>
+    </div>
+    
+    <div class="offer-selected-products__checkout">
+      <button id="checkout-button" class="offer-selected-products__button" disabled
+              style="background-color: {{ section.settings.button_color }}; color: {{ section.settings.button_text_color }};">
+        {{ section.settings.button_text }}
+      </button>
+      <div class="offer-selected-products__price">₹99</div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Selected Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Checkout for ₹99"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Selected Products",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .offer-selected-products {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    padding: 15px 0;
+  }
+  
+  .offer-selected-products__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .offer-selected-products__title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .offer-selected-products__slots {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .offer-selected-products__slot {
+    width: 80px;
+    height: 80px;
+    border: 2px dashed #e0e0e0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: #f8f8f8;
+    overflow: hidden;
+  }
+  
+  .offer-selected-products__slot.empty {
+    background-color: #f8f8f8;
+  }
+  
+  .offer-selected-products__slot:not(.empty) {
+    border: 2px solid #000;
+    background-color: #fff;
+  }
+  
+  .offer-selected-products__placeholder {
+    font-size: 24px;
+    color: #c0c0c0;
+    font-weight: bold;
+  }
+  
+  .offer-selected-products__checkout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .offer-selected-products__button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+  }
+  
+  .offer-selected-products__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .offer-selected-products__price {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  
+  .offer-selected-item {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .offer-selected-item__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .offer-selected-item__remove {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background-color: #ff5252;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 2;
+  }
+  
+  @media screen and (max-width: 767px) {
+    .offer-selected-products__slot {
+      width: 70px;
+      height: 70px;
+    }
+    
+    .offer-selected-products__button {
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+    
+    .offer-selected-products__price {
+      font-size: 18px;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .offer-selected-products__slot {
+      width: 60px;
+      height: 60px;
+    }
+    
+    .offer-selected-products__checkout {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .offer-selected-products__button {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the selected products section
+    const selectedProductsSection = {
+      selectedProducts: [],
+      maxSelections: 3,
+      
+      init: function() {
+        this.setupEventListeners();
+        this.updateUI();
+      },
+      
+      setupEventListeners: function() {
+        // Listen for product selection events from the product grid
+        document.addEventListener('offerProductsSelected', (event) => {
+          this.selectedProducts = event.detail.selectedProducts;
+          this.updateUI();
+        });
+        
+        // Setup checkout button
+        const checkoutButton = document.getElementById('checkout-button');
+        checkoutButton.addEventListener('click', this.handleCheckout.bind(this));
+        
+        // Setup remove buttons for selected items
+        document.addEventListener('click', (event) => {
+          if (event.target.classList.contains('offer-selected-item__remove')) {
+            const productId = event.target.getAttribute('data-product-id');
+            this.removeProduct(productId);
+          }
+        });
+      },
+      
+      updateUI: function() {
+        // Update product slots
+        for (let i = 1; i <= this.maxSelections; i++) {
+          const slotElement = document.getElementById(`product-slot-${i}`);
+          
+          // Clear existing content
+          while (slotElement.firstChild) {
+            slotElement.removeChild(slotElement.firstChild);
+          }
+          
+          if (i <= this.selectedProducts.length) {
+            // Populate slot with product
+            const product = this.selectedProducts[i-1];
+            slotElement.classList.remove('empty');
+            
+            const selectedItem = document.createElement('div');
+            selectedItem.className = 'offer-selected-item';
+            
+            const image = document.createElement('img');
+            image.className = 'offer-selected-item__image';
+            image.src = product.image;
+            image.alt = product.title;
+            
+            const removeButton = document.createElement('button');
+            removeButton.className = 'offer-selected-item__remove';
+            removeButton.setAttribute('data-product-id', product.id);
+            removeButton.innerHTML = '×';
+            
+            selectedItem.appendChild(image);
+            selectedItem.appendChild(removeButton);
+            slotElement.appendChild(selectedItem);
+          } else {
+            // Show empty slot
+            slotElement.classList.add('empty');
+            const placeholder = document.createElement('div');
+            placeholder.className = 'offer-selected-products__placeholder';
+            placeholder.textContent = i;
+            slotElement.appendChild(placeholder);
+          }
+        }
+        
+        // Update checkout button state
+        const checkoutButton = document.getElementById('checkout-button');
+        checkoutButton.disabled = this.selectedProducts.length !== this.maxSelections;
+      },
+      
+      removeProduct: function(productId) {
+        // Remove product from selection
+        this.selectedProducts = this.selectedProducts.filter(p => p.id !== productId);
+        
+        // Update UI
+        this.updateUI();
+        
+        // Notify product grid about the change
+        this.notifyProductGrid();
+      },
+      
+      notifyProductGrid: function() {
+        // Create and dispatch custom event with updated selected products
+        const event = new CustomEvent('offerProductsUpdated', {
+          detail: {
+            selectedProducts: this.selectedProducts
+          }
+        });
+        
+        document.dispatchEvent(event);
+        
+        // Also update product grid UI directly
+        const productCards = document.querySelectorAll('.offer-product-card');
+        
+        productCards.forEach(card => {
+          const productId = card.getAttribute('data-product-id');
+          const isSelected = this.selectedProducts.some(p => p.id === productId);
+          const selectButton = card.querySelector('.offer-product-card__select');
+          
+          if (isSelected) {
+            card.classList.add('selected');
+            selectButton.textContent = 'Selected';
+          } else {
+            card.classList.remove('selected');
+            selectButton.textContent = 'Select';
+            selectButton.disabled = false;
+            card.classList.remove('disabled');
+          }
+        });
+        
+        // Update counter in product grid
+        document.getElementById('selected-count').textContent = this.selectedProducts.length;
+      },
+      
+      handleCheckout: function() {
+        if (this.selectedProducts.length !== this.maxSelections) {
+          return;
+        }
+        
+        // Create array of variant IDs for cart
+        const variantIds = this.selectedProducts.map(p => p.id);
+        
+        // Add items to cart with special properties to indicate they're part of the offer
+        const formData = {
+          items: variantIds.map(id => ({
+            id: id,
+            quantity: 1,
+            properties: {
+              '_offer': 'Buy 3 for 99',
+              '_bundle_id': new Date().getTime()
+            }
+          }))
+        };
+        
+        // Show loading state
+        const checkoutButton = document.getElementById('checkout-button');
+        const originalText = checkoutButton.textContent;
+        checkoutButton.textContent = 'Adding to cart...';
+        checkoutButton.disabled = true;
+        
+        // Add to cart via AJAX
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Redirect to cart page
+          window.location.href = '/cart';
+        })
+        .catch(error => {
+          console.error('Error adding products to cart:', error);
+          
+          // Reset button state
+          checkoutButton.textContent = originalText;
+          checkoutButton.disabled = false;
+          
+          // Show error message
+          alert('There was an error adding products to your cart. Please try again.');
+        });
+      }
+    };
+    
+    selectedProductsSection.init();
+    
+    // Listen for product updates from the selected products section
+    document.addEventListener('offerProductsUpdated', function(event) {
+      // This event is used by the product grid to update its state
+      const productGrid = document.getElementById('offer-product-grid');
+      if (productGrid) {
+        const selectedCount = event.detail.selectedProducts.length;
+        const countElement = productGrid.querySelector('#selected-count');
+        if (countElement) {
+          countElement.textContent = selectedCount;
+        }
+      }
+    });
+  });
+</script>
+```
+---
+
+---
+FILE: snippets/offer-product-card.liquid
+TYPE: liquid
+CONTENT:
+```liquid
+{% comment %}
+  Renders a product card for the offer page
+  
+  Accepts:
+  - product: {Object} Product object
+  - index: {Number} Current loop index
+  
+  Usage:
+  {% render 'offer-product-card', product: product, index: forloop.index %}
+{% endcomment %}
+
+{% assign product_image = product.featured_image | default: product.images[0] %}
+{% assign image_url = product_image | img_url: '300x300', crop: 'center' %}
+
+<div class="offer-product-card" 
+     data-product-id="{{ product.selected_or_first_available_variant.id }}"
+     data-product-title="{{ product.title }}"
+     data-product-image="{{ image_url }}">
+  
+  <div class="offer-product-card__image-container">
+    <img class="offer-product-card__image" 
+         src="{{ image_url }}" 
+         alt="{{ product.title | escape }}"
+         loading="lazy">
+  </div>
+  
+  <div class="offer-product-card__content">
+    <h3 class="offer-product-card__title">{{ product.title }}</h3>
+    
+    <button class="offer-product-card__select">
+      Select
+    </button>
+  </div>
+</div>
+
+<style>
+  .offer-product-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .offer-product-card.selected {
+    border-color: #000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .offer-product-card.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .offer-product-card__image-container {
+    position: relative;
+    padding-top: 100%; /* 1:1 aspect ratio */
+    overflow: hidden;
+    background-color: #f8f8f8;
+  }
+  
+  .offer-product-card__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .offer-product-card:hover .offer-product-card__image {
+    transform: scale(1.05);
+  }
+  
+  .offer-product-card__content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  
+  .offer-product-card__title {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 15px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .offer-product-card__select {
+    margin-top: auto;
+    padding: 8px 15px;
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #000000;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .offer-product-card__select:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .offer-product-card.selected .offer-product-card__select {
+    background-color: #000000;
+    color: #ffffff;
+  }
+  
+  @media screen and (max-width: 767px) {
+    .offer-product-card__content {
+      padding: 12px;
+    }
+    
+    .offer-product-card__title {
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    
+    .offer-product-card__select {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+  }
+</style>
+```
+---
+
+---
+FILE: snippets/offer-selected-item.liquid
+TYPE: liquid
+CONTENT:
+```liquid
+{% comment %}
+  Renders a selected product item for the offer page
+  
+  Accepts:
+  - product: {Object} Product object with id, title, and image properties
+  - index: {Number} Current slot index
+  
+  Usage:
+  {% render 'offer-selected-item', product: product, index: forloop.index %}
+{% endcomment %}
+
+<div class="offer-selected-item">
+  <img class="offer-selected-item__image" 
+       src="{{ product.image }}" 
+       alt="{{ product.title | escape }}">
+  
+  <button class="offer-selected-item__remove" data-product-id="{{ product.id }}">
+    ×
+  </button>
+</div>
+```
+---
+
+This implementation provides a complete "Buy 3 for 99" offer page with all the required functionality:
+
+1. A banner section with customizable heading, subtext, and background image
+2. A product grid section that displays products from a selected collection
+3. A selected products section that shows the user's selections and provides a checkout button
+4. Product selection functionality with a limit of 3 products
+5. Visual feedback for selected products
+6. A checkout process that adds the selected products to the cart
+
+The implementation is fully responsive, follows Shopify 2.0 architecture, and includes proper error handling and validation. All components are modular and reusable, making it easy to maintain and extend.

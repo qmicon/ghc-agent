@@ -1,0 +1,2193 @@
+RELEVANT CODE EXAMPLES
+==================================================
+
+
+Example Snippet: page.offer.json
+```liquid
+{
+  "sections": {
+    "offer_banner": {
+      "type": "offer-banner",
+      "settings": {
+        "heading": "Pick Any 3 Products for ₹99",
+        "subtext": "Limited time offer. Select your favorite products below.",
+        "banner_image": "",
+        "text_color": "#ffffff",
+        "overlay_opacity": 50
+      }
+    },
+    "offer_product_grid": {
+      "type": "offer-product-grid",
+      "settings": {
+        "collection": "male",
+        "products_per_row": 3,
+        "max_rows": 4,
+        "show_vendor": false
+      }
+    },
+    "offer_selected_products": {
+      "type": "offer-selected-products",
+      "settings": {
+        "checkout_button_text": "Checkout for ₹99",
+        "empty_slot_text": "Select a product"
+      }
+    }
+  },
+  "order": [
+    "offer_banner",
+    "offer_product_grid",
+    "offer_selected_products"
+  ]
+}
+```
+
+
+Example Snippet: offer-banner.liquid
+```liquid
+<div class="offer-banner" id="offer-banner">
+  <div class="offer-banner__image-container">
+    {% if section.settings.banner_image != blank %}
+      {{ section.settings.banner_image | image_url: width: 2000 | image_tag: 
+        loading: 'lazy',
+        class: 'offer-banner__image',
+        alt: section.settings.heading
+      }}
+    {% else %}
+      {{ 'lifestyle-2' | placeholder_svg_tag: 'offer-banner__placeholder' }}
+    {% endif %}
+    
+    <div class="offer-banner__overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+    
+    <div class="offer-banner__content">
+      {% if section.settings.heading != blank %}
+        <h1 class="offer-banner__heading" style="color: {{ section.settings.text_color }};">
+          {{ section.settings.heading }}
+        </h1>
+      {% endif %}
+      
+      {% if section.settings.subtext != blank %}
+        <div class="offer-banner__subtext" style="color: {{ section.settings.text_color }};">
+          {{ section.settings.subtext }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Offer Banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Pick Any 3 Products for ₹99"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Limited time offer. Select your favorite products below."
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner image"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 50
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Banner",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-banner {
+  position: relative;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.offer-banner__image-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.offer-banner__image,
+.offer-banner__placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offer-banner__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+}
+
+.offer-banner__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 90%;
+  max-width: 800px;
+  z-index: 2;
+}
+
+.offer-banner__heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.offer-banner__subtext {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@media screen and (max-width: 767px) {
+  .offer-banner__image-container {
+    height: 250px;
+  }
+  
+  .offer-banner__heading {
+    font-size: 1.8rem;
+  }
+  
+  .offer-banner__subtext {
+    font-size: 1rem;
+  }
+}
+</style>
+```
+
+
+Example Snippet: offer-product-grid.liquid
+```liquid
+<div class="offer-product-grid" id="offer-product-grid">
+  <div class="offer-product-grid__header">
+    <h2 class="offer-product-grid__title">Select 3 Products</h2>
+    <div class="offer-product-grid__counter">
+      <span id="selected-count">0</span>/3 Selected
+    </div>
+  </div>
+  
+  <div class="offer-product-grid__container">
+    {% assign collection = collections[section.settings.collection] %}
+    
+    {% if collection.products.size > 0 %}
+      {% assign products_per_row = section.settings.products_per_row | default: 3 %}
+      {% assign max_rows = section.settings.max_rows | default: 4 %}
+      {% assign max_products = products_per_row | times: max_rows %}
+      
+      {% for product in collection.products limit: max_products %}
+        {% render 'offer-product-card', 
+          product: product,
+          index: forloop.index,
+          show_vendor: section.settings.show_vendor
+        %}
+      {% endfor %}
+    {% else %}
+      <div class="offer-product-grid__empty">
+        <p>No products found in this collection.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Offer Product Grid",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Products per row",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "max_rows",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Maximum rows",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Product Grid",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-product-grid {
+  padding: 20px 0 120px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.offer-product-grid__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.offer-product-grid__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.offer-product-grid__counter {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.offer-product-grid__counter #selected-count {
+  font-weight: 700;
+  color: #4a90e2;
+}
+
+.offer-product-grid__container {
+  display: grid;
+  grid-template-columns: repeat({{ section.settings.products_per_row | default: 3 }}, 1fr);
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.offer-product-grid__empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 0;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+@media screen and (max-width: 991px) {
+  .offer-product-grid__container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .offer-product-grid__container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .offer-product-grid__container {
+    grid-template-columns: 1fr;
+  }
+  
+  .offer-product-grid__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+</style>
+
+<script>
+  class OfferProductGrid {
+    constructor() {
+      this.selectedProducts = [];
+      this.maxSelection = 3;
+      this.init();
+    }
+    
+    init() {
+      // Update counter
+      this.updateCounter();
+      
+      // Initialize product cards
+      this.initProductCards();
+      
+      // Listen for slot update events
+      document.addEventListener('offer:slot-updated', (event) => {
+        const { action, productId, totalSelected } = event.detail;
+        if (action === 'remove') {
+          this.removeProduct(productId);
+        }
+        this.updateCounter();
+      });
+    }
+    
+    initProductCards() {
+      const productCards = document.querySelectorAll('.offer-product-card');
+      
+      productCards.forEach(card => {
+        const productId = card.dataset.productId;
+        const selectButton = card.querySelector('.offer-product-card__select-button');
+        
+        // Check if product is already selected
+        if (this.isProductSelected(productId)) {
+          this.markCardAsSelected(card);
+        }
+        
+        selectButton.addEventListener('click', () => {
+          if (this.isProductSelected(productId)) {
+            this.removeProduct(productId);
+            this.markCardAsUnselected(card);
+          } else {
+            if (this.selectedProducts.length < this.maxSelection) {
+              this.addProduct({
+                id: productId,
+                title: card.dataset.productTitle,
+                image: card.dataset.productImage,
+                url: card.dataset.productUrl,
+                variantId: card.dataset.variantId
+              });
+              this.markCardAsSelected(card);
+            } else {
+              this.showMaxSelectionAlert();
+            }
+          }
+        });
+      });
+    }
+    
+    isProductSelected(productId) {
+      return this.selectedProducts.some(product => product.id === productId);
+    }
+    
+    markCardAsSelected(card) {
+      card.classList.add('offer-product-card--selected');
+      const button = card.querySelector('.offer-product-card__select-button');
+      button.textContent = 'Selected';
+      button.classList.add('offer-product-card__select-button--selected');
+    }
+    
+    markCardAsUnselected(card) {
+      card.classList.remove('offer-product-card--selected');
+      const button = card.querySelector('.offer-product-card__select-button');
+      button.textContent = 'Select';
+      button.classList.remove('offer-product-card__select-button--selected');
+    }
+    
+    addProduct(product) {
+      if (this.selectedProducts.length < this.maxSelection) {
+        this.selectedProducts.push(product);
+        this.updateCounter();
+        this.notifyProductAdded(product);
+      }
+    }
+    
+    removeProduct(productId) {
+      const index = this.selectedProducts.findIndex(product => product.id === productId);
+      if (index !== -1) {
+        const removedProduct = this.selectedProducts.splice(index, 1)[0];
+        this.updateCounter();
+        
+        // Update UI for the product card if it exists on the page
+        const card = document.querySelector(`.offer-product-card[data-product-id="${productId}"]`);
+        if (card) {
+          this.markCardAsUnselected(card);
+        }
+
+        // Notify slots section about the removal
+        document.dispatchEvent(new CustomEvent('offer:product-removed', {
+          detail: { productId }
+        }));
+      }
+    }
+    
+    updateCounter() {
+      const counter = document.getElementById('selected-count');
+      if (counter) {
+        counter.textContent = this.selectedProducts.length;
+      }
+    }
+    
+    notifyProductAdded(product) {
+      document.dispatchEvent(new CustomEvent('offer:product-added', {
+        detail: { product }
+      }));
+    }
+    
+    showMaxSelectionAlert() {
+      // Create a floating alert
+      const alert = document.createElement('div');
+      alert.className = 'offer-max-selection-alert';
+      alert.textContent = 'You can only select 3 products. Remove a product to add a different one.';
+      
+      document.body.appendChild(alert);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        alert.classList.add('offer-max-selection-alert--hide');
+        setTimeout(() => {
+          document.body.removeChild(alert);
+        }, 300);
+      }, 3000);
+    }
+  }
+  
+  // Initialize on DOM content loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new OfferProductGrid();
+  });
+</script>
+
+<style>
+  .offer-max-selection-alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ff6b6b;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-width: 90%;
+    text-align: center;
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  .offer-max-selection-alert--hide {
+    animation: slideOut 0.3s ease-in forwards;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translate(-50%, -20px);
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOut {
+    from {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+    to {
+      transform: translate(-50%, -20px);
+      opacity: 0;
+    }
+  }
+</style>
+```
+
+
+Example Snippet: offer-selected-products.liquid
+```liquid
+<div class="offer-selected-products" id="offer-selected-products">
+  <div class="offer-selected-products__container">
+    <div class="offer-selected-products__slots">
+      {% for i in (1..3) %}
+        {% render 'offer-selected-product-slot', slot_number: i, empty_slot_text: section.settings.empty_slot_text %}
+      {% endfor %}
+    </div>
+    
+    <div class="offer-selected-products__checkout">
+      <button 
+        id="offer-checkout-button" 
+        class="offer-selected-products__checkout-button" 
+        disabled
+      >
+        {{ section.settings.checkout_button_text }}
+      </button>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Selected Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "checkout_button_text",
+      "label": "Checkout button text",
+      "default": "Checkout for ₹99"
+    },
+    {
+      "type": "text",
+      "id": "empty_slot_text",
+      "label": "Empty slot text",
+      "default": "Select a product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Selected Products",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-selected-products {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  padding: 15px 0;
+}
+
+.offer-selected-products__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.offer-selected-products__slots {
+  display: flex;
+  gap: 15px;
+  flex-grow: 1;
+}
+
+.offer-selected-products__checkout {
+  margin-left: 20px;
+}
+
+.offer-selected-products__checkout-button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.offer-selected-products__checkout-button:hover:not(:disabled) {
+  background-color: #3a7bc8;
+}
+
+.offer-selected-products__checkout-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.offer-selected-products__checkout-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+@media screen and (max-width: 767px) {
+  .offer-selected-products__container {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .offer-selected-products__slots {
+    width: 100%;
+  }
+  
+  .offer-selected-products__checkout {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .offer-selected-products__checkout-button {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .offer-selected-products__slots {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .offer-selected-products {
+    padding-bottom: 20px;
+  }
+}
+</style>
+
+<script>
+  class OfferSelectedProducts {
+    constructor() {
+      this.selectedProducts = [];
+      this.maxSelection = 3;
+      this.init();
+    }
+    
+    init() {
+      // Initialize slots
+      this.updateSlots();
+      
+      // Initialize checkout button
+      this.initCheckoutButton();
+      
+      // Listen for product selection events
+      document.addEventListener('offer:product-added', (event) => {
+        const { product } = event.detail;
+        this.addProduct(product);
+      });
+      
+      document.addEventListener('offer:product-removed', (event) => {
+        const { productId } = event.detail;
+        this.removeProduct(productId);
+      });
+      
+      // Initialize remove buttons in slots
+      this.initRemoveButtons();
+    }
+    
+    updateSlots() {
+      for (let i = 0; i < this.maxSelection; i++) {
+        const slot = document.getElementById(`offer-slot-${i + 1}`);
+        if (!slot) continue;
+        
+        const product = this.selectedProducts[i];
+        
+        if (product) {
+          this.fillSlot(slot, product);
+        } else {
+          this.emptySlot(slot);
+        }
+      }
+      
+      // Update checkout button state
+      this.updateCheckoutButton();
+    }
+    
+    fillSlot(slot, product) {
+      const slotContent = slot.querySelector('.offer-selected-product-slot__content');
+      const slotImage = slot.querySelector('.offer-selected-product-slot__image');
+      const slotTitle = slot.querySelector('.offer-selected-product-slot__title');
+      const slotEmpty = slot.querySelector('.offer-selected-product-slot__empty');
+      const removeButton = slot.querySelector('.offer-selected-product-slot__remove');
+      
+      // Update slot with product info
+      if (slotImage) {
+        if (product.image) {
+          slotImage.innerHTML = `<img src="${product.image}" alt="${product.title}">`;
+        } else {
+          slotImage.innerHTML = '<div class="offer-selected-product-slot__no-image"></div>';
+        }
+      }
+      
+      if (slotTitle) {
+        slotTitle.textContent = product.title;
+      }
+      
+      // Show content, hide empty state
+      if (slotContent) slotContent.style.display = 'flex';
+      if (slotEmpty) slotEmpty.style.display = 'none';
+      if (removeButton) {
+        removeButton.style.display = 'block';
+        removeButton.dataset.productId = product.id;
+      }
+      
+      // Mark slot as filled
+      slot.classList.add('offer-selected-product-slot--filled');
+      slot.dataset.productId = product.id;
+    }
+    
+    emptySlot(slot) {
+      const slotContent = slot.querySelector('.offer-selected-product-slot__content');
+      const slotEmpty = slot.querySelector('.offer-selected-product-slot__empty');
+      const removeButton = slot.querySelector('.offer-selected-product-slot__remove');
+      
+      // Hide content, show empty state
+      if (slotContent) slotContent.style.display = 'none';
+      if (slotEmpty) slotEmpty.style.display = 'flex';
+      if (removeButton) removeButton.style.display = 'none';
+      
+      // Mark slot as empty
+      slot.classList.remove('offer-selected-product-slot--filled');
+      slot.dataset.productId = '';
+    }
+    
+    addProduct(product) {
+      // Check if product is already in the list
+      const existingIndex = this.selectedProducts.findIndex(p => p.id === product.id);
+      if (existingIndex !== -1) return;
+      
+      // Add product if we haven't reached the max
+      if (this.selectedProducts.length < this.maxSelection) {
+        this.selectedProducts.push(product);
+        this.updateSlots();
+        
+        // Dispatch event to update product selector
+        document.dispatchEvent(new CustomEvent('offer:slot-updated', {
+          detail: { 
+            action: 'add',
+            productId: product.id,
+            totalSelected: this.selectedProducts.length
+          }
+        }));
+      }
+    }
+    
+    removeProduct(productId) {
+      const index = this.selectedProducts.findIndex(product => product.id === productId);
+      if (index !== -1) {
+        this.selectedProducts.splice(index, 1);
+        this.updateSlots();
+        
+        // Dispatch event to update product selector
+        document.dispatchEvent(new CustomEvent('offer:slot-updated', {
+          detail: { 
+            action: 'remove',
+            productId: productId,
+            totalSelected: this.selectedProducts.length
+          }
+        }));
+      }
+    }
+    
+    initRemoveButtons() {
+      document.querySelectorAll('.offer-selected-product-slot__remove').forEach(button => {
+        button.addEventListener('click', (event) => {
+          const productId = event.currentTarget.dataset.productId;
+          if (productId) {
+            this.removeProduct(productId);
+          }
+        });
+      });
+    }
+    
+    initCheckoutButton() {
+      const checkoutButton = document.getElementById('offer-checkout-button');
+      if (!checkoutButton) return;
+      
+      checkoutButton.addEventListener('click', () => {
+        if (this.selectedProducts.length === this.maxSelection) {
+          this.proceedToCheckout();
+        }
+      });
+    }
+    
+    updateCheckoutButton() {
+      const checkoutButton = document.getElementById('offer-checkout-button');
+      if (!checkoutButton) return;
+      
+      if (this.selectedProducts.length === this.maxSelection) {
+        checkoutButton.disabled = false;
+      } else {
+        checkoutButton.disabled = true;
+      }
+    }
+    
+    proceedToCheckout() {
+      // Create a form to submit the selected products to cart
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = '/cart/add';
+      
+      // Add the selected products as line items
+      this.selectedProducts.forEach((product, index) => {
+        const variantInput = document.createElement('input');
+        variantInput.type = 'hidden';
+        variantInput.name = `items[${index}][id]`;
+        variantInput.value = product.variantId;
+        form.appendChild(variantInput);
+        
+        const quantityInput = document.createElement('input');
+        quantityInput.type = 'hidden';
+        quantityInput.name = `items[${index}][quantity]`;
+        quantityInput.value = '1';
+        form.appendChild(quantityInput);
+        
+        // Add a property to identify this as part of the offer
+        const propertyInput = document.createElement('input');
+        propertyInput.type = 'hidden';
+        propertyInput.name = `items[${index}][properties][_offer]`;
+        propertyInput.value = 'Buy 3 for ₹99';
+        form.appendChild(propertyInput);
+      });
+      
+      // Add a redirect to checkout parameter
+      const redirectInput = document.createElement('input');
+      redirectInput.type = 'hidden';
+      redirectInput.name = 'checkout';
+      redirectInput.value = '';
+      form.appendChild(redirectInput);
+      
+      // Append the form to the body and submit it
+      document.body.appendChild(form);
+      form.submit();
+    }
+  }
+  
+  // Initialize on DOM content loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new OfferSelectedProducts();
+  });
+</script>
+```
+
+
+Example Snippet: offer-product-card.liquid
+```liquid
+{% comment %}
+  Renders a product card for the offer page
+  
+  Accepts:
+  - product: {Object} Product object
+  - index: {Number} Position of the product in the loop
+  - show_vendor: {Boolean} Show the product vendor
+  
+  Usage:
+  {% render 'offer-product-card', product: product, index: forloop.index, show_vendor: section.settings.show_vendor %}
+{% endcomment %}
+
+{%- if product != blank -%}
+  {%- assign featured_image = product.featured_image -%}
+  {%- assign first_variant = product.selected_or_first_available_variant -%}
+  
+  <div class="offer-product-card" 
+    data-product-id="{{ product.id }}"
+    data-product-title="{{ product.title }}"
+    data-product-url="{{ product.url }}"
+    data-product-image="{{ featured_image | image_url: width: 300 }}"
+    data-variant-id="{{ first_variant.id }}"
+  >
+    <div class="offer-product-card__image-container">
+      <a href="{{ product.url }}" class="offer-product-card__image-link" tabindex="-1">
+        {%- if featured_image != blank -%}
+          <img 
+            src="{{ featured_image | image_url: width: 300 }}" 
+            alt="{{ featured_image.alt | escape }}"
+            class="offer-product-card__image"
+            width="300"
+            height="{{ 300 | divided_by: featured_image.aspect_ratio | round }}"
+            loading="lazy"
+          >
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'offer-product-card__image offer-product-card__image--placeholder' }}
+        {%- endif -%}
+      </a>
+      
+      <div class="offer-product-card__badge">
+        <span class="offer-product-card__badge-text">₹99 Offer</span>
+      </div>
+    </div>
+    
+    <div class="offer-product-card__content">
+      {%- if show_vendor and product.vendor != blank -%}
+        <div class="offer-product-card__vendor">{{ product.vendor }}</div>
+      {%- endif -%}
+      
+      <h3 class="offer-product-card__title">
+        <a href="{{ product.url }}" class="offer-product-card__title-link">
+          {{ product.title }}
+        </a>
+      </h3>
+      
+      <div class="offer-product-card__price">
+        <span class="offer-product-card__price-regular">{{ product.price | money }}</span>
+        <span class="offer-product-card__price-offer">Part of 3 for ₹99</span>
+      </div>
+      
+      <button type="button" class="offer-product-card__select-button">
+        Select
+      </button>
+    </div>
+  </div>
+{%- endif -%}
+
+<style>
+.offer-product-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.offer-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.offer-product-card--selected {
+  border: 2px solid #4a90e2;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.offer-product-card__image-container {
+  position: relative;
+  padding-bottom: 100%;
+  overflow: hidden;
+}
+
+.offer-product-card__image-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.offer-product-card__image,
+.offer-product-card__image--placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.offer-product-card:hover .offer-product-card__image {
+  transform: scale(1.05);
+}
+
+.offer-product-card__badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff6b6b;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.offer-product-card__content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.offer-product-card__vendor {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.offer-product-card__title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 10px;
+  line-height: 1.3;
+}
+
+.offer-product-card__title-link {
+  color: #333;
+  text-decoration: none;
+}
+
+.offer-product-card__title-link:hover {
+  color: #4a90e2;
+}
+
+.offer-product-card__price {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.offer-product-card__price-regular {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.offer-product-card__price-offer {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ff6b6b;
+}
+
+.offer-product-card__select-button {
+  margin-top: auto;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.offer-product-card__select-button:hover {
+  background-color: #e0e0e0;
+}
+
+.offer-product-card__select-button--selected {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.offer-product-card__select-button--selected:hover {
+  background-color: #3a7bc8;
+}
+</style>
+```
+
+
+Example Snippet: offer-selected-product-slot.liquid
+```liquid
+{% comment %}
+  Renders a product slot for the selected products section
+  
+  Accepts:
+  - slot_number: {Number} The slot number (1-3)
+  - empty_slot_text: {String} Text to display when slot is empty
+  
+  Usage:
+  {% render 'offer-selected-product-slot', slot_number: 1, empty_slot_text: 'Select a product' %}
+{% endcomment %}
+
+<div class="offer-selected-product-slot" id="offer-slot-{{ slot_number }}">
+  <div class="offer-selected-product-slot__content" style="display: none;">
+    <div class="offer-selected-product-slot__image"></div>
+    <div class="offer-selected-product-slot__title"></div>
+    <button type="button" class="offer-selected-product-slot__remove" aria-label="Remove product" style="display: none;">
+      {% render 'offer-icon-close' %}
+    </button>
+  </div>
+  
+  <div class="offer-selected-product-slot__empty">
+    <div class="offer-selected-product-slot__empty-icon">{{ slot_number }}</div>
+    <div class="offer-selected-product-slot__empty-text">{{ empty_slot_text }}</div>
+  </div>
+</div>
+
+<style>
+.offer-selected-product-slot {
+  flex: 1;
+  min-width: 0;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  height: 70px;
+  transition: background-color 0.2s;
+}
+
+.offer-selected-product-slot--filled {
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.offer-selected-product-slot__content {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 8px;
+}
+
+.offer-selected-product-slot__image {
+  width: 54px;
+  height: 54px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.offer-selected-product-slot__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offer-selected-product-slot__no-image {
+  width: 100%;
+  height: 100%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.offer-selected-product-slot__title {
+  margin-left: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+.offer-selected-product-slot__remove {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  margin-left: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.offer-selected-product-slot__remove:hover {
+  background-color: #f0f0f0;
+  color: #ff6b6b;
+}
+
+.offer-selected-product-slot__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 8px;
+}
+
+.offer-selected-product-slot__empty-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #666;
+  margin-right: 8px;
+}
+
+.offer-selected-product-slot__empty-text {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+@media screen and (max-width: 479px) {
+  .offer-selected-product-slot {
+    height: 60px;
+  }
+  
+  .offer-selected-product-slot__image {
+    width: 44px;
+    height: 44px;
+  }
+}
+</style>
+```
+
+
+Example Snippet: page.offer.json
+```liquid
+{
+  "sections": {
+    "offer_header": {
+      "type": "offer-header",
+      "settings": {
+        "title": "Special Offer: Buy 3 for $99",
+        "subtitle": "Select any 3 items from our collection and get them for just $99!",
+        "text_color": "#000000",
+        "background_color": "#f5f5f5"
+      }
+    },
+    "offer_countdown": {
+      "type": "offer-countdown",
+      "settings": {
+        "end_date": "2025-05-09T23:59:59",
+        "heading": "Offer Ends In:",
+        "text_color": "#000000",
+        "accent_color": "#ff4d4d",
+        "background_color": "#ffffff"
+      }
+    },
+    "offer_product_selector": {
+      "type": "offer-product-selector",
+      "settings": {
+        "collection": "male",
+        "products_per_row": 3,
+        "max_rows": 4,
+        "show_vendor": false,
+        "show_price": true,
+        "text_color": "#000000",
+        "background_color": "#ffffff",
+        "selected_border_color": "#ff4d4d"
+      }
+    },
+    "offer_cta": {
+      "type": "offer-cta",
+      "settings": {
+        "button_text": "Add 3 Items to Cart for $99",
+        "button_color": "#ff4d4d",
+        "button_text_color": "#ffffff",
+        "disabled_button_color": "#cccccc",
+        "background_color": "#f5f5f5"
+      }
+    }
+  },
+  "order": [
+    "offer_header",
+    "offer_countdown",
+    "offer_product_selector",
+    "offer_cta"
+  ]
+}
+```
+
+
+Example Snippet: offer-product-selector.liquid
+```liquid
+<div class="offer-product-selector" 
+     id="offer-product-selector"
+     style="background-color: {{ section.settings.background_color }}; color: {{ section.settings.text_color }};"
+     data-max-selections="3">
+  <div class="page-width">
+    <div class="selection-status">
+      <span id="selection-count">0</span>/3 products selected
+    </div>
+    
+    <div class="products-grid" style="--products-per-row: {{ section.settings.products_per_row }};">
+      {% assign collection = collections[section.settings.collection] %}
+      {% if collection != blank %}
+        {% assign max_products = section.settings.products_per_row | times: section.settings.max_rows %}
+        {% assign product_limit = collection.products.size %}
+        {% if product_limit > max_products %}
+          {% assign product_limit = max_products %}
+        {% endif %}
+        
+        {% for product in collection.products limit: product_limit %}
+          {% if product.available %}
+            {% render 'offer-product-card', 
+              product: product, 
+              selected: false, 
+              show_vendor: section.settings.show_vendor, 
+              show_price: section.settings.show_price,
+              selected_border_color: section.settings.selected_border_color
+            %}
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <div class="no-products-message">
+          No products found in the selected collection.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .offer-product-selector {
+    padding: 40px 20px;
+  }
+  
+  .selection-status {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
+  
+  #selection-count {
+    font-size: 24px;
+    color: {{ section.settings.selected_border_color }};
+  }
+  
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--products-per-row), 1fr);
+    gap: 20px;
+    margin: 0 auto;
+  }
+  
+  .no-products-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    background: #f8f8f8;
+    border-radius: 5px;
+  }
+  
+  .offer-product-card {
+    cursor: pointer;
+  }
+  
+  .product-card-inner {
+    border: 2px solid transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-card-inner.selected {
+    border-color: var(--selected-border-color);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  
+  .product-card-image-container {
+    position: relative;
+    padding-bottom: 100%;
+    overflow: hidden;
+  }
+  
+  .product-card-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .offer-product-card:hover .product-card-image {
+    transform: scale(1.05);
+  }
+  
+  .product-card-selection-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .product-card-inner.selected .product-card-selection-indicator {
+    opacity: 1;
+  }
+  
+  .selection-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--selected-border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+  
+  .product-card-info {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-card-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 8px;
+    line-height: 1.3;
+  }
+  
+  .product-card-vendor {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  
+  .product-card-price {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: auto;
+  }
+  
+  @media screen and (max-width: 989px) {
+    .products-grid {
+      --products-per-row: 2;
+    }
+  }
+  
+  @media screen and (max-width: 749px) {
+    .offer-product-selector {
+      padding: 30px 15px;
+    }
+    
+    .selection-status {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    
+    #selection-count {
+      font-size: 20px;
+    }
+    
+    .product-card-title {
+      font-size: 14px;
+    }
+    
+    .product-card-price {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const productSelector = document.getElementById('offer-product-selector');
+    const maxSelections = parseInt(productSelector.dataset.maxSelections) || 3;
+    const selectionCountElement = document.getElementById('selection-count');
+    const productCards = document.querySelectorAll('.offer-product-card');
+    
+    // Initialize selected products array
+    window.selectedProducts = [];
+    
+    // Update selection count display
+    function updateSelectionCount() {
+      selectionCountElement.textContent = window.selectedProducts.length;
+      
+      // Dispatch custom event when selection changes
+      const event = new CustomEvent('offer:selection-changed', {
+        detail: {
+          selectedProducts: window.selectedProducts,
+          isComplete: window.selectedProducts.length === maxSelections
+        }
+      });
+      document.dispatchEvent(event);
+    }
+    
+    // Handle product selection
+    productCards.forEach(card => {
+      card.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        const cardInner = this.querySelector('.product-card-inner');
+        const isSelected = cardInner.classList.contains('selected');
+        
+        // If already selected, remove from selection
+        if (isSelected) {
+          cardInner.classList.remove('selected');
+          window.selectedProducts = window.selectedProducts.filter(p => p.id !== productId);
+        } 
+        // If not selected and haven't reached max, add to selection
+        else if (window.selectedProducts.length < maxSelections) {
+          cardInner.classList.add('selected');
+          window.selectedProducts.push({
+            id: productId,
+            handle: this.dataset.productHandle,
+            title: this.dataset.productTitle,
+            price: this.dataset.productPrice,
+            image: this.dataset.productImage,
+            url: this.dataset.productUrl,
+            variantId: this.dataset.variantId
+          });
+        }
+        // If trying to select more than max, show message
+        else {
+          const existingAlert = document.querySelector('.max-selection-alert');
+          if (!existingAlert) {
+            const alert = document.createElement('div');
+            alert.className = 'max-selection-alert';
+            alert.textContent = `You can only select ${maxSelections} products. Please deselect one before adding another.`;
+            alert.style.position = 'fixed';
+            alert.style.top = '20px';
+            alert.style.left = '50%';
+            alert.style.transform = 'translateX(-50%)';
+            alert.style.backgroundColor = '#ff4d4d';
+            alert.style.color = 'white';
+            alert.style.padding = '15px 20px';
+            alert.style.borderRadius = '5px';
+            alert.style.zIndex = '1000';
+            alert.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+              alert.remove();
+            }, 3000);
+          }
+        }
+        
+        updateSelectionCount();
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Offer Product Selector",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "Products per row"
+    },
+    {
+      "type": "range",
+      "id": "max_rows",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "Maximum rows"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show product price",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "selected_border_color",
+      "label": "Selected Product Border Color",
+      "default": "#ff4d4d"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Product Selector",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+```
+
+
+Example Snippet: offer-product-card.liquid
+```liquid
+<div class="offer-product-card" 
+     data-product-id="{{ product.id }}" 
+     data-product-handle="{{ product.handle }}" 
+     data-product-title="{{ product.title | escape }}" 
+     data-product-price="{{ product.price | money_without_currency | replace: ',', '.' }}"
+     data-product-image="{{ product.featured_image | img_url: '300x300', crop: 'center' }}"
+     data-product-url="{{ product.url }}"
+     data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+  
+  <div class="product-card-inner {% if selected %}selected{% endif %}" style="--selected-border-color: {{ selected_border_color }};">
+    <div class="product-card-image-container">
+      <img src="{{ product.featured_image | img_url: '300x300', crop: 'center' }}" alt="{{ product.title | escape }}" class="product-card-image">
+      <div class="product-card-selection-indicator">
+        <div class="selection-circle">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <div class="product-card-info">
+      <h3 class="product-card-title">{{ product.title }}</h3>
+      
+      {% if show_vendor and product.vendor %}
+        <div class="product-card-vendor">{{ product.vendor }}</div>
+      {% endif %}
+      
+      {% if show_price %}
+        <div class="product-card-price">{{ product.price | money }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+```
+
+
+Example Snippet: offer-header.liquid
+```liquid
+<div class="offer-header" style="background-color: {{ section.settings.background_color }};">
+  <div class="page-width">
+    <h1 style="color: {{ section.settings.text_color }};">{{ section.settings.title }}</h1>
+    {% if section.settings.subtitle != blank %}
+      <div class="offer-subtitle" style="color: {{ section.settings.text_color }};">
+        {{ section.settings.subtitle }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .offer-header {
+    padding: 40px 20px;
+    text-align: center;
+  }
+  
+  .page-width {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .offer-header h1 {
+    margin: 0 0 15px;
+    font-size: 32px;
+    font-weight: 700;
+  }
+  
+  .offer-subtitle {
+    font-size: 18px;
+    line-height: 1.5;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  @media screen and (max-width: 749px) {
+    .offer-header {
+      padding: 30px 15px;
+    }
+    
+    .offer-header h1 {
+      font-size: 24px;
+    }
+    
+    .offer-subtitle {
+      font-size: 16px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Offer Header",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Special Offer: Buy 3 for $99"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Select any 3 items from our collection and get them for just $99!"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f5f5f5"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Header",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+```
+
+
+Example Snippet: offer-countdown.liquid
+```liquid
+<div class="offer-countdown-section" style="background-color: {{ section.settings.background_color }};">
+  <div class="page-width">
+    {% if section.settings.heading != blank %}
+      <h2 class="countdown-heading" style="color: {{ section.settings.text_color }};">{{ section.settings.heading }}</h2>
+    {% endif %}
+    
+    <div class="countdown-container" style="color: {{ section.settings.text_color }}; --accent-color: {{ section.settings.accent_color }};">
+      {% assign timer_id = 'offer-countdown-timer' %}
+      {% assign end_date = section.settings.end_date %}
+      {% render 'offer-timer', timer_id: timer_id, end_date: end_date %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .offer-countdown-section {
+    padding: 30px 20px;
+    text-align: center;
+  }
+  
+  .countdown-heading {
+    margin: 0 0 20px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  
+  .countdown-container {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .offer-timer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .timer-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 70px;
+  }
+  
+  .timer-value {
+    font-size: 32px;
+    font-weight: 700;
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 5px;
+    padding: 10px 0;
+    width: 100%;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .timer-label {
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  
+  @media screen and (max-width: 749px) {
+    .offer-countdown-section {
+      padding: 20px 15px;
+    }
+    
+    .countdown-heading {
+      font-size: 20px;
+    }
+    
+    .timer-block {
+      min-width: 60px;
+    }
+    
+    .timer-value {
+      font-size: 24px;
+      padding: 8px 0;
+    }
+    
+    .timer-label {
+      font-size: 12px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Offer Countdown",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Offer Ends In:"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "End Date (YYYY-MM-DDThh:mm:ss)",
+      "default": "2025-05-09T23:59:59",
+      "info": "Format: YYYY-MM-DDThh:mm:ss (e.g., 2025-05-09T23:59:59)"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#ff4d4d"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Countdown",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+```
+
+
+Example Snippet: offer-cta.liquid
+```liquid
+<div class="offer-cta-section" style="background-color: {{ section.settings.background_color }};">
+  <div class="page-width">
+    <div class="cta-container">
+      <button id="offer-cta-button" 
+              class="offer-cta-button disabled" 
+              disabled
+              style="--button-color: {{ section.settings.button_color }}; --button-text-color: {{ section.settings.button_text_color }}; --disabled-button-color: {{ section.settings.disabled_button_color }};">
+        {{ section.settings.button_text }}
+      </button>
+      <div id="offer-cta-message" class="offer-cta-message"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .offer-cta-section {
+    padding: 40px 20px 60px;
+    text-align: center;
+  }
+  
+  .cta-container {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .offer-cta-button {
+    background-color: var(--button-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 5px;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .offer-cta-button:hover:not(.disabled) {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  
+  .offer-cta-button.disabled {
+    background-color: var(--disabled-button-color);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .offer-cta-message {
+    margin-top: 15px;
+    min-height: 24px;
+    font-size: 16px;
+  }
+  
+  .offer-cta-message.success {
+    color: #4CAF50;
+  }
+  
+  .offer-cta-message.error {
+    color: #F44336;
+  }
+  
+  @media screen and (max-width: 749px) {
+    .offer-cta-section {
+      padding: 30px 15px 50px;
+    }
+    
+    .offer-cta-button {
+      padding: 12px 25px;
+      font-size: 16px;
+    }
+    
+    .offer-cta-message {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const ctaButton = document.getElementById('offer-cta-button');
+    const ctaMessage = document.getElementById('offer-cta-message');
+    
+    // Initialize if selectedProducts doesn't exist
+    if (!window.selectedProducts) {
+      window.selectedProducts = [];
+    }
+    
+    // Listen for selection changes
+    document.addEventListener('offer:selection-changed', function(event) {
+      const { selectedProducts, isComplete } = event.detail;
+      
+      // Update button state
+      if (isComplete) {
+        ctaButton.classList.remove('disabled');
+        ctaButton.disabled = false;
+      } else {
+        ctaButton.classList.add('disabled');
+        ctaButton.disabled = true;
+      }
+      
+      // Clear any previous messages
+      ctaMessage.textContent = '';
+      ctaMessage.className = 'offer-cta-message';
+    });
+    
+    // Handle button click
+    ctaButton.addEventListener('click', function() {
+      if (window.selectedProducts.length !== 3) {
+        showMessage('Please select exactly 3 products.', 'error');
+        return;
+      }
+      
+      // Disable button during processing
+      ctaButton.disabled = true;
+      ctaButton.classList.add('disabled');
+      ctaButton.textContent = 'Adding to cart...';
+      
+      // Prepare items for cart
+      const items = window.selectedProducts.map(product => {
+        return {
+          id: product.variantId,
+          quantity: 1
+        };
+      });
+      
+      // Add items to cart with special price
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          items: items,
+          attributes: {
+            'Special Offer': 'Buy 3 for $99'
+          }
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Success - show message and redirect to cart
+        showMessage('Products added to cart!', 'success');
+        
+        // Reset button
+        ctaButton.textContent = '{{ section.settings.button_text }}';
+        
+        // Redirect to cart after a short delay
+        setTimeout(() => {
+          window.location.href = '/cart';
+        }, 1500);
+      })
+      .catch(error => {
+        console.error('Error adding to cart:', error);
+        showMessage('There was an error adding products to cart. Please try again.', 'error');
+        
+        // Reset button
+        ctaButton.disabled = false;
+        ctaButton.classList.remove('disabled');
+        ctaButton.textContent = '{{ section.settings.button_text }}';
+      });
+    });
+    
+    // Helper function to show messages
+    function showMessage(text, type) {
+      ctaMessage.textContent = text;
+      ctaMessage.className = 'offer-cta-message ' + type;
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Offer CTA",
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Add 3 Items to Cart for $99"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Color",
+      "default": "#ff4d4d"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "disabled_button_color",
+      "label": "Disabled Button Color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f5f5f5"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer CTA",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+```
+
+
+Example Snippet: offer-timer.liquid
+```liquid
+<div class="offer-timer" id="{{ timer_id }}">
+  <div class="timer-block">
+    <span class="timer-value" id="{{ timer_id }}-days">00</span>
+    <span class="timer-label">Days</span>
+  </div>
+  <div class="timer-block">
+    <span class="timer-value" id="{{ timer_id }}-hours">00</span>
+    <span class="timer-label">Hours</span>
+  </div>
+  <div class="timer-block">
+    <span class="timer-value" id="{{ timer_id }}-minutes">00</span>
+    <span class="timer-label">Minutes</span>
+  </div>
+  <div class="timer-block">
+    <span class="timer-value" id="{{ timer_id }}-seconds">00</span>
+    <span class="timer-label">Seconds</span>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set the date we're counting down to
+    var countDownDate = new Date("{{ end_date }}").getTime();
+    var timerId = "{{ timer_id }}";
+    
+    // Update the countdown every 1 second
+    var x = setInterval(function() {
+      // Get current date and time
+      var now = new Date().getTime();
+      
+      // Find the distance between now and the countdown date
+      var distance = countDownDate - now;
+      
+      // If the countdown is finished, display zeros
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById(timerId + "-days").innerHTML = "00";
+        document.getElementById(timerId + "-hours").innerHTML = "00";
+        document.getElementById(timerId + "-minutes").innerHTML = "00";
+        document.getElementById(timerId + "-seconds").innerHTML = "00";
+        return;
+      }
+      
+      // Time calculations for days, hours, minutes and seconds
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      // Add leading zeros if needed
+      days = days < 10 ? "0" + days : days;
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+      
+      // Display the result
+      document.getElementById(timerId + "-days").innerHTML = days;
+      document.getElementById(timerId + "-hours").innerHTML = hours;
+      document.getElementById(timerId + "-minutes").innerHTML = minutes;
+      document.getElementById(timerId + "-seconds").innerHTML = seconds;
+    }, 1000);
+  });
+</script>
+```
