@@ -1,0 +1,15 @@
+<!-- /snippets/pagination.liquid -->
+
+{% comment %}
+  Renders a list of pages to paginate
+
+  Accepts:
+  - paginate: {Object} link to paginate (required)
+
+  Usage:
+  {% render 'pagination', paginate: paginate %}
+{% endcomment %}
+
+<div class="pagination">
+  {{ paginate | default_pagination }}
+</div>

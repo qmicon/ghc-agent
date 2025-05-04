@@ -1,0 +1,531 @@
+<!-- /sections/section-collection-split.liquid -->
+{%- liquid
+  assign collection_products = collections[section.settings.collection].products
+  assign product_list = section.settings.product_list
+  assign products = product_list | default: collection_products
+  assign desktop_grid = ''
+  assign desktop_image_modifier = ''
+  assign mobile_grid = section.settings.grid_small | default: 2
+
+  if section.settings.grid_large == 2
+    assign desktop_grid = 'large-up--one-half'
+  elsif section.settings.grid_large == 3
+    assign desktop_grid = 'large-up--one-third'
+  endif
+
+  assign video_bg_show = false
+  if section.settings.video_link_bg != blank
+    assign video_link_bg_downcase = section.settings.video_link_bg | downcase
+    if video_link_bg_downcase contains '.mp4'
+      assign video_bg_show = true
+    endif
+  endif
+
+  capture images
+    if section.settings.mobile_image != blank
+      assign desktop_image_modifier = 'desktop'
+
+      render 'hero', img_object: section.settings.mobile_image, modifier: 'mobile'
+    endif
+
+    render 'hero', img_object: section.settings.image, frame_height_class: 'none', modifier: desktop_image_modifier
+  endcapture
+-%}
+
+<div
+  class="collection-split {{ section.settings.bg }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="collection-row"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px; --overlay:{{ section.settings.overlay_color }};"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <div class="collection-split__grid">
+      <div class="collection-split__item{% if section.settings.swap %} collection-split__item--last{% endif %}">
+        <div class="collection-split__block{% if section.settings.sticky_image_enable %} collection-split__block--sticky{% endif %} js-overflow-container">
+          <div class="hero__content__wrapper {{ section.settings.flex_align }}">
+            <div class="hero__content hero__content--transparent js-overflow-content">
+              <div class="text__standard {{ section.settings.color }} {{ section.settings.align_text }}">
+                {% for block in section.blocks %}
+                  {% case block.type %}
+                    {% when 'kicker' %}
+                      {% assign font_size_class = block.settings.text_size | prepend: 'body-size-' %}
+                      {% assign caps_class = block.settings.enable_caps | prepend: 'caps-' %}
+                      <div class="standard__kicker hero__kicker {{ font_size_class }} {{ caps_class }}" {{ block.shopify_attributes }}>{{ block.settings.kicker }}</div>
+                    {% when 'heading' %}
+                      {% assign heading_size_class = block.settings.text_size | prepend: 'heading-size-' %}
+                      <div class="standard__heading hero__title h1 {{ heading_size_class }}" {{ block.shopify_attributes }}>{{ block.settings.heading }}</div>
+                    {% when 'text' %}
+                      {% assign font_size_class = block.settings.text_size | prepend: 'body-size-' %}
+                      <div class="standard__rte hero__description h5--body {{ font_size_class }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+                    {% when 'button' %}
+                      <a
+                        href="{{ block.settings.button_url }}"
+                        {{ block.shopify_attributes }}
+                        class="standard__cta hero__btn {{ block.settings.button_style }} {{ block.settings.button_size }} {{ block.settings.button_color }}"
+                      >
+                        {{ block.settings.button_text }}
+                      </a>
+                    {% when 'image' %}
+                      <div class="standard__image" {{ block.shopify_attributes }} style="width: {{ block.settings.image_max_limit | append: 'px' }}; max-width: 100%;">
+                        {%- if block.settings.image_link != blank -%}<a href="{{ block.settings.image_link }}">{%- endif -%}
+                        {%- if block.settings.image != blank -%}
+                          <img
+                            loading="lazy"
+                            width="{{ block.settings.image.width }}"
+                            height="{{ block.settings.image.height }}"
+                            alt="{{ block.settings.image.alt | strip_html | escape }}"
+                            src="{{ block.settings.image | image_url: '540x540' }}"
+                            srcset="
+                              {% if block.settings.image.width < 90 %}{{ block.settings.image | img_url }} {{ block.settings.image.width }}w,{% endif %}
+                              {% if block.settings.image.width >= 90 %}{{ block.settings.image | img_url: '90x' }} 90w,{% endif %}
+                              {% if block.settings.image.width >= 180 %}{{ block.settings.image | img_url: '180x' }} 180w,{% endif %}
+                              {% if block.settings.image.width >= 360 %}{{ block.settings.image | img_url: '360x' }} 360w,{% endif %}
+                              {% if block.settings.image.width >= 540 %}{{ block.settings.image | img_url: '540x' }} 5400w,{% endif %}
+                              {% if block.settings.image.width >= 720 %}{{ block.settings.image | img_url: '720x' }} 720w,{% endif %}
+                              {% if block.settings.image.width >= 1080 %}{{ block.settings.image | img_url: '1080x' }} 1080w,{% endif %}
+                              {% if block.settings.image.width >= 1440 %}{{ block.settings.image | img_url: '1440x' }} 1440w,{% endif %}
+                              {% if block.settings.image.width >= 1980 %}{{ block.settings.image | img_url: '1980x' }} 1980w{% endif %}
+                            "
+                            sizes="
+                              (min-width: 768px), 90vw,
+                              100vw
+                            "
+                          >
+                        {%- else -%}
+                          {{ 'logo' | placeholder_svg_tag: 'placeholder-svg' }}
+                        {%- endif -%}
+                        {%- if block.settings.image_link != blank -%}</a>{%- endif -%}
+                      </div>
+                  {% endcase %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="image-overlay" style="--bg: {{ section.settings.overlay_color }}; opacity: {{ section.settings.overlay_opacity | times: 0.01 }};"></div>
+
+          {%- if video_bg_show -%}
+            <div class="video-background-wrapper">
+              <video
+                data-video-autoplay
+                {% if section.settings.image != blank %}
+                  poster="{{ section.settings.image.src | img_url: '1x1' }}"
+                {% endif %}
+                style="object-position: {{ section.settings.object_position | replace: '-', ' ' }};"
+                playsinline
+                autoplay
+                loop
+                muted
+              >
+                <source src="{{ section.settings.video_link_bg }}" type="video/mp4">
+              </video>
+            </div>
+          {%- else -%}
+            {{ images }}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="collection-split__products grid" style="--product-width: calc({{ 100 | divided_by: mobile_grid | append: 'vw' }} - var(--gutter)*2);">
+        {%- if products != blank -%}
+          {%- for _product in products limit: section.settings.limit -%}
+            <div class="collection-split__product grid__item {{ desktop_grid }}">
+              {% render 'product-grid-item', product: _product, text_align: 'text-left' %}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {%- assign wrap_class = 'collection-split__product grid__item ' | append: desktop_grid -%}
+          {%- render 'onboarding-product-grid-item', limit: section.settings.limit, wrap: wrap_class -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection split",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "product_list",
+      "id": "product_list",
+      "label": "Product list"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_image_enable",
+      "label": "Enable sticky title",
+      "info": "Recommended for layouts with more than two rows of products. Will not affect mobile layout.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "swap",
+      "label": "Move title to right",
+      "info": "Will not affect mobile layout.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "label": "Image overlay opacity",
+      "info": "Increase contrast for legible text.",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Products per row"
+    },
+    {
+      "type": "range",
+      "id": "grid_large",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Desktop",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "grid_small",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "label": "Mobile",
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "label": "Product limit",
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Background video (optional)"
+    },
+    {
+      "type": "text",
+      "id": "video_link_bg",
+      "label": "Video background link",
+      "info": "MP4 video link from [files](/admin/settings/files)."
+    },
+    {
+      "type": "select",
+      "id": "object_position",
+      "label": "Background video position",
+      "default": "center-center",
+      "options": [
+        {"label": "Top", "value": "center-top"},
+        {"label": "Right", "value": "right-center"},
+        {"label": "Center", "value": "center-center"},
+        {"label": "Left", "value": "left-center"},
+        {"label": "Bottom", "value": "center-bottom"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "select",
+      "id": "flex_align",
+      "label": "Placement",
+      "default": "align--middle-center",
+      "options": [
+        {"value": "align--top-left", "label": "Top left"},
+        {"value": "align--top-center", "label": "Top center"},
+        {"value": "align--top-right", "label": "Top right"},
+        {"value": "align--middle-left", "label": "Middle left"},
+        {"value": "align--middle-center", "label": "Absolute center"},
+        {"value": "align--middle-right", "label": "Middle right"},
+        {"value": "align--bottom-left", "label": "Bottom left"},
+        {"value": "align--bottom-center", "label": "Bottom center"},
+        {"value": "align--bottom-right", "label": "Bottom right"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "align_text",
+      "label": "Text alignment",
+      "default": "text-center",
+      "options": [
+        {"value": "text-left", "label": "Left"},
+        {"value": "text-center", "label": "Center"},
+        {"value": "text-right", "label": "Right"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "color",
+      "label": "Text color",
+      "default": "text--white",
+      "options": [
+        {"value": "text--neutral", "label": "Normal text"},
+        {"value": "text--white", "label": "White"},
+        {"value": "text--primary", "label": "Primary accent"},
+        {"value": "text--secondary", "label": "Secondary accent"},
+        {"value": "text--black", "label": "Black"},
+        {"value": "text--invert--primary", "label": "Primary dark accent"},
+        {"value": "text--invert--secondary", "label": "Secondary dark accent"},
+        {"value": "text--invert", "label": "Inverted text color"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Section width",
+      "default": "wrapper--full",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "kicker",
+      "name": "Kicker",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "kicker",
+          "label": "Kicker",
+          "default": "<p>Introducing</p>"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_caps",
+          "label": "Capitalize",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "text_size",
+          "label": "Text size",
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "Heading",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "heading",
+          "label": "Heading",
+          "default": "<p>Split collection</p>"
+        },
+        {
+          "type": "range",
+          "id": "text_size",
+          "label": "Text size",
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Shop the look with some of our favorite products</p>"
+        },
+        {
+          "type": "range",
+          "id": "text_size",
+          "label": "Text size",
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "default": 6
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Text",
+          "default": "Learn More"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Link"
+        },
+        {
+          "type": "select",
+          "id": "button_size",
+          "label": "Size",
+          "default": "btn--large",
+          "options": [
+            {"value": "btn--small", "label": "Small button"},
+            {"value": "", "label": "Medium button"},
+            {"value": "btn--large", "label": "Large button"}
+          ]
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "Style",
+          "default": "hero__btn btn",
+          "options": [
+            {"value": "text-link", "label": "Text link"},
+            {"value": "hero__btn btn", "label": "Solid button"},
+            {"value": "hero__btn btn--soft", "label": "Soft button"},
+            {"value": "hero__btn btn--outline", "label": "Outlined button"}
+          ]
+        },
+        {
+          "type": "select",
+          "id": "button_color",
+          "label": "Color",
+          "default": "btn--white",
+          "options": [
+            {"value": "btn--primary", "label": "Primary accent"},
+            {"value": "btn--secondary", "label": "Secondary accent"},
+            {"value": "btn--neutral", "label": "Text color"},
+            {"value": "btn--black", "label": "Black"},
+            {"value": "btn--white", "label": "White"}
+          ]
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "image_max_limit",
+          "min": 10,
+          "max": 900,
+          "step": 10,
+          "unit": "px",
+          "label": "Max width",
+          "default": 300
+        },
+        {
+          "type": "url",
+          "id": "image_link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection split",
+      "category": "Collection",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "button"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

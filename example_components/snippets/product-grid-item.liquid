@@ -1,0 +1,174 @@
+<!-- /snippets/product-grid-item.liquid -->
+
+{% comment %}
+  Renders list of products in grid layout
+
+  Accepts:
+  - product: {Object} product (required)
+  - grid_strings: {String} contains a string of grid offset
+
+  Usage:
+  {% render 'product-grid-item', product: product, grid_strings: grid_strings %}
+{% endcomment %}
+
+{%- liquid
+  assign current_variant = product.first_available_variant
+
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+
+  assign sold_out = true
+  if product.available
+    assign sold_out = false
+  endif
+
+  assign sellout_badge = false
+  if sold_out and settings.badge_sellout
+    assign sellout_badge = true
+  endif
+
+  assign align_text = settings.collection_text_alignment | default: 'text-center'
+  if align_product_text
+    assign align_text = align_product_text
+  endif
+
+  assign sale_badge = false
+  if on_sale and settings.badge_sale
+    assign sale_badge = true
+    assign sale_badge_content = 'products.product.sale' | t
+    if settings.badge_sale_discount
+      if settings.badge_sale_type == 'dollar'
+        if settings.currency_code_enable
+          assign sale_badge_content = product.compare_at_price | minus: product.price | money_with_currency
+        else
+          assign sale_badge_content = product.compare_at_price | minus: product.price | money_without_trailing_zeros
+        endif
+      else
+        assign difference = product.compare_at_price | minus: product.price
+        assign percent_off = difference | times: 1.0 | divided_by: product.compare_at_price | times: 100
+        assign sale_badge_content = percent_off | floor | append: '%'
+      endif
+      assign save_word = 'products.product.save' | t | append: ' '
+
+      assign sale_badge_content = sale_badge_content | prepend: save_word
+    endif
+  endif
+
+  assign custom_badge = false
+  if settings.badge_custom and product.metafields.theme.badge != blank and product.metafields.theme.badge.type == 'single_line_text_field'
+    assign custom_badge = true
+    assign custom_badge_content = product.metafields.theme.badge.value
+  endif
+
+  assign setting_badge = false
+  if badge_string and badge_string != ''
+    assign setting_badge = true
+  endif
+
+  assign tagged = false
+  if sellout_badge or sale_badge or custom_badge or setting_badge
+    assign tagged = true
+  endif
+-%}
+{%- capture badge -%}
+  {%- if tagged %}
+    {%- if setting_badge -%}
+      <div class="product__badge product__badge--setting">{{ badge_string }}</div>
+    {%- elsif custom_badge -%}
+      <div class="product__badge product__badge--custom">{{ custom_badge_content }}</div>
+    {%- elsif sellout_badge -%}
+      <div class="product__badge product__badge--sold">{{ 'products.product.sold_out' | t }}</div>
+    {%- elsif sale_badge -%}
+      <div class="product__badge product__badge--sale">{{ sale_badge_content }}</div>
+    {%- endif -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+<div class="grid__item {{ grid_strings }}{% if on_sale %} on-sale{% endif %}{% if tagged %} tagged{% endif %}">
+  <div class="product-grid-item">
+    <a class="product-grid-item--link" href="{{ product.url | within: collection }}" data-grid-link
+      ><span class="visually-hidden">{{ product.title | strip_html | escape }}</span></a
+    >
+
+    <div class="lazy-image">
+      {%- render 'image-fill', img_object: product.featured_media.preview_image, aspect_ratio: settings.product_grid_aspect_ratio -%}
+      {{ badge }}
+    </div>
+    <noscript>
+      <img src="{{ product.featured_media.preview_image | img_url: '360x' }}" alt="{{ product.featured_media.preview_image.alt | default: product.title | strip_html | escape }}">
+    </noscript>
+
+    <div class="grid__caption {{ align_text }}">
+      {%- if settings.show_vendow == 'show-vendor' and product.vendor -%}
+        <p class="vendor_wrapper">
+          {{ product.vendor | strip_html | escape }}
+        </p>
+      {%- elsif settings.show_vendow == 'show-vendor-link' and product.vendor -%}
+        <p class="vendor_wrapper">
+          <a class="vendor__link" href="{{ product.vendor | url_for_vendor }}">{{ product.vendor | strip_html | escape }}</a>
+        </p>
+      {%- endif -%}
+
+      <p class="name_wrapper">
+        {{ product.title | strip_html | escape }}
+      </p>
+
+      {%- if product.metafields.theme.cutline != blank and product.metafields.theme.cutline.type == 'single_line_text_field' -%}
+        <p class="grid__cutline">{{ product.metafields.theme.cutline.value }}</p>
+      {%- endif -%}
+
+      {%- if settings.product_grid_show_rating and product.metafields.reviews.rating.value != blank -%}
+        {% render 'product-rating', product: product, show_rating_count: settings.product_grid_show_rating_count %}
+      {%- endif -%}
+
+      
+      <p class="price_wrapper{% if on_sale %} on-sale{% endif %}">
+        {% if product.price_varies %}
+          {{ 'products.product.from' | t }}
+        {% endif %}
+
+        {%- if settings.currency_code_enable -%}
+          {{ product.price | money_with_currency }}
+        {%- else -%}
+          {{ product.price | money }}
+        {%- endif -%}
+
+        {% if on_sale %}
+          <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+          <s>
+            {%- if settings.currency_code_enable -%}
+              {{ product.compare_at_price | money_with_currency }}
+            {%- else -%}
+              {{ product.compare_at_price | money }}
+            {%- endif -%}
+          </s>
+        {% endif %}
+
+        {% if current_variant.unit_price %}
+          {% capture unit_price_separator %}
+            <span aria-hidden="true">/</span><span class="visually-hidden">{{ 'general.accessibility.unit_price_separator' | t }}&nbsp;</span>
+          {% endcapture %}
+          {% capture unit_price_base_unit %}
+            {%- if current_variant.unit_price_measurement.reference_value != 1 -%}
+              {{- current_variant.unit_price_measurement.reference_value -}}
+            {%- endif -%}
+            {{ current_variant.unit_price_measurement.reference_unit }}
+          {% endcapture %}
+          <br>
+          <span class="visually-hidden">{{ 'products.product.unit_price_label' | t }}</span>
+          <span class="price-per-unit">
+            {%- if settings.currency_code_enable -%}
+              {{ current_variant.unit_price | money_with_currency }}
+            {%- else -%}
+              {{ current_variant.unit_price | money }}
+            {%- endif -%}
+            {{- unit_price_separator -}}
+            {{- unit_price_base_unit -}}
+          </span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+</div>

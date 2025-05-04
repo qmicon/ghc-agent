@@ -1,0 +1,212 @@
+<!-- /sections/list-collections.liquid -->
+
+{% case section.settings.grid %}
+  {% when 1 %}
+    {% assign grid_width_large = 'large-up--one-third large-up--push-one-third clear' %}
+    {% assign grid_width_medium = 'medium--one-half medium--push-one-quarter clear' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+  {% when 2 %}
+    {% assign grid_width_large = 'large-up--one-half' %}
+    {% assign grid_width_medium = 'medium--one-half' %}
+    {% assign grid_width_small = 'small--one-half' %}
+  {% when 3 %}
+    {% assign grid_width_large = 'large-up--one-third' %}
+    {% assign grid_width_medium = 'medium--one-third' %}
+    {% assign grid_width_small = 'small--one-whole' %}
+  {% else %}
+    {% assign grid_width_large = 'large-up--one-quarter' %}
+    {% assign grid_width_medium = 'medium--one-half' %}
+    {% assign grid_width_small = 'small--one-half' %}
+{% endcase %}
+{% capture grid_strings %}
+  {{ grid_width_small }}
+  {{ grid_width_medium }}
+  {{ grid_width_large }}
+{% endcapture %}
+{%- assign product_limit = section.settings.grid | times: section.settings.rows -%}
+{%- assign excluded_collections_strict = settings.exclude_collections_strict | split: ',' -%}
+{%- assign excluded_collections = settings.exclude_collections_contain | split: ',' -%}
+
+<div
+  class="collection-list {{ section.settings.color_bg }}"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    {% if section.blocks.size == 0 %}
+      {% for collection in collections %}
+        {%- assign skip_collection = false -%}
+
+        {%- for exclude in excluded_collections_strict -%}
+          {%- assign exclude_handle = exclude | handle -%}
+
+          {%- if exclude_handle == collection.handle -%}
+            {%- assign skip_collection = true -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- for exclude in excluded_collections -%}
+          {%- assign exclude_handle = exclude | handle -%}
+
+          {%- if collection.handle contains exclude_handle -%}
+            {%- assign skip_collection = true -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {% unless skip_collection %}
+          {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}{%- if collection.all_products_count == 0 -%}
+  {%- if request.design_mode -%}
+    <div class="collection-list-item">
+      <div class="section-header">
+        <h2 class="h3">
+          <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: collection_title }}">{{ collection_title }}</a>
+        </h2>
+
+        <p>{{ 'collections.general.no_matches' | t }}</p>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- continue -%}
+{%- endif -%}
+<div class="collection-list-item">
+            <div class="section-header">
+              <h2 class="h3">
+                <a href="{{ collection.url }}" class="slide-in-link" title="{{ 'collections.general.link_title' | t: title: collection_title }}">{{ collection_title }}</a>
+              </h2>
+            </div>
+            <div class="grid grid--uniform">
+              {% for product in collection.products limit: product_limit %}
+                {% render 'product-grid-item', product: product, grid_strings: grid_strings %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endunless %}
+      {% endfor %}
+    {% else %}
+      {% for block in section.blocks %}
+        {%- assign collection = collections[block.settings.collection] -%}
+        {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}{%- if collection.all_products_count == 0 -%}
+  {%- if request.design_mode -%}
+    <div class="collection-list-item">
+      <div class="section-header">
+        <h2 class="h3">
+          <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: collection_title }}">{{ collection_title }}</a>
+        </h2>
+
+        <p>{{ 'collections.general.no_matches' | t }}</p>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- continue -%}
+{%- endif -%}
+<div class="collection-list-item" {{ block.shopify_attributes }}>
+          <div class="section-header">
+            <h2 class="h3">
+              <a href="{{ collection.url }}" class="slide-in-link" title="{{ 'collections.general.link_title' | t: title: collection_title }}">{{ collection_title }}</a>
+            </h2>
+          </div>
+          <div class="grid grid--uniform">
+            {% for product in collection.products limit: product_limit %}
+              {% render 'product-grid-item', product: product, grid_strings: grid_strings %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection list",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "All of your collections are listed by default. To customize your list, add specific collections to the list below."
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Product grid"
+    },
+    {
+      "type": "range",
+      "id": "grid",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Products per row",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "rows",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Number of rows",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "label": "Collection",
+          "id": "collection",
+          "type": "collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

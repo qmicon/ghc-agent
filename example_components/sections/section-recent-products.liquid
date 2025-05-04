@@ -1,0 +1,124 @@
+<!-- /sections/section-recent-products.liquid -->
+
+<div class="related__wrapper hide" data-section-id="{{ section.id }}" data-section-type="recent-products">
+  <div class="product__related section-collection" style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;">
+    <div class="{{ section.settings.width }} section-padding">
+      <div class="section-collection__foreground">
+        <div class="section-collection__inner">
+          {%- if section.settings.product_recently_heading != blank -%}
+            <h2 class="h3">{{ section.settings.product_recently_heading -}}</h2>
+          {%- endif -%}
+
+          <div class="slider-actions" data-slider-actions>
+            <button type="button" class="slider-arrow slider-arrow--prev" data-prev-arrow disabled>
+              <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+            </button>
+
+            <button type="button" class="slider-arrow slider-arrow--next" data-next-arrow>
+              <span class="visually-hidden">{{ 'general.accessibility.prev' | t }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="recent__wrapper"
+          id="RecentlyViewed-{{ section.id }}"
+          data-recent-wrapper
+          data-limit="{{ section.settings.product_recently_limit | at_least: section.settings.product_recently_minimum }}"
+          data-minimum="{{ section.settings.product_recently_minimum }}"
+          data-product-class="{{ grid_strings | strip }}"
+        >
+          <div
+            class="recent__content grid grid--uniform grid--inner-offsets flickity-disabled-mobile"
+            id="recently-viewed-products-{{ section.id }}"
+            style="display:none"
+            data-slideshow
+            data-custom-scrollbar-items
+            data-recently-viewed-products
+          ></div>
+
+          <div class="custom-scrollbar small-down--show" data-custom-scrollbar>
+            <div class="custom-scrollbar__track" data-custom-scrollbar-track></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Recently viewed products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "product_recently_heading",
+      "label": "Heading",
+      "default": "Recently viewed"
+    },
+    {
+      "type": "range",
+      "id": "product_recently_limit",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Product limit",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "product_recently_minimum",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Display threshold",
+      "info": "Hide section until a minimum of products can be shown.",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "category": "Collection",
+      "name": "Recently viewed products"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

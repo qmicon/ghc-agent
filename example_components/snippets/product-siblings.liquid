@@ -1,0 +1,33 @@
+<!-- /snippets/product-siblings.liquid -->
+
+{%- assign sibs_collection = collections[block.settings.siblings_collection].products -%}
+{%- assign cutline_default = block.settings.cutline | default: product.metafields.theme.cutline.value -%}
+{%- if sibs_collection.size > 1 -%}
+  {%- assign title_down = product.title | downcase -%}
+  {%- assign cutline_down = cutline_default | downcase -%}
+  {%- unless title_down contains cutline_down -%}
+    {% comment %} Form ID must match value in product-form.liquid {% endcomment %}
+    {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
+    <input type="hidden" form="{{ product_form_id }}" name="properties[{{ 'general.siblings.label' | t }}]" value="{{ cutline_default }}">
+  {%- endunless -%}
+  <div class="product__block product__page__siblings" {{ block_style }} data-swapper-wrapper {{ block.shopify_attributes }}>
+    <legend class="radio__legend">
+      <span class="radio__legend__label">{{ 'general.siblings.label' | t }}</span>
+      <span data-swapper-target>{{ cutline_default }}</span>
+    </legend>
+
+    {%- for sib_product in sibs_collection limit: 50 -%}
+      {%- assign current_class = '' -%}
+      {%- if sib_product.handle == product.handle -%}
+        {%- assign current_class = 'siblings__link--current' -%}
+      {%- endif -%}
+      {%- assign title_safe = sib_product.title | strip_html | escape -%}
+      {%- assign color_name = sib_product.metafields.theme.cutline.value | default: title_safe -%}
+      <a href="{{ sib_product.url }}" class="siblings__link {{ current_class }}" data-swapper-hover="{{ color_name }}">
+        <div class="siblings__swatch">
+          <div class="sibling__image">{%- render 'image-fill', img_object: sib_product.featured_media.preview_image, aspect_ratio: 1.0 -%}</div>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+{%- endif -%}

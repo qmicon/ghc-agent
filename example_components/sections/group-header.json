@@ -1,0 +1,55 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "header": {
+      "type": "header",
+      "blocks": {
+        "toolbar": {
+          "type": "toolbar",
+          "settings": {
+            "announcement_text": "<p>🚚<strong>FREE SHIPPING</strong> on orders over <strong>$60.00</strong></p>",
+            "secondary_linklist": "",
+            "show_menu_desktop": true,
+            "show_menu_mobile": true,
+            "show_locale_desktop": false,
+            "show_locale_mobile": false,
+            "show_country_name": false,
+            "show_country_flag": false,
+            "show_currency_desktop": false,
+            "show_currency_mobile": false
+          }
+        }
+      },
+      "block_order": [
+        "toolbar"
+      ],
+      "custom_css": [],
+      "settings": {
+        "enable_header_sticky": true,
+        "header_style": "logo_above",
+        "full_width": true,
+        "logo": "{{ shop.brand.logo }}",
+        "logo_max_limit": 120,
+        "main_menu_linklist": "main-menu",
+        "enable_search": true,
+        "enable_account": true,
+        "transparent_home": true,
+        "transparent_collection": false,
+        "transparent_logo": "{{ shop.brand.logo }}"
+      }
+    }
+  },
+  "order": [
+    "header"
+  ]
+}

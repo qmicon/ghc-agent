@@ -1,0 +1,134 @@
+<!-- /sections/related.liquid -->
+
+{% if section.settings.related_products_enable %}
+  <div class="related__wrapper" data-related-section data-section-id="{{ section.id }}" data-product-id="{{ product.id }}" data-limit="{{ section.settings.limit }}" data-section-type="related">
+    {% if recommendations.performed %}
+      {%- if recommendations.products_count > 0 -%}
+        <div class="product__related section-collection" style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;">
+          <div class="{{ section.settings.width }} section-padding">
+            <div class="section-collection__foreground">
+              <div class="section-collection__inner">
+                {% if section.settings.product_recommendations_heading != blank %}
+                  <div class="section-collection__head">
+                    <h2 class="h3">{{ section.settings.product_recommendations_heading }}</h2>
+                  </div>
+                {% endif %}
+
+                <div class="slider-actions" data-slider-actions>
+                  <button type="button" class="slider-arrow slider-arrow--prev" data-prev-arrow disabled>
+                    <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+                  </button>
+
+                  <button type="button" class="slider-arrow slider-arrow--next" data-next-arrow>
+                    <span class="visually-hidden">{{ 'general.accessibility.prev' | t }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="grid grid--uniform related__inner grid--inner-offsets flickity-disabled-mobile" data-slideshow data-custom-scrollbar-items data-related-products>
+                {% assign grid_width_large = 'large-up--one-quarter' %}
+                {% assign grid_width_medium = 'medium--one-half' %}
+                {% assign grid_width_small = 'small--one-half mobile--nine-tenths' %}
+
+                {% case recommendations.products_count %}
+                  {% when 1 %}
+                    {% assign grid_width_large = 'large-up--one-third large-up--push-one-third' %}
+                    {% assign grid_width_medium = 'medium--one-third' %}
+                  {% when 2 %}
+                    {% assign grid_width_large = 'large-up--one-half' %}
+                    {% assign grid_width_medium = 'medium--one-half' %}
+                  {% when 3 %}
+                    {% assign grid_width_large = 'large-up--one-third' %}
+                    {% assign grid_width_medium = 'medium--one-third' %}
+                  {% when 4 %}
+                    {% assign grid_width_large = 'large-up--one-quarter' %}
+                    {% assign grid_width_medium = 'medium--one-half' %}
+                    {% assign grid_width_small = 'small--one-half mobile--nine-tenths' %}
+                {% endcase %}
+                {% capture grid_strings %}
+                  {{ grid_width_small }}
+                  {{ grid_width_medium }}
+                  {{ grid_width_large }}
+                {% endcapture %}
+                {%- for product in recommendations.products -%}
+                  {% render 'product-grid-item', product: product, grid_strings: grid_strings %}
+                {%- endfor -%}
+              </div>
+
+              <div class="custom-scrollbar small-down--show" data-custom-scrollbar>
+                <div class="custom-scrollbar__track" data-custom-scrollbar-track></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+    {% else %}
+      <div class="related__placeholder"></div>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "related_products_enable",
+      "label": "Show related products",
+      "info": "Dynamic recommendations change and improve with time. [Learn more](https://help.shopify.com/en/themes/development/recommended-products)",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "label": "Product limit",
+      "default": 6
+    },
+    {
+      "type": "text",
+      "id": "product_recommendations_heading",
+      "label": "Heading",
+      "default": "Related products"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

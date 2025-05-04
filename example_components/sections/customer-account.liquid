@@ -1,0 +1,120 @@
+<!-- /sections/customer-account.liquid -->
+
+<div
+  class="{{ section.settings.color_bg }} customer-account"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <header role="banner" class="account-header">
+      <h1>{{ 'customer.account.title' | t }}</h1>
+      <a href="{{ routes.account_logout_url }}" class="btn--soft">{{ 'layout.customer.log_out' | t }}</a>
+    </header>
+
+    <div class="grid">
+      <div class="grid__item large-up--two-thirds">
+        <h2 class="h4 mt1">{{ 'customer.orders.title' | t }}</h2>
+        {% paginate customer.orders by 20 %}
+          {% if customer.orders.size != 0 %}
+            <table class="responsive-table">
+              <thead>
+                <tr>
+                  <th>{{ 'customer.orders.order_number' | t }}</th>
+                  <th>{{ 'customer.orders.date' | t }}</th>
+                  <th>{{ 'customer.orders.payment_status' | t }}</th>
+                  <th>{{ 'customer.orders.fulfillment_status' | t }}</th>
+                  <th>{{ 'customer.orders.total' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in customer.orders %}
+                  <tr class="responsive-table-row">
+                    <td data-label="{{ 'customer.orders.order_number' | t }}">{{ order.name | link_to: order.customer_url }}</td>
+                    <td data-label="{{ 'customer.orders.date' | t }}">{{ order.created_at | date: format: 'month_day_year' }}</td>
+                    <td data-label="{{ 'customer.orders.payment_status' | t }}">{{ order.financial_status_label }}</td>
+                    <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">{{ order.fulfillment_status_label }}</td>
+                    <td data-label="{{ 'customer.orders.total' | t }}">
+                      {% if settings.currency_code_enable %}
+                        {{ order.total_price | money_with_currency }}
+                      {% else %}
+                        {{ order.total_price | money }}
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p>{{ 'customer.orders.none' | t }}</p>
+          {% endif %}
+
+          {% if paginate.pages > 1 %}
+            {% render 'pagination', paginate: paginate %}
+          {% endif %}
+        {% endpaginate %}
+      </div>
+      <div class="grid__item large-up--one-third account__sidebar__title">
+        <h2 class="h4">{{ 'customer.account.details' | t }}</h2>
+
+        {{ customer.default_address | format_address }}
+
+        <a class="btn" href="{{ routes.account_addresses_url }}">{{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer account",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

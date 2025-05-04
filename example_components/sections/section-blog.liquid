@@ -1,0 +1,214 @@
+<!-- /sections/section-blog.liquid -->
+
+{%- assign blog = blogs[section.settings.index_blog] -%}
+
+{% case section.settings.grid %}
+  {% when 2 %}
+    {%- assign grid_strings = 'large-up--one-half medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 3 %}
+    {%- assign grid_strings = 'large-up--one-third medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 4 %}
+    {%- assign grid_strings = 'large-up--one-quarter medium--one-half small--one-half mobile--nine-tenths' -%}
+{% endcase %}
+
+<div
+  class="section-blog {{ section.settings.color_bg }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="section-blog"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <div class="section-blog__inner">
+      <div class="section-blog__head">
+        {% if section.settings.title != blank %}
+          <h1 class="h3">{{ section.settings.title | escape }}</h1>
+        {% endif %}
+      </div>
+
+      <div class="slider-actions" data-slider-actions>
+        <button type="button" class="slider-arrow slider-arrow--prev" data-prev-arrow disabled>
+          <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+        </button>
+
+        <button type="button" class="slider-arrow slider-arrow--next" data-next-arrow>
+          <span class="visually-hidden">{{ 'general.accessibility.prev' | t }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="section__blog__grid grid grid--uniform flickity-disabled-mobile" data-slideshow="{{ section.settings.grid }}" data-custom-scrollbar-items>
+      {% for article in blog.articles limit: section.settings.limit %}
+        {% render 'article-grid-item',
+          article: article,
+          grid_strings: grid_strings,
+          show_excerpt: section.settings.show_excerpt,
+          show_tags: section.settings.show_tags,
+          show_meta: section.settings.show_meta,
+          aspect_ratio: section.settings.aspect_ratio,
+          blog: blog
+        %}
+      {% else %}
+        {% comment %}    Onboarding content    {% endcomment %}
+        {% for i in (1..15) limit: section.settings.limit %}
+          <div class="grid__item {{ grid_strings }}">
+            <div class="article__card article__card--image">
+              <div class="lazy-image article__card__image__wrapper">
+                <span class="image__fill fade-in-image" style="padding-top: {{ section.settings.aspect_ratio | times: 100 }}%;">
+                  {% capture imgCount %}{% cycle 1, 2, 3, 4 %}{% endcapture %}
+                  {% capture svg_name %}collection-apparel-{{ imgCount }}{% endcapture %}
+                  {{ svg_name | placeholder_svg_tag: 'placeholder-svg' }}
+                </span>
+              </div>
+              <div class="article__card__content">
+                <p class="h5--body article__card__title">{{ 'homepage.onboarding.blog_title' | t }}</p>
+                <div class="article__card__text">
+                  <p>{{ 'homepage.onboarding.blog_excerpt' | t }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+        {% comment %}    End onboarding content    {% endcomment %}
+      {% endfor %}
+    </div>
+
+    <div class="custom-scrollbar small-down--show" data-custom-scrollbar>
+      <div class="custom-scrollbar__track" data-custom-scrollbar-track></div>
+    </div>
+    {% if section.settings.show_view_all %}
+      <div class="text-center">
+        <a href="{{ blog.url }}" class="btn">
+          {{ 'blogs.general.view_all' | t }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "News"
+    },
+    {
+      "type": "blog",
+      "id": "index_blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 3,
+      "max": 15,
+      "step": 3,
+      "label": "Number of articles",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "grid",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Posts per row",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "aspect_ratio",
+      "min": 0.5,
+      "max": 1.5,
+      "step": 0.1,
+      "unit": ":1",
+      "label": "Photo aspect ratio",
+      "info": "Wide to tall",
+      "default": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_meta",
+      "label": "Show date and author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "default": false,
+      "label": "Show article excerpt"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "default": false,
+      "label": "Show article tags"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View all' button",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog posts",
+      "category": "Text"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

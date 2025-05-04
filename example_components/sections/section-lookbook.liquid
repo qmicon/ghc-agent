@@ -1,0 +1,201 @@
+<!-- /sections/section-lookbook.liquid -->
+
+<div
+  class="section-lookbook"
+  data-section-id="{{ section.id }}"
+  data-section-type="lookbook"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <div class="lookbook__block__top">
+      {% if section.settings.title != blank %}
+        <h2 class="lookbook__title">{{ section.settings.title | escape }}</h2>
+      {% endif %}
+      {% if section.settings.text != blank %}
+        <div class="rte lookbook__text">{{ section.settings.text }}</div>
+      {% endif %}
+      <div class="lookbook__image__one">
+        {%- if section.settings.scale_image -%}
+          {%- render 'image-fill', img_object: section.settings.image, aspect_ratio: section.settings.aspect_ratio -%}
+        {%- else -%}
+          {%- render 'image-fill', img_object: section.settings.image -%}
+        {%- endif -%}
+      </div>
+      {%- if section.settings.title != blank or section.settings.text != blank -%}
+        <div class="lookbook__image__one__bg"></div>
+      {%- endif -%}
+    </div>
+    <div class="lookbook__block__bottom">
+      <div class="lookbook__image__two">
+        {%- if section.settings.scale_image_two -%}
+          {%- render 'image-fill', img_object: section.settings.image_two, aspect_ratio: section.settings.aspect_ratio_two -%}
+        {%- else -%}
+          {%- render 'image-fill', img_object: section.settings.image_two -%}
+        {%- endif -%}
+      </div>
+      {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+        <div class="lookbook__image__two__bg"></div>
+
+        <div class="lookbook__button">
+          <a href="{{ section.settings.button_link }}" class="btn btn--large {{ section.settings.button_style }} {{ section.settings.button_color }}">
+            {{ section.settings.button_label | escape }}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Overlapping images",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collection name"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Use this text to describe the collection.</p>"
+    },
+    {
+      "type": "header",
+      "content": "First image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "scale_image",
+      "label": "Scale image",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "aspect_ratio",
+      "min": 0.3,
+      "max": 1.5,
+      "step": 0.1,
+      "unit": ":1",
+      "label": "Image scaling ratio",
+      "info": "Wide to tall",
+      "default": 0.5
+    },
+    {
+      "type": "header",
+      "content": "Second image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_two",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "scale_image_two",
+      "label": "Scale image",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "aspect_ratio_two",
+      "min": 0.3,
+      "max": 1.5,
+      "step": 0.1,
+      "unit": ":1",
+      "label": "Image scaling ratio",
+      "info": "Wide to tall",
+      "default": 0.5
+    },
+    {
+      "type": "header",
+      "content": "Button (optional)"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "default": "btn",
+      "options": [
+        {"value": "btn", "label": "Solid button"},
+        {"value": "btn--soft", "label": "Soft button"},
+        {"value": "btn--outline", "label": "Outlined button"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "button_color",
+      "label": "Color",
+      "default": "btn--neutral",
+      "options": [
+        {"value": "btn--primary", "label": "Primary accent"},
+        {"value": "btn--secondary", "label": "Secondary accent"},
+        {"value": "btn--neutral", "label": "Text color"},
+        {"value": "btn--black", "label": "Black"},
+        {"value": "btn--white", "label": "White"}
+      ]
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Overlapping images",
+      "category": "Image"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

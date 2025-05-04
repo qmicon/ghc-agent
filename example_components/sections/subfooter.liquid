@@ -1,0 +1,207 @@
+<!-- /sections/subfooter.liquid -->
+
+<section
+  class="subfooter"
+  data-section-id="{{ section.id }}"
+  data-section-type="subfooter"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    {%- liquid
+      assign footer_count = 1
+      assign footer_locale = false
+      assign footer_currency = false
+      assign enable_follow_on_shop = section.settings.enable_follow_on_shop
+      assign show_country_name = section.settings.show_country_name
+      assign show_country_flag = section.settings.show_country_flag
+
+      if section.settings.show_locale_selector and localization.available_languages.size > 1
+        assign footer_locale = true
+      endif
+      if section.settings.show_currency_selector and localization.available_countries.size > 1
+        assign footer_currency = true
+      endif
+
+      if section.settings.footer_social_enable
+        assign footer_count = footer_count | plus: 1
+      endif
+      if section.settings.footer_payment_enable
+        assign footer_count = footer_count | plus: 1
+      endif
+      if footer_currency or footer_locale
+        assign footer_count = footer_count | plus: 1
+      endif
+      if shop.features.follow_on_shop? and enable_follow_on_shop
+        assign footer_count = footer_count | plus: 1
+      endif
+    -%}
+
+    <div class="subfooter__content subfooter__content--{{ footer_count }}">
+      <div class="subfooter__item subfooter__newsletter">
+        {% render 'newsletter-form' %}
+    </div>
+
+    <div class="subfooter__items" style="gap: 10px; display: grid;">
+        
+        {%- if footer_currency or footer_locale -%}
+            <div class="subfooter__item subfooter__item--selects">
+                {%- form 'localization', class: 'popout--footer', id: 'localization-form-footer' -%}
+                    {%- if section.settings.show_locale_selector and localization.available_languages.size > 1 -%}
+                        {%- render 'select-locale', form: form, unique: 'localization-form-footer', wrapper_class: 'subfooter__select' -%}
+                    {%- endif -%}
+                    {%- if section.settings.show_currency_selector and localization.available_countries.size > 1 -%}
+                        {%- render 'select-country', form: form, unique: 'localization-form-footer', wrapper_class: 'subfooter__select' -%}
+                    {%- endif -%}
+                {%- endform -%}
+            </div>
+        {%- endif -%}
+
+        <div class="subfooter__item subfooter__item--copyright">
+            <small>
+                {{ 'layout.footer.copyright' | t }} &copy; {{ shop.name }} {{ 'now' | date: '%Y' }}
+                <span class="divider-bar">|</span> TGHCo Inc.
+                <span class="divider-bar">|</span> <span data-powered-link>{{ powered_by_link }}</span>
+            </small>
+        </div>
+
+        {%- if shop.features.follow_on_shop? and section.settings.enable_follow_on_shop -%}
+            <div class="subfooter__item subfooter__item--follow-on-shop">
+                {{ shop | login_button: action: 'follow' }}
+            </div>
+        {%- endif -%}
+
+        {% if section.settings.footer_social_enable %}
+            <div class="subfooter__item subfooter__item--social">
+                {%- assign social_accounts = 'Instagram, TikTok, Snapchat, Facebook, Twitter, Pinterest, Linkedin, Tumblr, YouTube, Vimeo' | split: ', ' -%}
+                {% for social in social_accounts %}
+                    {%- assign social_handle = social | handleize -%}
+                    {% capture social_link %}social_{{ social_handle }}_link{% endcapture %}
+                    {% if settings[social_link] != blank %}
+                        <a class="subfooter__icon subfooter__icon--social" href="{{ settings[social_link] }}" target="_blank">
+                            {% render 'social', social_handle: social_handle %}
+                            <span class="icon-fallback-text">{{ social }}</span>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if section.settings.footer_payment_enable and shop.enabled_payment_types != empty %}
+            <div class="subfooter__item subfooter__item--payment">
+                <span class="visually-hidden">{{ 'layout.footer.payment_methods' | t }}</span>
+                {% for type in shop.enabled_payment_types %}
+                    <span class="subfooter__icon subfooter__icon--payment">
+                        {{ type | payment_type_svg_tag: class: 'payment-icon' }}
+                        <span class="visually-hidden">{{ type | capitalize | replace: '_', ' ' }}</span>
+                    </span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Subfooter",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "footer_social_enable",
+      "label": "Show social icons",
+      "default": true,
+      "info": "Show icons for all links in your social media theme settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "footer_payment_enable",
+      "label": "Show payment icons",
+      "default": true,
+      "info": "Show icons for payment providers enabled in your Shopify settings"
+    },
+    {
+      "type": "header",
+      "content": "Follow on Shop",
+      "info": "Display follow button for your storefront on the Shop app. [Learn more](https://help.shopify.com/manual/online-store/themes/customizing-themes/follow-on-shop)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_follow_on_shop",
+      "default": true,
+      "label": "Enable Follow on Shop"
+    },
+    {
+      "type": "header",
+      "content": "Language selector",
+      "info": "To add a language, go to your [language settings.](/admin/settings/languages)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_locale_selector",
+      "label": "Show language selector",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Country/Region selector",
+      "info": "To add a currency, go to your [markets settings.](/admin/settings/markets)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_selector",
+      "label": "Show country/region selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_name",
+      "label": "Show country name",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_flag",
+      "label": "Show country flag",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 32
+    }
+  ],
+  "enabled_on": {
+    "groups": ["footer"]
+  }
+}
+{% endschema %}

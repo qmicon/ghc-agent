@@ -1,0 +1,53 @@
+<!-- /snippets/filters-active.liquid -->
+
+{%- assign filters = filters | default: collection.filters -%}
+{%- assign clear_url = collection.url -%}
+
+{%- if filter_search -%}
+  {%- capture clear_url -%}
+    {{ routes.search_url }}?q={{ search.terms | url_encode }}
+  {%- endcapture -%}
+{%- endif -%}
+
+{%- assign filter_count = 0 -%}
+{%- capture filter_clears -%}
+  {%- for filter in filters -%}
+    {% if filter.type == "price_range" %}
+      {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+        {%- if filter.min_value.value != 0 or filter.max_value.value != filter.range_max -%}
+          {%- assign filter_count = filter_count | plus: 1 -%}
+          <a class="active__filters__remove" href="{{ filter.url_to_remove }}">
+            <span class="filter__x">×</span>
+            {%- assign min_value = filter.min_value.value | default: 0 -%}
+            {%- assign max_value = filter.max_value.value | default: filter.range_max -%}
+            {{ min_value | money_without_trailing_zeros }} - {{ max_value | money_without_trailing_zeros }}
+          </a>
+        {%- endif -%}
+      {%- endif -%}
+    {% else %}
+      {%- for filter_value in filter.active_values -%}
+        {%- assign filter_count = filter_count | plus: 1 -%}
+        <a class="active__filters__remove" href="{{ filter_value.url_to_remove }}">
+          <span class="filter__x">×</span>
+          {% if filter.type == 'boolean' %}
+            {{ filter.label }} :
+          {% endif %}
+          {{ filter_value.label }}
+        </a>
+      {%- endfor -%}
+    {% endif %}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if filter_count > 0 -%}
+  <div class="collection__active__filters">
+    {%- if filter_count > 1 -%}
+      <a href="{{ clear_url }}" class="active__filters__clear">
+        <span class="filter__x">×</span>
+        {{ 'collections.sidebar.all_tags' | t }}
+      </a>
+    {%- endif -%}
+
+    {{ filter_clears }}
+  </div>
+{%- endif -%}

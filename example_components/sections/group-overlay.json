@@ -1,0 +1,1 @@
+{"type":"aside","name":"Overlay","sections":{"popups":{"type":"popups","blocks":{"cookie":{"type":"cookie","disabled":true,"settings":{"position":"popup--bottom"}},"newsletter":{"type":"newsletter","disabled":true,"settings":{"position":"popup--left","trigger":"idle"}}},"block_order":["cookie","newsletter"],"settings":{}}},"order":["popups"]}

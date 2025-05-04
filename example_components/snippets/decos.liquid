@@ -1,0 +1,20 @@
+<!-- /snippets/decos.liquid -->
+
+{%- if settings.decoration_style == 'decoration-modern' -%}
+  <div class="decos__wrapper">
+    <div class="decos decos--{{ direction }}">
+      {%- assign row = 1 -%}
+      {%- for deco in (1..36) -%}
+        {%- assign column = forloop.index | modulo: 9 -%}
+        {%- if column == 0 -%}
+          {%- assign column = 9 -%}
+        {%- endif -%}
+        <span class="animated-deco deco-{{ forloop.index }} row-{{ row }} column-{{ column }}"></span>
+        {%- assign child9Mod = forloop.index | modulo: 9 -%}
+        {%- if child9Mod == 0 -%}
+          {%- assign row = row | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}

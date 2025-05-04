@@ -1,0 +1,227 @@
+<!-- /sections/section-mosaic.liquid -->
+
+<div
+  class="section-mosaic {{ section.settings.color_bg }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="section-collection-grid"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <div class="section-collection__foreground">
+      <div class="section-mosaic__inner">
+        <div class="section-mosaic__head">
+          {% if section.settings.title != blank %}
+            <h2 class="index__collection__title h3">{{ section.settings.title | escape }}</h2>
+          {% endif %}
+
+          {% if section.settings.description != blank %}
+            <div class="index__collection__subtitle subtitle--decorated">{{ section.settings.description }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="grid grid--mosaic grid--mosaic-{{ section.blocks.size }} grid--inner-offsets flickity-disabled-mobile" data-custom-scrollbar-items>
+        {% for block in section.blocks %}
+          {% render 'collection-grid-item', section: section, block: block, forloop: forloop %}
+        {% endfor %}
+      </div>
+
+      <div class="custom-scrollbar small-down--show" data-custom-scrollbar>
+        <div class="custom-scrollbar__track" data-custom-scrollbar-track></div>
+      </div>
+    </div>
+  </div>
+
+  {% if section.blocks.size == 0 %}
+    <div class="text-center">{{ 'homepage.onboarding.no_content' | t }}</div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Mosaic",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Mosaic"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Text",
+      "default": "<p>Use this area to describe the mosaic.</p>"
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Block style"
+    },
+    {
+      "type": "range",
+      "id": "aspect_ratio",
+      "min": 0.3,
+      "max": 1.5,
+      "step": 0.1,
+      "unit": ":1",
+      "label": "Image scaling ratio",
+      "info": "Wide to tall",
+      "default": 0.6
+    },
+    {
+      "type": "select",
+      "id": "place_text",
+      "label": "Text placement",
+      "default": "flex-column",
+      "options": [
+        {"value": "flex-column", "label": "Below"},
+        {"value": "flex-column-reverse", "label": "Above"},
+        {"value": "flex-row", "label": "Right"},
+        {"value": "flex-row-reverse", "label": "Left"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "align_text",
+      "label": "Text alignment",
+      "default": "text-center",
+      "options": [
+        {"value": "text-left", "label": "Left"},
+        {"value": "text-center", "label": "Centered"},
+        {
+          "value": "text-right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "use_font",
+      "label": "Font",
+      "default": "font-heading",
+      "options": [
+        {"value": "font-heading", "label": "Heading"},
+        {"value": "font-body", "label": "Body"},
+        {"value": "font-accent", "label": "Accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "featured_collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "label": "Collection",
+          "id": "collection",
+          "type": "collection"
+        },
+        {
+          "type": "header",
+          "content": "Overrides",
+          "info": "Override the default collection content"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "collection_image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "link_override",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Style"
+        },
+        {
+          "type": "color",
+          "id": "content_color",
+          "label": "Text color",
+          "default": "#333333"
+        },
+        {
+          "type": "color",
+          "id": "content_bg",
+          "label": "Text background",
+          "default": "#f7f7f7"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mosaic",
+      "category": "Collection",
+      "blocks": [
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

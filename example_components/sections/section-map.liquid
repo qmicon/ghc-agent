@@ -1,0 +1,279 @@
+<!-- /sections/section-map.liquid -->
+
+{% assign display_map = false %}
+{%- if section.settings.api_key != blank and section.settings.map_address -%}
+  {% assign display_map = true %}
+{%- endif -%}
+
+{%- if section.settings.image -%}
+  {%- assign img_object = section.settings.image -%}
+{%- else -%}
+  {%- assign img_object = 'blank.svg' | asset_url -%}
+{%- endif -%}
+
+<div
+  class="section-map {{ section.settings.color_bg }} {% if display_map %} map--display-map{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="section-map"
+  data-style="{{ section.settings.style }}"
+  data-zoom="{{ section.settings.zoom }}"
+  data-address="{{ section.settings.map_address | escape }}"
+  data-api-key="{{ section.settings.api_key }}"
+  data-latlong-correction="{{ section.settings.enable_latlong }}"
+  data-lat="{{ section.settings.lat }}"
+  data-long="{{ section.settings.long }}"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    {% capture image_layout %}
+      <div class="overlap__item overlap__image map__wrapper">
+        <div class="map__content map__background-wrapper">
+          <div class="map__image {{ section.settings.height }}">
+            <div class="background-size-cover lazyload" data-bgset="{% render 'bgset', image: img_object %}"></div>
+            {%- if section.settings.image -%}
+              <noscript>
+                <img src="{{ section.settings.image | img_url: '720x' }}" alt="{{ section.settings.image.alt | default: section.settings.title }}" style="width: 100%;">
+              </noscript>
+            {%- endif -%}
+          </div>
+          {% if display_map %}
+            <div
+              class="map__container {{ section.settings.height }}"
+              data-map-container
+              id="Map-{{ section.id }}"
+            ></div>
+          {% endif %}
+        </div>
+      </div>
+    {% endcapture %}
+
+    <div class="overlap">
+      {% if section.settings.layout == 'left' %}
+        {{ image_layout }}
+      {% endif %}
+
+      <div class="overlap__item overlap__text {{ section.settings.color_text_bg }}">
+        <div class="overlap__content__wrapper">
+          {% if section.settings.heading != blank %}
+            <h2 class="h3 overlap__heading">{{ section.settings.heading | escape }}</h2>
+          {% endif %}
+          {% if section.settings.address != blank %}
+            <div class="rte-setting section--rte overlap__rte">
+              <span>{{ section.settings.address }}</span>
+            </div>
+          {% endif %}
+          {% if section.settings.button != blank and section.settings.map_address != blank %}
+            <p>
+              <a href="https://maps.google.com?daddr={{ section.settings.map_address | escape }}" target="_blank" class="btn overlap__button">
+                {{ section.settings.button | escape }}
+              </a>
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if section.settings.layout == 'right' %}
+        {{ image_layout }}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Map",
+  "class": "section-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Map alignment",
+      "default": "left",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "right", "label": "Right"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Map height",
+      "default": "use_screen_one_half",
+      "options": [
+        {"value": "use_screen_two_thirds", "label": "Tall"},
+        {"value": "use_screen_one_half", "label": "Medium"},
+        {"value": "use_screen_one_third", "label": "Short"},
+        {"value": "use_screen_one_fifth", "label": "Tiny"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Address & Directions"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our store"
+    },
+    {
+      "type": "richtext",
+      "id": "address",
+      "label": "Address and hours",
+      "default": "<p>123 Fake St.<br>Whistler, Canada</p><p>Mon - Fri, 10am - 9pm<br>Weekends, 11am - 4pm</p>"
+    },
+    {
+      "type": "text",
+      "id": "button",
+      "label": "Map link label",
+      "default": "Directions"
+    },
+    {
+      "type": "select",
+      "id": "color_text_bg",
+      "label": "Text background",
+      "default": "palette--light bg--accent",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Map"
+    },
+    {
+      "id": "api_key",
+      "type": "text",
+      "label": "Google Maps API key",
+      "info": "You’ll need to [register a Google Maps API Key](https://help.shopify.com/manual/using-themes/troubleshooting/map-section-api-key) to display the map"
+    },
+    {
+      "id": "map_address",
+      "type": "text",
+      "label": "Map address",
+      "info": "Google Maps will find the exact location",
+      "default": "4300 Main St, Whistler"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Map style",
+      "default": "light",
+      "options": [
+        {"value": "default", "label": "Default"},
+        {"value": "light", "label": "Desaturated"},
+        {"value": "light_blank", "label": "Desaturated without labels"},
+        {"value": "white_label", "label": "White"},
+        {"value": "white_blank", "label": "White without labels"},
+        {"value": "dark_label", "label": "Black"},
+        {"value": "dark_blank", "label": "Black without labels"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "zoom",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "label": "Zoom",
+      "info": "Low numbers are less zoomed",
+      "default": 11
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Displayed if the map isn’t loaded"
+    },
+    {
+      "type": "header",
+      "content": "Location correction"
+    },
+    {
+      "type": "paragraph",
+      "content": "Correct the pin position if Google shows an incorrect location for your address."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_latlong",
+      "label": "Enable location correction",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "lat",
+      "label": "Latitude",
+      "info": "Example: 21.6640"
+    },
+    {
+      "type": "text",
+      "id": "long",
+      "label": "Longitude",
+      "info": "Example: -158.0539"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Map",
+      "category": "Text"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside", "footer"]
+  }
+}
+{% endschema %}

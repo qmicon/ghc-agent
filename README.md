@@ -58,7 +58,7 @@ ANTHROPIC_API_KEY=your_api_key_here
 
 2. Generate code examples:
 ```bash
-python generate_examples.py
+python generate_examples_from_template.py
 ```
 This will create `examples.txt` with relevant code examples from the dataset.
 
@@ -87,7 +87,7 @@ This will create the actual implementation files based on the plan and create a 
 ├── offer_requirements_prompt.txt  # Your offer requirements
 ├── examples.txt              # Generated code examples
 ├── offer_plan_claude.txt     # Generated implementation plan
-├── generate_examples.py      # Example generation script
+├── generate_examples_from_template.py      # Example generation script
 ├── generate_offer_plan_claude.py  # Plan generation script
 └── save_implementations.py   # Implementation saving script
 ```

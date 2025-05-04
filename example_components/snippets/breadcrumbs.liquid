@@ -1,0 +1,21 @@
+<!-- /snippets/breadcrumbs.liquid -->
+
+{%- assign breadcrumbs_modifier = breadcrumbs_modifier | default: '' -%}
+
+{%- capture divider_html -%}
+  <span class="breadcrumbs__separator">/</span>
+{%- endcapture -%}
+
+<nav class="breadcrumbs {{ breadcrumbs_modifier }}">
+  <a href="{{ routes.root_url }}" class="breadcrumbs__link">{{ 'general.breadcrumbs.home' | t }}</a>
+
+  {{ divider_html }}
+
+  {%- if template contains 'product' and collection -%}
+    {{ collection.title | link_to: collection.url | replace: '<a ', '<a class="breadcrumbs__link" ' }}
+
+    {{ divider_html }}
+  {%- endif -%}
+
+  <span>{{- page_title -}}</span>
+</nav>

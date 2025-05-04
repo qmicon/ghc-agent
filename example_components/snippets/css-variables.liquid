@@ -1,0 +1,311 @@
+{% comment %}
+  This is where CSS Variables are set with values from your theme settings.
+  These values are created in settings_schema.json and stored in settings_data.json.
+  CSS variables are used to remove liquid code from your CSS file, allowing CSS to load faster.
+{% endcomment %}
+
+{% style %}
+  :root {
+
+  {%- liquid
+    assign base_font = settings.type_base_font
+    assign base_font_mid = base_font | font_modify: 'weight', 'bolder'
+    assign base_font_bold = base_font | font_modify: 'weight', 'bolder'
+    assign nav_font = settings.type_nav_font
+
+    assign heading_font = settings.type_heading_font
+    assign heading_font_bold = heading_font | font_modify: 'weight', 'bolder'
+
+    assign number_font = settings.type_number_font
+    assign number_font_bold = number_font | font_modify: 'weight', 'bolder'
+
+    assign base_font_100 = base_font | font_modify: 'weight', '+100'
+    assign base_font_200 = base_font | font_modify: 'weight', '+200'
+    assign base_font_300 = base_font | font_modify: 'weight', '+300'
+    assign base_font_400 = base_font | font_modify: 'weight', '+400'
+    if base_font_100 and base_font_100.weight > base_font.weight
+      assign base_font_mid = base_font_100
+    elsif base_font_200 and base_font_200.weight > base_font.weight
+      assign base_font_mid = base_font_200
+    elsif base_font_300 and base_font_300.weight > base_font.weight
+      assign base_font_mid = base_font_300
+    elsif base_font_400 and base_font_400.weight > base_font.weight
+      assign base_font_mid = base_font_400
+    endif
+
+    assign heading_font_100 = heading_font | font_modify: 'weight', '+100'
+    assign heading_font_200 = heading_font | font_modify: 'weight', '+200'
+    assign heading_font_300 = heading_font | font_modify: 'weight', '+300'
+    assign heading_font_400 = heading_font | font_modify: 'weight', '+400'
+    if heading_font_100 and heading_font_100.weight > heading_font.weight
+      assign heading_font_bold = heading_font_100
+    elsif heading_font_200 and heading_font_200.weight > heading_font.weight
+      assign heading_font_bold = heading_font_200
+    elsif heading_font_300 and heading_font_300.weight > heading_font.weight
+      assign heading_font_bold = heading_font_300
+    elsif heading_font_400 and heading_font_400.weight > heading_font.weight
+      assign heading_font_bold = heading_font_400
+    endif
+
+    assign number_font_100 = number_font | font_modify: 'weight', '+100'
+    assign number_font_200 = number_font | font_modify: 'weight', '+200'
+    assign number_font_300 = number_font | font_modify: 'weight', '+300'
+    assign number_font_400 = number_font | font_modify: 'weight', '+400'
+    if number_font_100 and number_font_100.weight > number_font.weight
+      assign number_font_bold = number_font_100
+    elsif number_font_200 and number_font_200.weight > number_font.weight
+      assign number_font_bold = number_font_200
+    elsif number_font_300 and number_font_300.weight > number_font.weight
+      assign number_font_bold = number_font_300
+    elsif number_font_400 and number_font_400.weight > number_font.weight
+      assign number_font_bold = number_font_400
+    endif
+
+    if nav_font == 'heading'
+      assign nav_font = heading_font
+      assign nav_font_bold = heading_font_bold
+    else
+      assign nav_font = base_font
+      assign nav_font_bold = base_font_bold
+    endif
+  -%}
+
+  /*================ Font Variables ================*/
+
+  --FONT-WEIGHT-BODY: {{ base_font.weight | default: 400 }};
+
+  --FONT-WEIGHT-BODY-MID: {{ base_font_mid.weight | default: 500 }};
+  --FONT-WEIGHT-BODY-BOLD: {{ base_font_bold.weight | default: 700 }};
+
+  --FONT-STACK-BODY: {{ base_font.family }}, {{ base_font.fallback_families }};
+  --FONT-STYLE-BODY: {{ base_font.style }};
+  --FONT-ADJUST-BODY: {{ settings.type_body_size | divided_by: 100.0 }};
+
+
+  --FONT-WEIGHT-HEADING: {{ heading_font.weight | default: 400 }};
+  --FONT-WEIGHT-HEADING-BOLD: {{ heading_font_bold.weight | default: 700 }};
+
+  --FONT-STACK-HEADING: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+  --FONT-STYLE-HEADING: {{ heading_font.style }};
+  --FONT-ADJUST-HEADING: {{ settings.type_heading_size | divided_by: 100.0 }};
+
+  --FONT-STACK-NAV: {{ nav_font.family }}, {{ nav_font.fallback_families }};
+  --FONT-STYLE-NAV: {{ nav_font.style }};
+  --FONT-ADJUST-NAV: {{ settings.type_nav_size | divided_by: 100.0 }};
+
+  --FONT-WEIGHT-NAV: {{ nav_font.weight | default: 400 }};
+  --FONT-WEIGHT-NAV-BOLD: {{ nav_font_bold.weight | default: 700 }};
+
+  --FONT-WEIGHT-ACCENT: {{ number_font.weight | default: 400 }};
+  --FONT-WEIGHT-ACCENT-BOLD: {{ number_font_bold.weight | default: 700 }};
+
+  --FONT-STACK-ACCENT: {{ number_font.family }}, {{ number_font.fallback_families }};
+  --FONT-STYLE-ACCENT: {{ number_font.style }};
+  --FONT-ADJUST-ACCENT: {{ settings.type_number_size | divided_by: 100.0 }};
+
+
+  /*================ Color Variables ================*/
+  --LAYOUT-WIDTH: {{ settings.layout_site_width }}px;
+  --LAYOUT-GUTTER: {{ settings.layout_gutter }}px;
+  --LAYOUT-OUTER: {{ settings.layout_outer }}px;
+  --LAYOUT-CONTAINER: {{ settings.layout_container_width }}px;
+
+
+  /*================ Color Variables ================*/
+  /* ===  Backgrounds ===*/
+  --COLOR-BG: {{ settings.color_bg }};
+  --COLOR-BG-ACCENT: {{ settings.color_bg_accent }};
+
+  /* === Text colors ===*/
+  --COLOR-TEXT-DARK: {{ settings.color_body_text | color_saturate: 10 | color_darken: 15 }};
+  --COLOR-TEXT: {{ settings.color_body_text }};
+  --COLOR-TEXT-LIGHT: {{ settings.color_body_text | color_mix: settings.color_bg, 70 }};
+
+  /* === Shades of grey ===*/
+  --COLOR-A5:  {{ settings.color_body_text | color_modify: 'alpha', 0.05 }};
+  --COLOR-A10: {{ settings.color_body_text | color_modify: 'alpha', 0.10 }};
+  --COLOR-A20: {{ settings.color_body_text | color_modify: 'alpha', 0.20 }};
+  --COLOR-A30: {{ settings.color_body_text | color_modify: 'alpha', 0.30 }};
+  --COLOR-A40: {{ settings.color_body_text | color_modify: 'alpha', 0.40 }};
+  --COLOR-A50: {{ settings.color_body_text | color_modify: 'alpha', 0.50 }};
+  --COLOR-A60: {{ settings.color_body_text | color_modify: 'alpha', 0.60 }};
+  --COLOR-A70: {{ settings.color_body_text | color_modify: 'alpha', 0.70 }};
+  --COLOR-A80: {{ settings.color_body_text | color_modify: 'alpha', 0.80 }};
+  --COLOR-A90: {{ settings.color_body_text | color_modify: 'alpha', 0.90 }};
+  --COLOR-A95: {{ settings.color_body_text | color_modify: 'alpha', 0.95 }};
+
+  /* === Product badges ===*/
+  --COLOR-BADGE: {{ settings.color_badge }};
+  --COLOR-BADGE-TEXT: {{ settings.color_badge_text }};
+
+  /* === Rounding ===*/
+  {% if settings.radius_buttons == 'rounded' %}
+    --RADIUS-BTN: 3px;
+    --RADIUS-FORM: 3px;
+    --RADIUS-ROUNDED-ONLY: 3px;
+  {% elsif settings.radius_buttons == 'pill' %}
+    --RADIUS-BTN: 300px;
+    --RADIUS-FORM: 24px;
+    --RADIUS-ROUNDED-ONLY: 3px;
+  {% else %}
+    --RADIUS-BTN: 0px;
+    --RADIUS-FORM: 0px;
+    --RADIUS-ROUNDED-ONLY: 0px;
+  {% endif %}
+
+  {% if settings.radius_images == 'rounded' %}
+    --RADIUS-XL: 24px;
+    --RADIUS-LG: 12px;
+    --RADIUS: 6px;
+    --RADIUS-SM: 3px;
+  {% else %}
+    --RADIUS-XL: 0px;
+    --RADIUS-LG: 0px;
+    --RADIUS: 0px;
+    --RADIUS-SM: 0px;
+  {% endif %}
+
+  /* === Border colors ===*/
+  --COLOR-BORDER: {{ settings.color_border }};
+  --COLOR-BORDER-LIGHT: {{ settings.color_border | color_lighten: 2 }};
+
+  {%- assign white = settings.color_bg_accent | color_lighten: 100 -%}
+  {%- assign black = settings.color_bg_accent | color_darken: 100 -%}
+  {%- assign contrast_limit = 2 -%}
+  {% if settings.high_contrast %}
+    {%- assign contrast_limit = 3 -%}
+  {%- endif -%}
+
+  /* === Accent-cool ===*/
+  --COLOR-SECONDARY: {{ settings.accent_cool }};
+  --COLOR-SECONDARY-HOVER: {{ settings.accent_cool | color_saturate: 15 | color_darken: 15 }};
+  --COLOR-SECONDARY-FADE: {{ settings.accent_cool | color_modify: 'alpha', 0.05 }};
+  --COLOR-SECONDARY-SHADOW: {{ settings.accent_cool | color_darken: 30 | color_modify: 'alpha', 0.1 }};
+  --COLOR-SECONDARY-FADE-HOVER: {{ settings.accent_cool | color_modify: 'alpha', 0.1 }};
+  {%- assign opposite = white -%}
+  {%- assign contrast_white = settings.accent_cool | color_contrast: white -%}
+  {%- assign contrast_black = settings.accent_cool | color_contrast: black -%}
+  {%- if contrast_white < contrast_limit and contrast_black > contrast_white -%}
+    {%- assign opposite = black -%}
+  {%- endif -%}
+  --COLOR-SECONDARY-OPPOSITE: {{ opposite }};
+
+  /* === Accent-warm ===*/
+  --COLOR-PRIMARY: {{ settings.accent_warm }};
+  --COLOR-PRIMARY-HOVER: {{ settings.accent_warm | color_saturate: 15 | color_darken: 15 }};
+  --COLOR-PRIMARY-FADE: {{ settings.accent_warm | color_modify: 'alpha', 0.05 }};
+  --COLOR-PRIMARY-FADE-HOVER: {{ settings.accent_warm | color_modify: 'alpha', 0.1 }};
+  --COLOR-PRIMARY-SHADOW: {{ settings.accent_warm | color_darken: 30 | color_modify: 'alpha', 0.1 }};
+  {%- assign opposite = white -%}
+  {%- assign contrast_white = settings.accent_warm | color_contrast: white -%}
+  {%- assign contrast_black = settings.accent_warm | color_contrast: black -%}
+  {%- if contrast_white < contrast_limit and contrast_black > contrast_white -%}
+    {%- assign opposite = black -%}
+  {%- endif -%}
+  --COLOR-PRIMARY-OPPOSITE: {{ opposite }};
+
+
+
+
+  /* ================ Inverted Color Variables ================ */
+
+  --INVERSE-BG: {{ settings.color_bg_inverse }};
+  --INVERSE-BG-ACCENT: {{ settings.color_bg_accent_inverse }};
+
+  /* === Text colors ===*/
+  --INVERSE-TEXT-DARK: {{ settings.color_text_inverse | color_lighten: 25 }};
+  --INVERSE-TEXT: {{ settings.color_text_inverse }};
+  --INVERSE-TEXT-LIGHT: {{ settings.color_text_inverse | color_mix: settings.color_bg_inverse, 70 }};
+
+  /* === Bright color ===*/
+  --INVERSE-PRIMARY: {{ settings.color_primary_inverse }};
+  --INVERSE-PRIMARY-HOVER: {{ settings.color_primary_inverse | color_saturate: 15 | color_darken: 15 }};
+  --INVERSE-PRIMARY-FADE: {{ settings.color_primary_inverse | color_modify: 'alpha', 0.05 }};
+  --INVERSE-PRIMARY-FADE-HOVER: {{ settings.color_primary_inverse | color_modify: 'alpha', 0.1 }};
+  --INVERSE-PRIMARY-SHADOW: {{ settings.color_primary_inverse | color_darken: 30 | color_modify: 'alpha', 0.1 }};
+  {%- assign opposite = settings.color_primary_inverse | color_lighten: 100 -%}
+  {%- assign contrast = settings.color_primary_inverse | color_contrast: opposite -%}
+  {%- if contrast < 3.5 -%}
+    {%- assign opposite = settings.color_primary_inverse | color_darken: 95 -%}
+  {%- endif -%}
+  --INVERSE-PRIMARY-OPPOSITE: {{ opposite }};
+
+
+  /* === Second Color ===*/
+  --INVERSE-SECONDARY: {{ settings.color_secondary_inverse }};
+  --INVERSE-SECONDARY-HOVER: {{ settings.color_secondary_inverse | color_saturate: 15 | color_darken: 15 }};
+  --INVERSE-SECONDARY-FADE: {{ settings.color_secondary_inverse | color_modify: 'alpha', 0.05 }};
+  --INVERSE-SECONDARY-FADE-HOVER: {{ settings.color_secondary_inverse | color_modify: 'alpha', 0.1 }};
+  --INVERSE-SECONDARY-SHADOW: {{ settings.color_secondary_inverse | color_darken: 30 | color_modify: 'alpha', 0.1 }};
+  {%- assign opposite = settings.color_secondary_inverse | color_lighten: 100 -%}
+  {%- assign contrast = settings.color_secondary_inverse | color_contrast: opposite -%}
+  {%- if contrast < 3.5 -%}
+    {%- assign opposite = settings.color_secondary_inverse | color_darken: 95 -%}
+  {%- endif -%}
+  --INVERSE-SECONDARY-OPPOSITE: {{ opposite }};
+
+  /* === Shades of grey ===*/
+  --INVERSE-A5:  {{ settings.color_text_inverse | color_modify: 'alpha', 0.05 }};
+  --INVERSE-A10: {{ settings.color_text_inverse | color_modify: 'alpha', 0.10 }};
+  --INVERSE-A20: {{ settings.color_text_inverse | color_modify: 'alpha', 0.20 }};
+  --INVERSE-A35: {{ settings.color_text_inverse | color_modify: 'alpha', 0.30 }};
+  --INVERSE-A80: {{ settings.color_text_inverse | color_modify: 'alpha', 0.80 }};
+  --INVERSE-A90: {{ settings.color_text_inverse | color_modify: 'alpha', 0.90 }};
+  --INVERSE-A95: {{ settings.color_text_inverse | color_modify: 'alpha', 0.95 }};
+
+  /* === Border colors ===*/
+  --INVERSE-BORDER: {{ settings.color_border_inverse }};
+  --INVERSE-BORDER-LIGHT: {{ settings.color_border_inverse | color_darken: 2 }};
+
+  /* ================ End Inverted Color Variables ================ */
+
+
+  /* === Footer Bar ===*/
+  --COLOR-FOOTER-BG: {{ settings.color_footer_bg }};
+  --COLOR-FOOTER-TEXT: {{ settings.color_footer_text }};
+  --COLOR-FOOTER-TEXT-HOVER: {{ settings.color_footer_text | color_saturate: 15 | color_darken: 15 }};
+  --COLOR-FOOTER-A8:  {{ settings.color_body_text | color_modify: 'alpha', 0.08 }};
+  --COLOR-FOOTER-A15: {{ settings.color_body_text | color_modify: 'alpha', 0.15 }};
+
+  /* === Nav and dropdown link background ===*/
+  --COLOR-NAV: {{ settings.color_nav_bg }};
+  --COLOR-NAV-a50:  {{ settings.color_body_text | color_modify: 'alpha', 0.50 }};
+
+  --COLOR-NAV-BORDER: {{ settings.color_nav_border }};
+  {% comment %} --COLOR-NAV-BORDER-light: {{ settings.color_nav_border | color_lighten: 2 }}; {% endcomment %}
+  --COLOR-NAV-BORDER-HAIRLINE: {{ settings.color_nav_bg | color_darken: 3 }};
+
+  --COLOR-NAV-TEXT: {{ settings.color_nav_text }};
+  --COLOR-NAV-TEXT-DARK: {{ settings.color_nav_text | color_darken: 12 }};
+  --COLOR-NAV-TEXT-BRIGHT: {{ settings.color_nav_text | color_lighten: 12 | color_desaturate: 30 }};
+  --COLOR-NAV-TEXT-TRANSPARENT: {{ settings.color_nav_transparent_text }};
+  --COLOR-HIGHLIGHT-LINK: {{ settings.color_highlight_link }};
+
+  --COLOR-NAV-TOOLBAR-BG: {{ settings.color_nav_toolbar_bg }};
+  --COLOR-NAV-TOOLBAR-TEXT: {{ settings.color_nav_toolbar_text }};
+
+  /* ================ Special ================ */
+  --COLOR-SUCCESS: {{ settings.color_success }};
+  --COLOR-SUCCESS-FADE: {{ settings.color_success | color_modify: 'alpha', 0.05 }};
+  --COLOR-ERROR: {{ settings.color_error }};
+  --COLOR-ERROR-FADE: {{ settings.color_error | color_modify: 'alpha', 0.05 }};
+  --COLOR-WARN: {{ settings.color_warn }};
+  --COLOR-WARN-FADE: {{ settings.color_warn | color_modify: 'alpha', 0.05 }};
+
+  /* ================ Photo correction ================ */
+  {%- assign photo_correction = 100 -%}
+  {% if settings.product_background_grey %}
+    {%- assign photo_correction = 98 -%}
+  {% endif %}
+  --PHOTO-CORRECTION: {{ photo_correction }}%;
+
+  /* ================ 3D Models ================ */
+  --progress-bar-color: {{ settings.color_body_text }};
+
+
+  {% if settings.high_contrast %}
+    {% render 'css-variables-contrast' %}
+  {% endif %}
+
+  }
+{% endstyle %}

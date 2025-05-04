@@ -1,0 +1,35 @@
+<!-- /snippets/header-social.liquid -->
+
+{%- assign social_accounts = 'Instagram, TikTok, Snapchat, Facebook, Twitter, Pinterest, Linkedin, Tumblr, YouTube, Vimeo,' | split: ', ' -%}
+{% for social in social_accounts %}
+  {%- assign social_handle = social | handleize -%}
+  {% capture social_link %}social_{{ social_handle }}_link{% endcapture %}
+  {% if settings[social_link] != blank %}
+    <a class="header__social" href="{{ settings[social_link] }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: social }}">
+      {% render 'social', social_handle: social_handle %}
+      <span class="icon-fallback-text">{{ social }}</span>
+    </a>
+  {% endif %}
+{% endfor %}
+
+{% for custom_social_icon_idx in (1..3) %}
+  {% capture custom_social_icon_capture %}custom_social_icon_{{ custom_social_icon_idx }}{% endcapture %}
+  {% capture custom_social_link_capture %}custom_social_link_{{ custom_social_icon_idx }}{% endcapture %}
+  {%- assign custom_social_icon = settings[custom_social_icon_capture] -%}
+  {%- assign custom_social_icon_downcase = custom_social_icon | downcase -%}
+  {%- assign custom_social_link = settings[custom_social_link_capture] -%}
+  {%- if custom_social_icon != blank and custom_social_link != blank and custom_social_icon_downcase contains '.png' -%}
+    {%- assign custom_social_icon_title = custom_social_icon.alt | default: custom_social_link -%}
+    <a class="header__social" href="{{ custom_social_link }}" title="{{ custom_social_icon_title }}" target="_blank">
+      <img
+        class="icon"
+        loading="lazy"
+        alt="{{ custom_social_icon_title | strip_html | escape }}"
+        src="{{ custom_social_icon | img_url: '40x40' }}"
+        width="20"
+        height="20"
+      >
+      <span class="icon-fallback-text">{{ custom_social_icon_title }}</span>
+    </a>
+  {%- endif -%}
+{% endfor %}

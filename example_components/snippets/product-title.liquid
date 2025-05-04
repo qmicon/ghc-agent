@@ -1,0 +1,43 @@
+<!-- /snippets/product-title.liquid -->
+<div class="product__block product__title{{ classes }}" {{ block_style }} {{ block.shopify_attributes }}>
+  {%- if block.settings.navigation != 'none' -%}
+    <div class="product__navigation">
+      {%- case block.settings.navigation -%}
+        {%- when 'vendor' -%}
+          {%- if product.vendor -%}
+            <a href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
+          {%- endif -%}
+        {%- when 'breadcrumb' -%}
+          {% render 'breadcrumbs' %}
+      {%- endcase -%}
+    </div>
+  {%- endif -%}
+
+  <div class="product__title__wrapper">
+    {% assign heading_size_class = block.settings.text_size | prepend: 'heading-size-' %}
+
+    {% if template contains 'product' %}
+      <h3 class="product__title {{ heading_size_class }}">{{ product.title | strip_html }}</h3>
+    {% else %}
+      <h3 class="product__title">
+        <a href="{{ product.url }}">{{ product.title | strip_html }}</a>
+      </h3>
+    {% endif %}
+
+     {% if product.metafields.custom.units_sold.value %}
+    <p id="units_sold" data-units="{{ product.metafields.custom.units_sold }}">
+      {{ product.metafields.custom.units_sold }} units sold
+    </p>
+    {% endif %}  
+
+    {%- if block.settings.show_rating and product.metafields.reviews.rating.value != blank -%}
+      <div class="rating__wrapper__title">
+        {% render 'product-rating', product: product, show_rating_count: block.settings.show_rating_count %}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if product.metafields.theme.cutline != blank and product.metafields.theme.cutline.type == 'single_line_text_field' and block.settings.product_show_cutline -%}
+    <p class="product__cutline">{{ product.metafields.theme.cutline.value }}</p>
+  {%- endif -%}
+</div>

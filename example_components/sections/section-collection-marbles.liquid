@@ -1,0 +1,344 @@
+<!-- /sections/section-collection-marbles.liquid -->
+
+<div
+  class="section-marbles {{ section.settings.color_bg }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="section-collection-grid"
+  data-minimum="{{ section.settings.grid }}"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    {% assign grid_mobile = 100.00 | divided_by: section.settings.grid_mobile %}
+    {% unless section.settings.enable_slider %}
+      {% assign grid_mobile = section.settings.grid_mobile | round %}
+      {% assign grid_mobile = 100.00 | divided_by: grid_mobile %}
+    {% endunless %}
+    <div
+      class="section-collection__foreground"
+      style="
+        --grid-mobile: {{ grid_mobile }}%;
+        --grid-medium: {{ 100.00 | divided_by: section.settings.grid_medium }}%;
+        --grid-large:  {{ 100.00 | divided_by: section.settings.grid_large }}%;
+        --font-size-custom:  {{ section.settings.font_size }}px;
+      "
+    >
+      <div class="section-collection__inner">
+        <div class="section-collection__head{% unless section.settings.enable_slider %} text-center{% endunless %}">
+          {% if section.settings.title != blank %}
+            <h2 class="index__collection__title h3">{{ section.settings.title | escape }}</h2>
+          {% endif %}
+          {% if section.settings.description != blank %}
+            <div class="index__collection__subtitle subtitle--decorated">{{ section.settings.description }}</div>
+          {% endif %}
+        </div>
+
+        {% if section.settings.enable_slider %}
+          <div class="slider-actions" data-slider-actions>
+            <button type="button" class="slider-arrow slider-arrow--prev" data-prev-arrow disabled>
+              <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+            </button>
+
+            <button type="button" class="slider-arrow slider-arrow--next" data-next-arrow>
+              <span class="visually-hidden">{{ 'general.accessibility.prev' | t }}</span>
+            </button>
+          </div>
+        {% endif %}
+      </div>
+
+      <div
+        class="grid grid--custom grid--inner-offsets {% if section.settings.enable_slider %}flickity-disabled-mobile{% endif %}"
+        {% if section.settings.enable_slider %}
+          data-slideshow="{{ section.settings.grid_large }}"
+        {% endif %}
+        {% if section.settings.image_width %}
+          style="--image-width:{{ section.settings.image_width }}%"
+        {% endif %}
+        data-custom-scrollbar-items
+        data-block-scroll
+      >
+        {% for block in section.blocks %}
+          <div
+            class="grid__item uniform-large-{{ section.settings.grid_large }}"
+            {{ block.shopify_attributes }}
+            {% if block.settings.content_color %}
+              style="--block-text:{{ block.settings.content_color }}"
+            {% endif %}
+            {% if section.settings.enable_slider %}
+              data-slide="{{ block.id }}" data-slide-index="{{ forloop.index0 }}"
+            {% endif %}
+          >
+            <div class="collection-marble-item section--image {% if section.settings.enable_circle %} marble--circle{% endif %}">
+              {%- liquid
+                assign collection = collections[block.settings.collection]
+                assign img_object = blank
+                if block.settings.collection_image
+                  assign img_object = block.settings.collection_image
+                elsif collection.image
+                  assign img_object = collection.image
+                elsif collection.products.first
+                  assign img_object = collection.products.first.featured_media.preview_image
+                endif
+
+                assign collection_link = collection.url | default: '#'
+                if block.settings.link_override != blank
+                  assign collection_link = block.settings.link_override
+                endif
+
+                assign collection_def_title = 'collections.general.collection' | t
+
+                assign collection_title = collection.title | default: collection_def_title
+                if block.settings.text != '' and block.settings.text != '<p></p>' and block.settings.text != blank
+                  assign collection_title = block.settings.text
+                endif
+
+                assign aspect_ratio = section.settings.image_width | divided_by: 100.0 | default: 1.0
+              -%}
+
+              <a href="{{ collection_link }}" class="link-over-image" aria-label="{{ collection_title | strip_html | escape }}"> </a>
+
+              {%- if img_object != blank -%}
+                {%- render 'image-fill', img_object: img_object, aspect_ratio: aspect_ratio -%}
+              {%- else -%}
+                <div class="image__fill" style="padding-top: {{ aspect_ratio | times: 100 }}%">
+                  <div class="background-size-cover">
+                    <span>
+                      {% capture svg_name %}collection-apparel-{{ forloop.index | modulo: 5 | at_least: 1 }}{% endcapture %}
+                      {{ svg_name | placeholder_svg_tag: 'placeholder-svg' }}
+                    </span>
+                  </div>
+                </div>
+              {%- endif -%}
+
+              <div class="marbles__title {{ section.settings.use_font }}">{{ collection_title }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.enable_slider %}
+        <div class="custom-scrollbar small-down--show" data-custom-scrollbar>
+          <div class="custom-scrollbar__track" data-custom-scrollbar-track></div>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if section.blocks.size == 0 %}
+      <div class="text-center">{{ 'homepage.onboarding.no_content' | t }}</div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection marbles",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collections"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Collections per row"
+    },
+    {
+      "type": "range",
+      "id": "grid_large",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "label": "Desktop",
+      "default": 7
+    },
+    {
+      "type": "range",
+      "id": "grid_medium",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Tablet",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "grid_mobile",
+      "min": 1,
+      "max": 5,
+      "step": 0.1,
+      "label": "Mobile",
+      "default": 3.5
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "label": "Enable slider",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Block style"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Image width",
+      "default": 90
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_circle",
+      "label": "Enable circle image",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "use_font",
+      "label": "Font",
+      "default": "font-body",
+      "options": [
+        {"value": "font-heading", "label": "Heading"},
+        {"value": "font-body", "label": "Body"},
+        {"value": "font-accent", "label": "Accent"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "header",
+          "content": "Overrides",
+          "info": "Override the default collection content"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "collection_image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "link_override",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection marbles",
+      "category": "Collection",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

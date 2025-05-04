@@ -1,0 +1,26 @@
+<!-- snippets/onboarding-featured-products.liquid -->
+
+{% assign product_count = product_count | default: 6 %}
+{% for i in (1..product_count) %}
+  <div class="grid__item {{ grid_strings }}">
+    <div class="product-grid-item">
+      <span>
+        {% capture imgCount %}{% cycle 1, 2, 3, 4 %}{% endcapture %}
+        {% capture svg_name %}product-apparel-{{ imgCount }}{% endcapture %}
+        {{ svg_name | placeholder_svg_tag: 'placeholder-svg' }}
+      </span>
+      <div class="grid__caption hover">
+        <p class="name_wrapper">
+          <span>{{ 'homepage.onboarding.product_title' | t }}</span>
+        </p>
+        <p class="price_wrapper">
+          {% if settings.currency_code_enable %}
+            {{ '1999' | money_with_currency }}
+          {% else %}
+            {{ '1999' | money }}
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+{% endfor %}

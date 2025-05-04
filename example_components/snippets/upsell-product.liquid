@@ -1,0 +1,185 @@
+<!-- /snippets/upsell-product.liquid -->
+
+{%- if upsell_product -%}
+  {%- assign upsell_error = false -%}
+
+  {%- assign upsell_variant = upsell_product.selected_or_first_available_variant -%}
+
+  {%- if upsell_product.title == '' or upsell_variant == null -%}
+    {%- assign upsell_error = true -%}
+  {%- endif -%}
+
+  {%- if request.design_mode -%}
+    {%- assign upsell_error = false -%}
+  {%- endif -%}
+
+  {%- unless upsell_error -%}
+    {%- if request.design_mode and upsell_product.title == '' or upsell_variant == null -%}
+      {%- assign upsell_error = true -%}
+    {%- endif -%}
+
+    <upsell-product>
+      <div class="upsell__holder" data-upsell-holder="{{ upsell_product.id }}" data-add-action-wrapper>
+        <div class="upsell">
+          <div class="upsell__content">
+            {%- if upsell_error -%}
+              <p class="upsell__title">{{ 'products.upsell.error_title' | t }}</p>
+              <p class="small">{{ 'products.upsell.error_info' | t }}</p>
+            {%- else -%}
+              <a href="{{ upsell_product.url }}">
+                {%- if upsell_variant.available -%}
+                  <p class="upsell__title">
+                    {{ 'products.upsell.add_text' | t }}
+
+                    <strong>{{ upsell_product.title | strip_html }}</strong>
+                  </p>
+                {%- else -%}
+                  <p class="upsell__out-of-stock upsell__title">
+                    <strong>{{ upsell_product.title | strip_html }}</strong>
+
+                    <span>{{ 'products.upsell.out_of_stock' | t }}</span>
+                  </p>
+                {%- endif -%}
+
+                {%- unless upsell_product.has_only_default_variant -%}
+                  <p class="upsell__variant-title">{{ upsell_variant.title | replace: '/', '<span>&nbsp;</span>' }}</p>
+                {%- endunless -%}
+
+                <p class="upsell__price {% unless upsell_variant.available %}hide{% endunless %} {% if upsell_variant.compare_at_price > upsell_variant.price %} sale{% endif %}">
+                  <span class="new-price">
+                    {{ 'products.upsell.get_for' | t }}
+                    {% if settings.currency_code_enable %}
+                      {{ upsell_variant.price | money_with_currency }}
+                    {% else %}
+                      {{ upsell_variant.price | money }}
+                    {% endif %}
+                  </span>
+
+                  {%- if upsell_variant.compare_at_price > upsell_variant.price -%}
+                    <span class="old-price">
+                      {% if settings.currency_code_enable %}
+                        {{ upsell_variant.compare_at_price | money_with_currency }}
+                      {% else %}
+                        {{ upsell_variant.compare_at_price | money }}
+                      {% endif %}
+                    </span>
+                  {%- endif -%}
+
+                  {%- if upsell_variant.unit_price -%}
+                    {%- capture unit_price_separator -%}
+                      <span aria-hidden="true">/</span>
+                      <span class="visually-hidden">{{ 'general.accessibility.unit_price_separator' | t }}&nbsp;</span>
+                    {%- endcapture -%}
+
+                    {%- capture unit_price_base_unit -%}
+                      {%- if upsell_variant.unit_price_measurement.reference_value != 1 -%}
+                        {{ upsell_variant.unit_price_measurement.reference_value }}
+                      {%- endif -%}
+                      {{ upsell_variant.unit_price_measurement.reference_unit }}
+                    {%- endcapture -%}
+
+                    <br>
+
+                    <span class="visually-hidden visually-hidden--inline">{{ 'products.product.unit_price_label' | t }}</span>
+
+                    <span class="unit">
+                      {% if settings.currency_code_enable %}
+                        {{ upsell_variant.unit_price | money_with_currency }}
+                      {% else %}
+                        {{ upsell_variant.unit_price | money }}
+                      {% endif %}
+                      {{ unit_price_separator -}}
+                      {{- unit_price_base_unit -}}
+                    </span>
+                  {%- endif -%}
+                </p>
+              </a>
+
+              {%- if upsell_product.has_only_default_variant -%}
+                {%- form 'product', upsell_product -%}
+                  <input type="hidden" name="id" value="{{ upsell_variant.id }}">
+
+                  <button
+                    data-add-to-cart
+                    {% if show_form %}
+                      type="submit" name="add"
+                    {% else %}
+                      data-add-to-cart-variant="{{ upsell_variant.id }}"
+                    {% endif %}
+                    class="
+                      upsell__btn
+                      {% unless upsell_variant.available %} is-hidden {% endunless %}
+                    "
+                  >
+                    <span class="btn-state-ready">{{ 'products.upsell.add_to_cart' | t }}</span>
+
+                    <span class="btn-state-loading">
+                      <svg height="18" width="18" class="svg-loader">
+                        <circle r="7" cx="9" cy="9" />
+                        <circle stroke-dasharray="87.96459430051421 87.96459430051421" r="7" cx="9" cy="9" />
+                      </svg>
+                    </span>
+
+                    <span class="btn-state-complete">&nbsp;</span>
+                  </button>
+                {%- endform -%}
+              {%- endif -%}
+
+              {%- unless upsell_product.has_only_default_variant -%}
+                <button
+                  data-popup-{{ upsell_product.id }}="{{ upsell_product.handle }}"
+                  class="upsell__btn"
+                  type="button"
+                >
+                  <span class="btn-state-ready">{{ 'products.upsell.add_to_cart' | t }}</span>
+                </button>
+              {%- endunless -%}
+            {%- endif -%}
+          </div>
+
+          <div class="upsell__image">
+            {%- assign upsell_image = upsell_product.featured_media.preview_image -%}
+            {%- if upsell_error -%}
+              <div class="upsell__image__inner" style="background-color: var(--bg-accent);"></div>
+            {%- elsif upsell_image -%}
+              <a href="{{ upsell_product.url }}">
+                <img
+                  class="upsell__image__inner"
+                  loading="lazy"
+                  alt="{{ upsell_image.alt | default: upsell_product.title | strip_html | escape }}"
+                  src="{{ upsell_image.src | img_url: '180x180', crop: 'center' }}"
+                  width="90"
+                  height="90"
+                >
+              </a>
+            {%- else -%}
+              <a href="{{ upsell_product.url }}">
+                <div class="upsell__image__inner" style="background-color: var(--bg-accent);"></div>
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <div data-add-action-errors class="add-action-errors--upsell"></div>
+
+        {%- unless upsell_product.has_only_default_variant -%}
+          <script data-upsell-modal-template type="text/x-template">
+            <div class="upsell__modal" data-upsell-modal id="{{ upsell_product.id }}" aria-hidden="true">
+              <div class="upsell__modal__overlay" data-micromodal-close tabindex="-1"></div>
+
+              <div class="upsell__modal__content" data-upsell-modal-product role="dialog" aria-modal="true">
+                <div class="upsell__modal__drawer__close" data-upsell-modal-close-handle></div>
+
+                <div class="upsell__form" data-scroll-lock-scrollable>
+                  <button type="button" data-micromodal-close class="upsell__modal__close" aria-label="{{ 'general.accessibility.close' | t }}"></button>
+
+                  <div data-product-upsell-ajax></div>
+                </div>
+              </div>
+            </div>;
+          </script>
+        {%- endunless -%}
+      </div>
+    </upsell-product>
+  {%- endunless -%}
+{%- endif -%}

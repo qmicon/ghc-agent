@@ -1,48 +1,11 @@
-RELEVANT CODE EXAMPLES
+OFFER PAGE IMPLEMENTATION CODE EXAMPLES
 ==================================================
 
 
-Example Snippet: page.offer.json
-```liquid
-{
-  "sections": {
-    "offer_banner": {
-      "type": "offer-banner",
-      "settings": {
-        "heading": "Pick Any 3 Products for ₹99",
-        "subtext": "Limited time offer. Select your favorite products below.",
-        "banner_image": "",
-        "text_color": "#ffffff",
-        "overlay_opacity": 50
-      }
-    },
-    "offer_product_grid": {
-      "type": "offer-product-grid",
-      "settings": {
-        "collection": "male",
-        "products_per_row": 3,
-        "max_rows": 4,
-        "show_vendor": false
-      }
-    },
-    "offer_selected_products": {
-      "type": "offer-selected-products",
-      "settings": {
-        "checkout_button_text": "Checkout for ₹99",
-        "empty_slot_text": "Select a product"
-      }
-    }
-  },
-  "order": [
-    "offer_banner",
-    "offer_product_grid",
-    "offer_selected_products"
-  ]
-}
-```
-
-
-Example Snippet: offer-banner.liquid
+---
+FILE: sections\offer-banner.liquid
+TYPE: liquid
+CONTENT:
 ```liquid
 <div class="offer-banner" id="offer-banner">
   <div class="offer-banner__image-container">
@@ -190,9 +153,12 @@ Example Snippet: offer-banner.liquid
 }
 </style>
 ```
+---
 
-
-Example Snippet: offer-product-grid.liquid
+---
+FILE: sections\offer-product-grid.liquid
+TYPE: liquid
+CONTENT:
 ```liquid
 <div class="offer-product-grid" id="offer-product-grid">
   <div class="offer-product-grid__header">
@@ -525,9 +491,12 @@ Example Snippet: offer-product-grid.liquid
   }
 </style>
 ```
+---
 
-
-Example Snippet: offer-selected-products.liquid
+---
+FILE: sections\offer-selected-products.liquid
+TYPE: liquid
+CONTENT:
 ```liquid
 <div class="offer-selected-products" id="offer-selected-products">
   <div class="offer-selected-products__container">
@@ -877,9 +846,24 @@ Example Snippet: offer-selected-products.liquid
   });
 </script>
 ```
+---
 
+---
+FILE: snippets\offer-icon-close.liquid
+TYPE: liquid
+CONTENT:
+```liquid
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="18" y1="6" x2="6" y2="18"></line>
+  <line x1="6" y1="6" x2="18" y2="18"></line>
+</svg>
+```
+---
 
-Example Snippet: offer-product-card.liquid
+---
+FILE: snippets\offer-product-card.liquid
+TYPE: liquid
+CONTENT:
 ```liquid
 {% comment %}
   Renders a product card for the offer page
@@ -1087,9 +1071,12 @@ Example Snippet: offer-product-card.liquid
 }
 </style>
 ```
+---
 
-
-Example Snippet: offer-selected-product-slot.liquid
+---
+FILE: snippets\offer-selected-product-slot.liquid
+TYPE: liquid
+CONTENT:
 ```liquid
 {% comment %}
   Renders a product slot for the selected products section
@@ -1232,962 +1219,2205 @@ Example Snippet: offer-selected-product-slot.liquid
 }
 </style>
 ```
+---
 
-
-Example Snippet: page.offer.json
-```liquid
+---
+FILE: templates\page.offer.json
+TYPE: json
+CONTENT:
+```json
 {
   "sections": {
-    "offer_header": {
-      "type": "offer-header",
+    "offer_banner": {
+      "type": "offer-banner",
       "settings": {
-        "title": "Special Offer: Buy 3 for $99",
-        "subtitle": "Select any 3 items from our collection and get them for just $99!",
-        "text_color": "#000000",
-        "background_color": "#f5f5f5"
+        "heading": "Pick Any 3 Products for ₹99",
+        "subtext": "Limited time offer. Select your favorite products below.",
+        "banner_image": "",
+        "text_color": "#ffffff",
+        "overlay_opacity": 50
       }
     },
-    "offer_countdown": {
-      "type": "offer-countdown",
-      "settings": {
-        "end_date": "2025-05-09T23:59:59",
-        "heading": "Offer Ends In:",
-        "text_color": "#000000",
-        "accent_color": "#ff4d4d",
-        "background_color": "#ffffff"
-      }
-    },
-    "offer_product_selector": {
-      "type": "offer-product-selector",
+    "offer_product_grid": {
+      "type": "offer-product-grid",
       "settings": {
         "collection": "male",
         "products_per_row": 3,
         "max_rows": 4,
-        "show_vendor": false,
-        "show_price": true,
-        "text_color": "#000000",
-        "background_color": "#ffffff",
-        "selected_border_color": "#ff4d4d"
+        "show_vendor": false
       }
     },
-    "offer_cta": {
-      "type": "offer-cta",
+    "offer_selected_products": {
+      "type": "offer-selected-products",
       "settings": {
-        "button_text": "Add 3 Items to Cart for $99",
-        "button_color": "#ff4d4d",
-        "button_text_color": "#ffffff",
-        "disabled_button_color": "#cccccc",
-        "background_color": "#f5f5f5"
+        "checkout_button_text": "Checkout for ₹99",
+        "empty_slot_text": "Select a product"
       }
     }
   },
   "order": [
-    "offer_header",
-    "offer_countdown",
-    "offer_product_selector",
-    "offer_cta"
+    "offer_banner",
+    "offer_product_grid",
+    "offer_selected_products"
   ]
 }
 ```
+---
 
 
-Example Snippet: offer-product-selector.liquid
+
+RELEVANT CODE EXAMPLES FOR UI COMPONENTS
+==================================================
+
+
+Example Section: api-product-grid-item
 ```liquid
-<div class="offer-product-selector" 
-     id="offer-product-selector"
-     style="background-color: {{ section.settings.background_color }}; color: {{ section.settings.text_color }};"
-     data-max-selections="3">
-  <div class="page-width">
-    <div class="selection-status">
-      <span id="selection-count">0</span>/3 products selected
-    </div>
-    
-    <div class="products-grid" style="--products-per-row: {{ section.settings.products_per_row }};">
-      {% assign collection = collections[section.settings.collection] %}
-      {% if collection != blank %}
-        {% assign max_products = section.settings.products_per_row | times: section.settings.max_rows %}
-        {% assign product_limit = collection.products.size %}
-        {% if product_limit > max_products %}
-          {% assign product_limit = max_products %}
-        {% endif %}
-        
-        {% for product in collection.products limit: product_limit %}
-          {% if product.available %}
-            {% render 'offer-product-card', 
-              product: product, 
-              selected: false, 
-              show_vendor: section.settings.show_vendor, 
-              show_price: section.settings.show_price,
-              selected_border_color: section.settings.selected_border_color
-            %}
+<div data-api-content>
+  {%- assign grid_strings = 'mobile--nine-tenths small--one-half medium--one-half large-up--one-quarter' -%}
+
+  {% render 'product-grid-item', product: product, grid_strings: grid_strings %}
+</div>
+
+```
+
+
+Example Snippet: onboarding-featured-products
+```liquid
+<!-- snippets/onboarding-featured-products.liquid -->
+
+{% assign product_count = product_count | default: 6 %}
+{% for i in (1..product_count) %}
+  <div class="grid__item {{ grid_strings }}">
+    <div class="product-grid-item">
+      <span>
+        {% capture imgCount %}{% cycle 1, 2, 3, 4 %}{% endcapture %}
+        {% capture svg_name %}product-apparel-{{ imgCount }}{% endcapture %}
+        {{ svg_name | placeholder_svg_tag: 'placeholder-svg' }}
+      </span>
+      <div class="grid__caption hover">
+        <p class="name_wrapper">
+          <span>{{ 'homepage.onboarding.product_title' | t }}</span>
+        </p>
+        <p class="price_wrapper">
+          {% if settings.currency_code_enable %}
+            {{ '1999' | money_with_currency }}
+          {% else %}
+            {{ '1999' | money }}
           {% endif %}
-        {% endfor %}
-      {% else %}
-        <div class="no-products-message">
-          No products found in the selected collection.
-        </div>
-      {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+```
+
+
+Example Snippet: onboarding-product-grid-item
+```liquid
+<!-- snippets/onboarding-product-grid-item.liquid -->
+
+{% comment %}
+  Passes in limit because for else syntax is cleaner that way
+
+  {% render 'onboarding-product-grid-item', limit: limit, wrap: false %}
+{% endcomment %}
+
+{%- assign limit = limit | default: 1 -%}
+{%- for i in (1..limit) -%}
+  {%- if wrap and wrap != '' -%}<div class="{{ wrap }}">{%- endif -%}
+  <div
+    class="product-grid-item helper-content"
+    data-grid-item
+    {% if block %}
+      {{- block.shopify_attributes -}}
+    {% endif %}
+  >
+    <div>
+      <div data-grid-slide>
+        {% capture imgCount %}{% cycle 1, 2, 3, 4 %}{% endcapture %}
+        {% capture svg_name %}product-apparel-{{ imgCount }}{% endcapture %}
+        {{ svg_name | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+      <div class="grid__caption hover">
+        <p class="name_wrapper">
+          <span>{{ 'homepage.onboarding.product_title' | t }}</span>
+        </p>
+        <p class="price_wrapper">
+          {% if settings.currency_code_enable %}
+            {{ '1999' | money_with_currency }}
+          {% else %}
+            {{ '1999' | money }}
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+  {%- if wrap and wrap != '' -%}</div>{%- endif -%}
+{%- endfor -%}
+
+```
+
+
+Example Snippet: social-meta-tags
+```liquid
+<!-- /snippets/social-meta-tags.liquid -->
+
+{%- liquid
+  assign og_title = page_title | default: shop.name
+  assign og_url = canonical_url | default: shop.url
+  assign og_type = 'website'
+  assign og_description = page_description | default: shop.description | default: shop.name
+
+  if request.page_type == 'product'
+    assign og_type = 'product'
+  elsif request.page_type == 'article'
+    assign og_type = 'article'
+  elsif request.page_type == 'collection'
+    assign og_type = 'product.group'
+  elsif request.page_type == 'password'
+    assign og_url = shop.url
+  endif
+%}
+
+<meta property="og:site_name" content="{{ shop.name }}">
+<meta property="og:url" content="{{ og_url }}">
+<meta property="og:title" content="{{ og_title | escape }}">
+<meta property="og:type" content="{{ og_type }}">
+<meta property="og:description" content="{{ og_description | escape }}">
+
+{%- if page_image -%}
+  <meta property="og:image" content="http:{{ page_image | img_url: 'master' }}">
+  <meta property="og:image:secure_url" content="https:{{ page_image | img_url: 'master' }}">
+  <meta property="og:image:width" content="{{ page_image.width }}">
+  <meta property="og:image:height" content="{{ page_image.height }}">
+{%- endif -%}
+
+{%- if request.page_type == 'product' -%}
+  <meta property="og:price:amount" content="{{ product.selected_or_first_available_variant.price | money_without_currency | strip_html }}">
+  <meta property="og:price:currency" content="{{ cart.currency.iso_code }}">
+{%- endif -%}
+
+{%- if settings.social_twitter_link != blank -%}
+  <meta name="twitter:site" content="{{ settings.social_twitter_link | split: 'twitter.com/' | last | prepend: '@' }}">
+{%- endif -%}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title | escape }}">
+<meta name="twitter:description" content="{{ og_description | escape }}">
+
+```
+
+
+Example Snippet: cart-subtotal
+```liquid
+<!-- /snippets/cart-subtotal.liquid -->
+
+{%- if cart.cart_level_discount_applications.size > 0 -%}
+  <p class="cart__footer__itemtotal">
+    <span class="cart__footer__label">{{ 'layout.cart.items_count.other' | t | capitalize }}:</span>
+    <span class="cart__footer__value">{{ cart.items_subtotal_price | money_with_currency }}</span>
+  </p>
+  {%- for discount in cart.cart_level_discount_applications -%}
+    <p class="cart__footer__discount">
+      <span class="cart__footer__label">{{ discount.title }}:</span>
+      <span class="cart__footer__value">-{{ discount.total_allocated_amount | money_with_currency }}</span>
+    </p>
+  {%- endfor -%}
+{%- endif -%}
+
+```
+
+
+Example Snippet: product-grid-item
+```liquid
+<!-- /snippets/product-grid-item.liquid -->
+
+{% comment %}
+  Renders list of products in grid layout
+
+  Accepts:
+  - product: {Object} product (required)
+  - grid_strings: {String} contains a string of grid offset
+
+  Usage:
+  {% render 'product-grid-item', product: product, grid_strings: grid_strings %}
+{% endcomment %}
+
+{%- liquid
+  assign current_variant = product.first_available_variant
+
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+
+  assign sold_out = true
+  if product.available
+    assign sold_out = false
+  endif
+
+  assign sellout_badge = false
+  if sold_out and settings.badge_sellout
+    assign sellout_badge = true
+  endif
+
+  assign align_text = settings.collection_text_alignment | default: 'text-center'
+  if align_product_text
+    assign align_text = align_product_text
+  endif
+
+  assign sale_badge = false
+  if on_sale and settings.badge_sale
+    assign sale_badge = true
+    assign sale_badge_content = 'products.product.sale' | t
+    if settings.badge_sale_discount
+      if settings.badge_sale_type == 'dollar'
+        if settings.currency_code_enable
+          assign sale_badge_content = product.compare_at_price | minus: product.price | money_with_currency
+        else
+          assign sale_badge_content = product.compare_at_price | minus: product.price | money_without_trailing_zeros
+        endif
+      else
+        assign difference = product.compare_at_price | minus: product.price
+        assign percent_off = difference | times: 1.0 | divided_by: product.compare_at_price | times: 100
+        assign sale_badge_content = percent_off | floor | append: '%'
+      endif
+      assign save_word = 'products.product.save' | t | append: ' '
+
+      assign sale_badge_content = sale_badge_content | prepend: save_word
+    endif
+  endif
+
+  assign custom_badge = false
+  if settings.badge_custom and product.metafields.theme.badge != blank and product.metafields.theme.badge.type == 'single_line_text_field'
+    assign custom_badge = true
+    assign custom_badge_content = product.metafields.theme.badge.value
+  endif
+
+  assign setting_badge = false
+  if badge_string and badge_string != ''
+    assign setting_badge = true
+  endif
+
+  assign tagged = false
+  if sellout_badge or sale_badge or custom_badge or setting_badge
+    assign tagged = true
+  endif
+-%}
+{%- capture badge -%}
+... (truncated) ...
+    </noscript>
+
+    <div class="grid__caption {{ align_text }}">
+      {%- if settings.show_vendow == 'show-vendor' and product.vendor -%}
+        <p class="vendor_wrapper">
+          {{ product.vendor | strip_html | escape }}
+        </p>
+      {%- elsif settings.show_vendow == 'show-vendor-link' and product.vendor -%}
+        <p class="vendor_wrapper">
+          <a class="vendor__link" href="{{ product.vendor | url_for_vendor }}">{{ product.vendor | strip_html | escape }}</a>
+        </p>
+      {%- endif -%}
+
+      <p class="name_wrapper">
+        {{ product.title | strip_html | escape }}
+      </p>
+
+      {%- if product.metafields.theme.cutline != blank and product.metafields.theme.cutline.type == 'single_line_text_field' -%}
+        <p class="grid__cutline">{{ product.metafields.theme.cutline.value }}</p>
+      {%- endif -%}
+
+      {%- if settings.product_grid_show_rating and product.metafields.reviews.rating.value != blank -%}
+        {% render 'product-rating', product: product, show_rating_count: settings.product_grid_show_rating_count %}
+      {%- endif -%}
+
+      
+      <p class="price_wrapper{% if on_sale %} on-sale{% endif %}">
+        {% if product.price_varies %}
+          {{ 'products.product.from' | t }}
+        {% endif %}
+
+        {%- if settings.currency_code_enable -%}
+          {{ product.price | money_with_currency }}
+        {%- else -%}
+          {{ product.price | money }}
+        {%- endif -%}
+
+        {% if on_sale %}
+          <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+          <s>
+            {%- if settings.currency_code_enable -%}
+              {{ product.compare_at_price | money_with_currency }}
+            {%- else -%}
+              {{ product.compare_at_price | money }}
+            {%- endif -%}
+          </s>
+        {% endif %}
+
+        {% if current_variant.unit_price %}
+          {% capture unit_price_separator %}
+            <span aria-hidden="true">/</span><span class="visually-hidden">{{ 'general.accessibility.unit_price_separator' | t }}&nbsp;</span>
+          {% endcapture %}
+          {% capture unit_price_base_unit %}
+            {%- if current_variant.unit_price_measurement.reference_value != 1 -%}
+              {{- current_variant.unit_price_measurement.reference_value -}}
+            {%- endif -%}
+            {{ current_variant.unit_price_measurement.reference_unit }}
+          {% endcapture %}
+          <br>
+          <span class="visually-hidden">{{ 'products.product.unit_price_label' | t }}</span>
+          <span class="price-per-unit">
+            {%- if settings.currency_code_enable -%}
+              {{ current_variant.unit_price | money_with_currency }}
+            {%- else -%}
+              {{ current_variant.unit_price | money }}
+            {%- endif -%}
+            {{- unit_price_separator -}}
+            {{- unit_price_base_unit -}}
+          </span>
+        {% endif %}
+      </p>
     </div>
   </div>
 </div>
 
-<style>
-  .offer-product-selector {
-    padding: 40px 20px;
-  }
-  
-  .selection-status {
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 30px;
-  }
-  
-  #selection-count {
-    font-size: 24px;
-    color: {{ section.settings.selected_border_color }};
-  }
-  
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(var(--products-per-row), 1fr);
-    gap: 20px;
-    margin: 0 auto;
-  }
-  
-  .no-products-message {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 40px;
-    background: #f8f8f8;
-    border-radius: 5px;
-  }
-  
-  .offer-product-card {
-    cursor: pointer;
-  }
-  
-  .product-card-inner {
-    border: 2px solid transparent;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .product-card-inner.selected {
-    border-color: var(--selected-border-color);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  }
-  
-  .product-card-image-container {
-    position: relative;
-    padding-bottom: 100%;
-    overflow: hidden;
-  }
-  
-  .product-card-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-  
-  .offer-product-card:hover .product-card-image {
-    transform: scale(1.05);
-  }
-  
-  .product-card-selection-indicator {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  .product-card-inner.selected .product-card-selection-indicator {
-    opacity: 1;
-  }
-  
-  .selection-circle {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background-color: var(--selected-border-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-  }
-  
-  .product-card-info {
-    padding: 15px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .product-card-title {
-    font-size: 16px;
-    font-weight: 500;
-    margin: 0 0 8px;
-    line-height: 1.3;
-  }
-  
-  .product-card-vendor {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 8px;
-  }
-  
-  .product-card-price {
-    font-size: 16px;
-    font-weight: 600;
-    margin-top: auto;
-  }
-  
-  @media screen and (max-width: 989px) {
-    .products-grid {
-      --products-per-row: 2;
-    }
-  }
-  
-  @media screen and (max-width: 749px) {
-    .offer-product-selector {
-      padding: 30px 15px;
-    }
-    
-    .selection-status {
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-    
-    #selection-count {
-      font-size: 20px;
-    }
-    
-    .product-card-title {
-      font-size: 14px;
-    }
-    
-    .product-card-price {
-      font-size: 14px;
-    }
-  }
-</style>
+```
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const productSelector = document.getElementById('offer-product-selector');
-    const maxSelections = parseInt(productSelector.dataset.maxSelections) || 3;
-    const selectionCountElement = document.getElementById('selection-count');
-    const productCards = document.querySelectorAll('.offer-product-card');
-    
-    // Initialize selected products array
-    window.selectedProducts = [];
-    
-    // Update selection count display
-    function updateSelectionCount() {
-      selectionCountElement.textContent = window.selectedProducts.length;
-      
-      // Dispatch custom event when selection changes
-      const event = new CustomEvent('offer:selection-changed', {
-        detail: {
-          selectedProducts: window.selectedProducts,
-          isComplete: window.selectedProducts.length === maxSelections
-        }
-      });
-      document.dispatchEvent(event);
-    }
-    
-    // Handle product selection
-    productCards.forEach(card => {
-      card.addEventListener('click', function() {
-        const productId = this.dataset.productId;
-        const cardInner = this.querySelector('.product-card-inner');
-        const isSelected = cardInner.classList.contains('selected');
-        
-        // If already selected, remove from selection
-        if (isSelected) {
-          cardInner.classList.remove('selected');
-          window.selectedProducts = window.selectedProducts.filter(p => p.id !== productId);
-        } 
-        // If not selected and haven't reached max, add to selection
-        else if (window.selectedProducts.length < maxSelections) {
-          cardInner.classList.add('selected');
-          window.selectedProducts.push({
-            id: productId,
-            handle: this.dataset.productHandle,
-            title: this.dataset.productTitle,
-            price: this.dataset.productPrice,
-            image: this.dataset.productImage,
-            url: this.dataset.productUrl,
-            variantId: this.dataset.variantId
-          });
-        }
-        // If trying to select more than max, show message
-        else {
-          const existingAlert = document.querySelector('.max-selection-alert');
-          if (!existingAlert) {
-            const alert = document.createElement('div');
-            alert.className = 'max-selection-alert';
-            alert.textContent = `You can only select ${maxSelections} products. Please deselect one before adding another.`;
-            alert.style.position = 'fixed';
-            alert.style.top = '20px';
-            alert.style.left = '50%';
-            alert.style.transform = 'translateX(-50%)';
-            alert.style.backgroundColor = '#ff4d4d';
-            alert.style.color = 'white';
-            alert.style.padding = '15px 20px';
-            alert.style.borderRadius = '5px';
-            alert.style.zIndex = '1000';
-            alert.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
-            document.body.appendChild(alert);
-            
-            setTimeout(() => {
-              alert.remove();
-            }, 3000);
-          }
-        }
-        
-        updateSelectionCount();
-      });
-    });
-  });
-</script>
+
+Example Section: customer-account
+```liquid
+<!-- /sections/customer-account.liquid -->
+
+<div
+  class="{{ section.settings.color_bg }} customer-account"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <header role="banner" class="account-header">
+      <h1>{{ 'customer.account.title' | t }}</h1>
+      <a href="{{ routes.account_logout_url }}" class="btn--soft">{{ 'layout.customer.log_out' | t }}</a>
+    </header>
+
+    <div class="grid">
+      <div class="grid__item large-up--two-thirds">
+        <h2 class="h4 mt1">{{ 'customer.orders.title' | t }}</h2>
+        {% paginate customer.orders by 20 %}
+          {% if customer.orders.size != 0 %}
+            <table class="responsive-table">
+              <thead>
+                <tr>
+                  <th>{{ 'customer.orders.order_number' | t }}</th>
+                  <th>{{ 'customer.orders.date' | t }}</th>
+                  <th>{{ 'customer.orders.payment_status' | t }}</th>
+                  <th>{{ 'customer.orders.fulfillment_status' | t }}</th>
+                  <th>{{ 'customer.orders.total' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in customer.orders %}
+                  <tr class="responsive-table-row">
+                    <td data-label="{{ 'customer.orders.order_number' | t }}">{{ order.name | link_to: order.customer_url }}</td>
+                    <td data-label="{{ 'customer.orders.date' | t }}">{{ order.created_at | date: format: 'month_day_year' }}</td>
+                    <td data-label="{{ 'customer.orders.payment_status' | t }}">{{ order.financial_status_label }}</td>
+                    <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">{{ order.fulfillment_status_label }}</td>
+                    <td data-label="{{ 'customer.orders.total' | t }}">
+                      {% if settings.currency_code_enable %}
+                        {{ order.total_price | money_with_currency }}
+                      {% else %}
+                        {{ order.total_price | money }}
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p>{{ 'customer.orders.none' | t }}</p>
+          {% endif %}
+
+          {% if paginate.pages > 1 %}
+            {% render 'pagination', paginate: paginate %}
+          {% endif %}
+        {% endpaginate %}
+      </div>
+      <div class="grid__item large-up--one-third account__sidebar__title">
+        <h2 class="h4">{{ 'customer.account.details' | t }}</h2>
+
+        {{ customer.default_address | format_address }}
+
+        <a class="btn" href="{{ routes.account_addresses_url }}">{{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% schema %}
 {
-  "name": "Offer Product Selector",
+  "name": "Customer account",
+  "tag": "section",
   "settings": [
     {
-      "type": "collection",
-      "id": "collection",
-      "label": "Collection"
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
     },
     {
       "type": "range",
-      "id": "products_per_row",
-      "min": 2,
-      "max": 4,
-      "step": 1,
-      "default": 3,
-      "label": "Products per row"
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
     },
     {
       "type": "range",
-      "id": "max_rows",
-      "min": 1,
-      "max": 6,
-      "step": 1,
-      "default": 4,
-      "label": "Maximum rows"
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}
+
+```
+
+
+Example Snippet: article-column-item
+```liquid
+<!-- /snippets/article-column-item.liquid -->
+
+{% comment %}
+  Renders list of articles in sidebar
+
+  Accepts:
+  - article: {Object} currenct collection
+
+  Usage:
+  {% render 'article-column-item', article: article, show_meta: show_meta %}
+{% endcomment %}
+
+<a href="{{ article.url }}" class="article__card--small">
+  {% if article.image %}
+    <div class="article__card__image__wrapper--small">
+      <div class="article__card__image--small lazyload" data-bgset="{% render 'bgset', image: article.image %}"></div>
+    </div>
+  {% endif %}
+  <div class="article__card__contents--small">
+    <p class="h6--body article__card__title--small">{{ article.title }}</p>
+    {%- if show_meta -%}
+      <span class="meta--light">{{ article.author }}</span>
+    {%- endif -%}
+  </div>
+</a>
+
+```
+
+
+Example Snippet: cart-drawer
+```liquid
+<!-- /snippets/cart-drawer.liquid -->
+
+{% comment %}
+  * The AJAX cart drawer called by layouts/cart.drawer.liquid
+  * cart {object} - the cart
+  {% render 'cart-drawer', cart: cart %}
+{% endcomment %}
+
+{%- liquid
+  assign hide_quantity = 'quantity--hide'
+  if settings.cart_show_quantity
+    assign hide_quantity = ''
+  endif
+
+  assign pop_style = 'drawer--right'
+  if settings.cart_style == 'pop'
+    assign pop_style = 'drawer--pop'
+  endif
+-%}
+
+<nav
+  class="drawer cart__drawer {{ pop_style }} {{ hide_quantity }} {{ settings.cart_color_bg }}"
+  data-drawer="drawer-cart"
+  aria-label="{{ 'layout.cart.title' | t }}"
+  id="drawer-cart"
+>
+  <div class="drawer__content">
+    <div class="drawer__top">
+      <div class="drawer__top__left">
+        <p class="cart__drawer__title">{{ 'layout.cart.title' | t }}</p>
+      </div>
+
+      <button
+        class="drawer__button drawer__close"
+        data-drawer-toggle="drawer-cart"
+        aria-label="{{ 'general.accessibility.close' | t }}"
+      >
+        {% render 'icon-close' %}
+      </button>
+    </div>
+    <div class="drawer__body" data-scroll-lock-scrollable>
+      {% if settings.cart_custom_message_enable and settings.cart_custom_message_text != blank %}
+        <div class="drawer__announcement__bar cart--hidden" data-cart-bar>
+          {{ settings.cart_custom_message_text }}
+        </div>
+      {% endif %}
+
+      {% assign free_shipping_text = block.settings.message | default: settings.message %}
+{% assign is_enable = false %}
+{% assign show_wheel = true %}
+
+{% if block.settings.show_wheel == false %}
+  {% assign show_wheel = false %}
+{% endif %}
+
+{% if block.settings.message != blank %}
+  {% assign is_enable = true %}
+{% endif %}
+
+{% if settings.show_free_shipping_message and settings.free_shipping_limit != blank and free_shipping_text != blank %}
+  {% assign is_enable = true %}
+{% endif %}
+
+{% if is_enable %}
+  {% assign limit = settings.free_shipping_limit | plus: 0 %}
+  {% assign limit_currency = limit | times: 100 %}
+  {% assign subtotal_without_currency = cart.total_price | plus: 0 | divided_by: 100 %}
+
+  {% capture left_to_spend %}
+    <span data-left-to-spend>
+      {% if settings.currency_code_enable %}
+        {{ limit_currency | minus: cart.total_price | money_with_currency }}
+      {% else %}
+        {{ limit_currency | minus: cart.total_price | money_without_trailing_zeros }}
+      {% endif %}
+... (truncated) ...
+            </div>
+            <div class="cart__items__title empty-content"></div>
+            <div class="cart__items__price empty-content"></div>
+          </div>
+        </div>
+      </div>
+
+      {% comment %}Shown if cart has contents{% endcomment %}
+      <div data-cart-form data-cart-loading>
+        <div data-line-items></div>
+      </div>
+    </div>
+    <div class="drawer__bottom cart--hidden" data-cart-bottom data-accordion-group>
+      {%- if settings.cart_notes_enable or settings.cart_shipping_enable -%}
+        <div class="drawer__accordion__holder">
+          {%- if settings.cart_notes_enable -%}
+            <div class="drawer__bottom__notes drawer__accordion">
+              <button
+                class="accordion__title"
+                data-accordion-trigger="accordion-cart-notes"
+                aria-controls="accordion-{{ key }}"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {{ 'cart.general.note' | t }}
+              </button>
+              <div
+                class="accordion__body drawer__accordion__body"
+                data-accordion-body
+                id="accordion-cart-notes"
+              >
+                <label class="visually-hidden" for="CartSpecialInstructions">{{ 'cart.general.note' | t }}</label>
+                <textarea form="cart-form" name="note" placeholder="{{ 'cart.general.note' | t }}" class="drawer__notes__input input-full" id="CartSpecialInstructions" data-cart-note>{{ cart.note }}</textarea>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- if settings.cart_shipping_enable -%}
+            {% render 'cart-shipping' %}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <p class="drawer__bottom__meta small">
+        <em>{{ 'cart.general.shipping_at_checkout' | t }}</em>
+      </p>
+
+      <div class="drawer__footer__subtotal" data-cart-subtotal>
+        {% render 'cart-subtotal' %}
+      </div>
+
+      <form id="cart-form" action="{{ routes.cart_url }}" method="post" novalidate class="cart">
+        <button type="submit" name="checkout" class="btn btn--primary btn--large btn--full checkout__button" role="button">
+          {{ 'cart.general.checkout' | t }}
+          <em>•</em>
+          <span data-cart-final>
+            {{ cart.total_price | money_with_currency }}
+          </span>
+        </button>
+      </form>
+      {% if additional_checkout_buttons and settings.cart_show_additional_buttons %}
+        <div class="drawer__checkout__additional additional-checkout-buttons--vertical">
+          <div class="additional-checkout-buttons">
+            {{ content_for_additional_checkout_buttons }}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  <span class="drawer__underlay" data-drawer-underlay>
+    <span class="drawer__underlay__fill"></span>
+    <span class="drawer__underlay__blur"></span>
+  </span>
+</nav>
+
+```
+
+
+Example Snippet: product-siblings
+```liquid
+<!-- /snippets/product-siblings.liquid -->
+
+{%- assign sibs_collection = collections[block.settings.siblings_collection].products -%}
+{%- assign cutline_default = block.settings.cutline | default: product.metafields.theme.cutline.value -%}
+{%- if sibs_collection.size > 1 -%}
+  {%- assign title_down = product.title | downcase -%}
+  {%- assign cutline_down = cutline_default | downcase -%}
+  {%- unless title_down contains cutline_down -%}
+    {% comment %} Form ID must match value in product-form.liquid {% endcomment %}
+    {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
+    <input type="hidden" form="{{ product_form_id }}" name="properties[{{ 'general.siblings.label' | t }}]" value="{{ cutline_default }}">
+  {%- endunless -%}
+  <div class="product__block product__page__siblings" {{ block_style }} data-swapper-wrapper {{ block.shopify_attributes }}>
+    <legend class="radio__legend">
+      <span class="radio__legend__label">{{ 'general.siblings.label' | t }}</span>
+      <span data-swapper-target>{{ cutline_default }}</span>
+    </legend>
+
+    {%- for sib_product in sibs_collection limit: 50 -%}
+      {%- assign current_class = '' -%}
+      {%- if sib_product.handle == product.handle -%}
+        {%- assign current_class = 'siblings__link--current' -%}
+      {%- endif -%}
+      {%- assign title_safe = sib_product.title | strip_html | escape -%}
+      {%- assign color_name = sib_product.metafields.theme.cutline.value | default: title_safe -%}
+      <a href="{{ sib_product.url }}" class="siblings__link {{ current_class }}" data-swapper-hover="{{ color_name }}">
+        <div class="siblings__swatch">
+          <div class="sibling__image">{%- render 'image-fill', img_object: sib_product.featured_media.preview_image, aspect_ratio: 1.0 -%}</div>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+```
+
+
+Example Section: collection-banner
+```liquid
+<!-- /sections/collection-banner.liquid -->
+
+{%- liquid
+  assign show_image = false
+  if collection.image and section.settings.show_image
+    assign show_image = true
+  endif
+
+  assign title_below = false
+  if show_image == false or section.settings.show_title_below
+    assign title_below = true
+  endif
+
+  assign description_below = false
+  if show_image == false or section.settings.show_description_below
+    assign description_below = true
+  endif
+-%}
+
+<section
+  class="section-collection-banner"
+  data-section-id="{{ section.id }}"
+  data-section-type="hero"
+  {% if section.settings.width == 'wrapper--none' and section.settings.padding_top == 0 %}
+    data-overlay-header
+  {% endif %}
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    {% if show_image %}
+      <div class="section--image fade-in-child js-overflow-container">
+        <div class="hero__content__wrapper {{ section.settings.flex_align }}">
+          <div class="hero__content {{ section.settings.color_bg }} js-overflow-content">
+            <div class="text__standard {{ section.settings.color }}">
+              {% for block in section.blocks %}
+                {% case block.type %}
+                  {% when 'heading' %}
+                    {%- unless section.settings.show_title_below -%}
+                      {% assign heading_size_class = block.settings.text_size | prepend: 'heading-size-' %}
+                      <div class="standard__heading hero__title h1 {{ heading_size_class }}" {{ block.shopify_attributes }}>{{ collection.title }}</div>
+                    {%- endunless -%}
+                  {% when 'text' %}
+                    {%- unless section.settings.show_description_below -%}
+                      {% assign font_size_class = block.settings.text_size | prepend: 'body-size-' %}
+                      <div class="standard__rte hero__description h5--body {{ font_size_class }}" {{ block.shopify_attributes }}>{{ collection.description }}</div>
+                    {%- endunless -%}
+                {% endcase %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="image-overlay" style="--bg:{{ section.settings.overlay_color }}; opacity:{{ section.settings.overlay_opacity | times: 0.01 }};"></div>
+        {% render 'image-background', img_object: collection.image, frame_height_class: section.settings.image_height %}
+      </div>
+    {% endif %}
+
+    {%- if show_image == false or title_below or description_below -%}
+      {% comment %} Catch white text on white background {% endcomment %}
+      {%- assign color_text = section.settings.color -%}
+      {%- if section.settings.color_bg == 'hero__content--transparent' and section.settings.color == 'text--white' -%}
+        {%- assign color_text = 'text--neutral' -%}
+      {%- endif -%}
+      <div class="wrapper">
+        <div class="collection__heading {{ section.settings.flex_align }} {{ color_text }}">
+          {%- if title_below -%}
+            {% for block in section.blocks %}
+              {% case block.type %}
+                {% when 'heading' %}
+                  {% assign heading_size_class = block.settings.text_size | prepend: 'heading-size-' %}
+                  <h1 class="h3 standard__heading collection__heading__text {{ heading_size_class }}" {{ block.shopify_attributes }}>
+                    {{ collection.title }}
+                  </h1>
+              {% endcase %}
+            {% endfor %}
+          {%- endif -%}
+... (truncated) ...
     },
     {
-      "type": "checkbox",
-      "id": "show_vendor",
-      "label": "Show product vendor",
-      "default": false
+      "type": "header",
+      "content": "Section spacing"
     },
     {
+      "type": "select",
+      "id": "width",
+      "label": "Section width",
+      "default": "wrapper--none",
+      "options": [
+        {"value": "wrapper--none", "label": "Full width"},
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Collection title",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "range",
+          "id": "text_size",
+          "label": "Text size",
+          "min": 1,
+          "max": 15,
+          "step": 1,
+          "default": 9
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Collection description",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "range",
+          "id": "text_size",
+          "label": "Text size",
+          "min": 1,
+          "max": 15,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+```
+
+
+Example Section: related
+```liquid
+<!-- /sections/related.liquid -->
+
+{% if section.settings.related_products_enable %}
+  <div class="related__wrapper" data-related-section data-section-id="{{ section.id }}" data-product-id="{{ product.id }}" data-limit="{{ section.settings.limit }}" data-section-type="related">
+    {% if recommendations.performed %}
+      {%- if recommendations.products_count > 0 -%}
+        <div class="product__related section-collection" style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;">
+          <div class="{{ section.settings.width }} section-padding">
+            <div class="section-collection__foreground">
+              <div class="section-collection__inner">
+                {% if section.settings.product_recommendations_heading != blank %}
+                  <div class="section-collection__head">
+                    <h2 class="h3">{{ section.settings.product_recommendations_heading }}</h2>
+                  </div>
+                {% endif %}
+
+                <div class="slider-actions" data-slider-actions>
+                  <button type="button" class="slider-arrow slider-arrow--prev" data-prev-arrow disabled>
+                    <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+                  </button>
+
+                  <button type="button" class="slider-arrow slider-arrow--next" data-next-arrow>
+                    <span class="visually-hidden">{{ 'general.accessibility.prev' | t }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="grid grid--uniform related__inner grid--inner-offsets flickity-disabled-mobile" data-slideshow data-custom-scrollbar-items data-related-products>
+                {% assign grid_width_large = 'large-up--one-quarter' %}
+                {% assign grid_width_medium = 'medium--one-half' %}
+                {% assign grid_width_small = 'small--one-half mobile--nine-tenths' %}
+
+                {% case recommendations.products_count %}
+                  {% when 1 %}
+                    {% assign grid_width_large = 'large-up--one-third large-up--push-one-third' %}
+                    {% assign grid_width_medium = 'medium--one-third' %}
+                  {% when 2 %}
+                    {% assign grid_width_large = 'large-up--one-half' %}
+                    {% assign grid_width_medium = 'medium--one-half' %}
+                  {% when 3 %}
+                    {% assign grid_width_large = 'large-up--one-third' %}
+                    {% assign grid_width_medium = 'medium--one-third' %}
+                  {% when 4 %}
+                    {% assign grid_width_large = 'large-up--one-quarter' %}
+                    {% assign grid_width_medium = 'medium--one-half' %}
+                    {% assign grid_width_small = 'small--one-half mobile--nine-tenths' %}
+                {% endcase %}
+                {% capture grid_strings %}
+                  {{ grid_width_small }}
+                  {{ grid_width_medium }}
+                  {{ grid_width_large }}
+                {% endcapture %}
+                {%- for product in recommendations.products -%}
+                  {% render 'product-grid-item', product: product, grid_strings: grid_strings %}
+                {%- endfor -%}
+              </div>
+
+              <div class="custom-scrollbar small-down--show" data-custom-scrollbar>
+                <div class="custom-scrollbar__track" data-custom-scrollbar-track></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+    {% else %}
+      <div class="related__placeholder"></div>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "settings": [
+    {
       "type": "checkbox",
-      "id": "show_price",
-      "label": "Show product price",
+      "id": "related_products_enable",
+      "label": "Show related products",
+      "info": "Dynamic recommendations change and improve with time. [Learn more](https://help.shopify.com/en/themes/development/recommended-products)",
       "default": true
     },
     {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text Color",
-      "default": "#000000"
+      "type": "range",
+      "id": "limit",
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "label": "Product limit",
+      "default": 6
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "Background Color",
-      "default": "#ffffff"
+      "type": "text",
+      "id": "product_recommendations_heading",
+      "label": "Heading",
+      "default": "Related products"
     },
     {
-      "type": "color",
-      "id": "selected_border_color",
-      "label": "Selected Product Border Color",
-      "default": "#ff4d4d"
-    }
-  ],
-  "presets": [
+      "type": "header",
+      "content": "Section spacing"
+    },
     {
-      "name": "Offer Product Selector",
-      "category": "Custom"
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
     }
   ]
 }
 {% endschema %}
+
 ```
 
 
-Example Snippet: offer-product-card.liquid
+Example Section: cart
 ```liquid
-<div class="offer-product-card" 
-     data-product-id="{{ product.id }}" 
-     data-product-handle="{{ product.handle }}" 
-     data-product-title="{{ product.title | escape }}" 
-     data-product-price="{{ product.price | money_without_currency | replace: ',', '.' }}"
-     data-product-image="{{ product.featured_image | img_url: '300x300', crop: 'center' }}"
-     data-product-url="{{ product.url }}"
-     data-variant-id="{{ product.selected_or_first_available_variant.id }}">
-  
-  <div class="product-card-inner {% if selected %}selected{% endif %}" style="--selected-border-color: {{ selected_border_color }};">
-    <div class="product-card-image-container">
-      <img src="{{ product.featured_image | img_url: '300x300', crop: 'center' }}" alt="{{ product.title | escape }}" class="product-card-image">
-      <div class="product-card-selection-indicator">
-        <div class="selection-circle">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/>
-          </svg>
+<!-- /sections/cart.liquid -->
+
+{%- liquid
+  assign hide_quantity = 'quantity--hide'
+  if settings.cart_show_quantity
+    assign hide_quantity = ''
+  endif
+
+  assign ajax_disable = false
+  assign no_ajax_class = ''
+  if settings.cart_style == 'compatible'
+    assign ajax_disable = true
+    assign no_ajax_class = 'no--ajax'
+  endif
+
+  assign full_init = ''
+  assign empty_init = 'cart--hidden'
+  if cart.item_count == 0
+    assign empty_init = ''
+    assign full_init = 'cart--hidden'
+  endif
+-%}
+
+<div class="cart__template {{ no_ajax_class }} {{ hide_quantity }}" data-section-id="{{ section.id }}" data-section-type="cart" data-ajax-disable="{{ ajax_disable }}">
+  {% comment %} Cart is empty {% endcomment %}
+  <div class="{{ empty_init }}" data-cart-empty>
+    {% render 'cart-empty' %}
+  </div>
+  {% comment %} Cart is full {% endcomment %}
+  <div class="wrapper {{ full_init }}" data-cart-form data-cart-loading>
+    <form action="{{ routes.cart_url }}" method="post" novalidate class="cart">
+      <h3 class="h3--body">{{ 'cart.general.title' | t }}</h3>
+      <div class="errors" data-form-errors style="display: none;"></div>
+      <div class="cart__items__grid cart__heading__wrapper">
+        <div class="cart__heading__back">
+          <a href="{{ settings.cart_continue_browsing | default: routes.all_products_collection_url }}" class="cart__heading cart__return">
+            {{ 'cart.general.continue_browsing' | t }}
+          </a>
+        </div>
+        <div class="cart__items__price">
+          <p class="cart__heading">{{ 'cart.label.price' | t }}</p>
+        </div>
+        <div class="cart__items__quantity">
+          <p class="cart__heading">{{ 'cart.label.quantity' | t }}</p>
+        </div>
+        <div class="cart__items__total">
+          <p class="cart__heading">{{ 'cart.label.total' | t }}</p>
         </div>
       </div>
-    </div>
-    
-    <div class="product-card-info">
-      <h3 class="product-card-title">{{ product.title }}</h3>
-      
-      {% if show_vendor and product.vendor %}
-        <div class="product-card-vendor">{{ product.vendor }}</div>
+      <div class="template__cart__body">
+        <div class="errors" data-form-errors style="display: none;"></div>
+        <div data-cart-form>
+          {% comment %}
+            The following snippet is refreshed via ajax with
+            cart.items.liquid when the quantity is adjusted.
+          {% endcomment %}
+          <div data-line-items>
+            {% render 'cart-line-items' %}
+          </div>
+        </div>
+
+        <div class="template__cart__footer" data-cart-bottom>
+          {%- if settings.cart_notes_enable -%}
+            <div class="cart__footer__notes">
+              <label class="cart__notes__label" for="CartSpecialInstructions">{{ 'cart.general.note' | t }}</label>
+              <textarea name="note" class="input-full" id="CartSpecialInstructions" data-cart-note>{{ cart.note }}</textarea>
+            </div>
+          {%- endif -%}
+          <div class="cart__footer__shipping">
+            {%- if settings.cart_shipping_enable -%}
+              {% render 'cart-shipping' %}
+            {%- endif -%}
+          </div>
+          <div class="cart__footer__total">
+            <div class="cart__page__shipping">{% assign free_shipping_text = block.settings.message | default: settings.message %}
+... (truncated) ...
+      {% assign class_message = 'is-success' %}
+    {% else %}
+      {% assign class_message = 'is-hidden' %}
+    {% endif %}
+  {% elsif subtotal_without_currency == 0 %}
+    {% comment %} {% assign class_message = 'is-hidden' %} {% endcomment %}
+  {% endif %}
+
+  <p class="cart__message {{ class_message }}" data-cart-message="{% if qualified_shipping_message != blank %}true{% else %}false{% endif %}" data-limit="{{ limit }}" data-cart-progress>
+    {% if show_wheel %}
+      {% assign percent = limit | minus: subtotal_without_currency | times: 100 | divided_by: limit %}
+      {% assign percent = 100 | minus: percent %}
+
+      {% if percent > 100 %}
+        {% assign percent = 100 %}
       {% endif %}
-      
-      {% if show_price %}
-        <div class="product-card-price">{{ product.price | money }}</div>
+      <small class="cart__graph">
+        {% for i in (1..6) %}
+          <small class="confetti confetti--{{ i }}"></small>
+        {% endfor %}
+      </small>
+    {% endif %}
+
+    {% if qualified_shipping_message != blank %}
+      <span class="cart__message-success">{{ qualified_shipping_message }}</span>
+    {% endif %}
+
+    <span class="cart__message-default">
+      {{ free_shipping_message }}
+    </span>
+  </p>
+{% endif %}
+</div>
+
+            <div class="page__footer__subtotal" data-cart-subtotal>
+              {% render 'cart-subtotal' %}
+            </div>
+
+            <p>
+              <span class="cart__footer__label">{{ 'cart.general.subtotal' | t }}:</span>
+              <span class="cart__footer__value" data-cart-final>
+                {{ cart.total_price | money_with_currency }}
+              </span>
+            </p>
+            <p class="cart__footer__small">{{ 'cart.general.shipping_at_checkout' | t }}</p>
+          </div>
+
+          <div class="cart__footer__checkout">
+            <button type="submit" name="checkout" class="btn btn--primary btn--large checkout__button">
+              {{ 'cart.general.checkout' | t }}
+            </button>
+          </div>
+
+          <div class="cart__footer__update">
+            <span class="cart__update" data-update-button>
+              <span class="cart__update__icon">{% render 'icon-sync' %}</span>
+              <button type="submit" name="update" class="text-link">
+                {{ 'cart.general.update' | t }}
+              </button>
+            </span>
+          </div>
+
+          {% if additional_checkout_buttons and settings.cart_show_additional_buttons %}
+            <div class="cart__footer__additional">
+              <div class="additional-checkout-buttons">
+                {{ content_for_additional_checkout_buttons }}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+```
+
+
+Example Snippet: select-country
+```liquid
+<!-- /snippets/select-country.liquid -->
+
+{% comment %}
+  Renders country/currency popouts in Header, Sub-Footer
+
+  Accepts:
+  - wrapper_class: {String} Class name (optional)
+  - show_country_flag: {Boolean} True or false
+  - show_country_name: {Boolean} True or false
+  - unique: {String} Unique id - section.id or block.id
+
+  Usage:
+  {% render 'select-country',
+      wrapper_class: wrapper_class,
+      show_country_flag: show_country_flag,
+      show_country_name: show_country_name,
+      unique: section.id,
+    %}
+{% endcomment %}
+
+{%- assign wrapper_class = wrapper_class | default: '' -%}
+
+{%- capture currency -%}
+  {{- localization.country.currency.iso_code }}
+  {{ localization.country.currency.symbol -}}
+{%- endcapture -%}
+
+<div class="{{ wrapper_class }}">
+  <h2 class="visually-hidden" id="currency-heading-{{ unique }}">
+    {{ 'layout.footer.currency' | t }}
+  </h2>
+
+  <popout-select>
+    <div class="popout" data-popout>
+      <button type="button" class="popout__toggle" aria-expanded="false" aria-controls="currency-list-{{ unique }}" aria-describedby="currency-heading-{{ unique }}" data-popout-toggle>
+        {%- if show_country_flag -%}
+          {{ localization.country | image_url: width: 40 | image_tag: loading: 'lazy', class: 'popout__flag' }}
+        {%- endif -%}
+
+        {%- if show_country_name -%}
+          {{ localization.country.name }}
+
+          ({{ currency }})
+        {%- else -%}
+          {{ currency }}
+        {%- endif -%}
+
+        {%- render 'icon-arrow-down' -%}
+      </button>
+
+      <ul id="country-list-{{ unique }}" class="popout-list" data-popout-list data-scroll-lock-scrollable>
+        {% for country in localization.available_countries %}
+          <li class="popout-list__item{% if country == localization.country %} popout-list__item--current{% endif %}">
+            <a
+              class="popout-list__option"
+              href="#"
+              {% if country == localization.country %}
+                aria-current="true"
+              {% endif %}
+              data-value="{{ country.iso_code }}"
+              data-popout-option
+            >
+              {%- if show_country_flag -%}
+                {{ country | image_url: width: 40 | image_tag: loading: 'lazy', class: 'popout__flag' }}
+              {%- endif -%}
+
+              <span>
+                {{ country.name }}
+
+                ({{ country.currency.iso_code }}
+                {{ country.currency.symbol }})
+              </span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <input type="hidden" name="country_code" id="CountrySelector-{{ unique }}" value="{{ localization.country.iso_code }}" data-popout-input>
+    </div>
+  </popout-select>
+</div>
+
+```
+
+
+Example Section: gift-card
+```liquid
+<!-- /sections/gift-card.liquid -->
+
+<header id="header" class="giftcard-header">
+  <div class="h1">
+    {% if section.settings.logo != blank %}
+      <a href="{{ shop.url }}" itemprop="url">
+        <img
+          src="{{ section.settings.logo | img_url: 'master' }}"
+          style="width: {{ section.settings.logo_max_limit }}px; margin: 0 auto;"
+          data-sizes="auto"
+          data-aspectratio="{{ section.settings.logo.aspect_ratio }}"
+          alt="{{ section.settings.logo.alt | default: shop.name }}"
+        >
+      </a>
+    {% else %}
+      <a href="{{ shop.url }}">
+        {{ shop.name | escape }}
+      </a>
+    {% endif %}
+  </div>
+  <div class="shop-url">{{ shop.url }}</div>
+</header>
+{% schema %}
+{
+  "name": "Gift card",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_max_limit",
+      "min": 5,
+      "max": 495,
+      "step": 5,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 300
+    }
+  ]
+}
+{% endschema %}
+
+```
+
+
+Example Snippet: select-locale
+```liquid
+<!-- /snippets/select-locale.liquid -->
+
+{%- assign wrapper_class = wrapper_class | default: '' -%}
+
+<div class="{{ wrapper_class }}">
+  <h2 class="visually-hidden" id="lang-heading-{{ unique }}">
+    {{ 'layout.footer.language' | t }}
+  </h2>
+
+  <popout-select>
+    <div class="popout" data-popout>
+      <button type="button" class="popout__toggle" aria-expanded="false" aria-controls="lang-list-{{ unique }}" aria-describedby="lang-heading-{{ unique }}" data-popout-toggle>
+        {{ localization.language.endonym_name }}
+
+        {%- render 'icon-arrow-down' -%}
+      </button>
+
+      <ul id="lang-list-{{ unique }}" class="popout-list" data-popout-list data-scroll-lock-scrollable>
+        {% for language in localization.available_languages %}
+          <li class="popout-list__item {% if language == localization.language %}popout-list__item--current{% endif %}">
+            <a
+              class="popout-list__option"
+              href="#"
+              lang="{{ locale.iso_code }}"
+              {% if language == localization.language %}
+                aria-current="true"
+              {% endif %}
+              data-value="{{ language.iso_code }}"
+              data-popout-option
+            >
+              <span>{{ language.endonym_name }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <input type="hidden" name="language_code" id="LocaleSelector-{{ unique }}" value="{{ form.current_locale.iso_code }}" data-popout-input>
+    </div>
+  </popout-select>
+</div>
+
+```
+
+
+Example Section: section-collection
+```liquid
+<!-- /sections/section-collection.liquid -->
+
+{%- assign collection = collections[section.settings.collection] -%}
+
+{% case section.settings.grid %}
+  {% when 2 %}
+    {%- assign grid_strings = 'medium-up--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 3 %}
+    {%- assign grid_strings = 'large-up--one-third medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 4 %}
+    {%- assign grid_strings = 'large-up--one-quarter medium--one-half small--one-half mobile--nine-tenths' -%}
+{% endcase %}
+
+<div
+  class="section-collection section-collection--{{ collection.products_count }} {{ section.settings.color_bg }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="section-collection"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <div class="section-collection__foreground">
+      <div class="section-collection__inner">
+        <div class="section-collection__head">
+          {% if section.settings.title != blank %}
+            <h2 class="index__collection__title h3">{{ section.settings.title | escape }}</h2>
+          {% endif %}
+          {% if section.settings.description != blank %}
+            <div class="index__collection__subtitle subtitle--decorated">{{ section.settings.description }}</div>
+          {% endif %}
+        </div>
+
+        {% if section.settings.enable_slider %}
+          <div class="slider-actions" data-slider-actions>
+            <button type="button" class="slider-arrow slider-arrow--prev" data-prev-arrow disabled>
+              <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+            </button>
+
+            <button type="button" class="slider-arrow slider-arrow--next" data-next-arrow>
+              <span class="visually-hidden">{{ 'general.accessibility.prev' | t }}</span>
+            </button>
+          </div>
+        {% endif %}
+      </div>
+
+      <div
+        class="grid grid--inner-offsets flickity-disabled-mobile {% unless section.settings.enable_slider %} grid--uniform{% endunless %}"
+        {% if section.settings.enable_slider %}
+          data-slideshow="{{ section.settings.grid }}"
+        {% endif %}
+        data-custom-scrollbar-items
+      >
+        {% assign limit = section.settings.limit | plus: 0 %}
+        {% for product in collection.products limit: limit %}
+          {% render 'product-grid-item', product: product, grid_strings: grid_strings %}
+        {% else %}
+          {% render 'onboarding-featured-products', section: section, grid_strings: grid_strings, product_count: limit %}
+        {% endfor %}
+      </div>
+
+      <div class="custom-scrollbar small-down--show" data-custom-scrollbar>
+        <div class="custom-scrollbar__track" data-custom-scrollbar-track></div>
+      </div>
+
+      {% if section.settings.show_view_all %}
+        <div class="text-center">
+          <a href="{{ collection.url }}" class="btn btn--clear">
+            {{ 'collections.general.view_all' | t }}
+          </a>
+        </div>
       {% endif %}
     </div>
   </div>
 </div>
+
+{% schema %}
+... (truncated) ...
+      "label": "Product limit",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "label": "Enable slider",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View all' button",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured collection",
+      "category": "Collection"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}
+
 ```
 
 
-Example Snippet: offer-header.liquid
+Example Snippet: article-grid-item
 ```liquid
-<div class="offer-header" style="background-color: {{ section.settings.background_color }};">
-  <div class="page-width">
-    <h1 style="color: {{ section.settings.text_color }};">{{ section.settings.title }}</h1>
-    {% if section.settings.subtitle != blank %}
-      <div class="offer-subtitle" style="color: {{ section.settings.text_color }};">
-        {{ section.settings.subtitle }}
+<!-- /snippets/article-grid-item.liquid -->
+
+{% comment %}
+  Renders list of articles in grid layout
+
+  Accepts:
+  - article: {Object} currenct collection
+  - grid_strings: {String} contains a string of grid offset
+
+  (Optional) arguments:
+  - show_excerpt
+  - show_meta
+  - show_tags
+  - show_comments
+
+  Usage:
+  {% render 'article-grid-item', article: article, grid_strings: grid_strings, show_excerpt: section.settings.show_excerpt, show_meta: section.settings.show_meta, show_tags: section.settings.show_tags, show_comments: section.settings.show_comments %}
+{% endcomment %}
+
+<div
+  class="grid__item {{ grid_strings }}"
+  {% if block %}
+    {{- block.shopify_attributes -}}
+  {% endif %}
+>
+  <div class="article__card{% if article.image %} article__card--image{% endif %}">
+    {% if article.image %}
+      <a href="{{ article.url }}">
+        <div class="article__card__image__wrapper">
+          {%- render 'image-fill', img_object: article.image, aspect_ratio: section.settings.aspect_ratio -%}
+        </div>
+      </a>
+    {% endif %}
+    {% if article.image and article.tags.size > 0 and show_tags %}
+      <div class="article__card__tags">
+        {% for tag in article.tags %}
+          <a class="btn btn--pill" href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>
+        {% endfor %}
       </div>
     {% endif %}
+    <div class="article__card__content">
+      <a href="{{ article.url }}" class="h5--body article__card__title">{{ article.title }}</a>
+      {% if show_meta %}
+        <p class="article__card__meta {% if show_comments and article.comments_count > 0 %}article__card__meta--comments{% endif %}">
+          <span class="meta--light">{{ 'blogs.article.by' | t }}</span>
+          <span class="meta--dark">{{ article.author }}</span>
+          <span class="meta--light">{{ 'blogs.article.on' | t }}</span>
+          <span class="meta--dark">{{ article.published_at | date: '%b %d, %Y' }}</span>
+        </p>
+      {% endif %}
+      {% if show_excerpt %}
+        <div class="article__card__text">
+          {% if article.excerpt == blank %}
+            <p class="rte">{{ article.content | strip_html | truncate: 210 }}</p>
+          {% else %}
+            <p class="rte">{{ article.excerpt | strip_html }}</p>
+          {% endif %}
+          <a class="h6--body border-bottom-link" href="{{ article.url }}">{{ 'blogs.article.read_more' | t }}</a>
+        </div>
+      {% endif %}
+      {% if show_comments and article.comments_count > 0 %}
+        <a class="article__card__comments" href="{{ article.url }}/#comments">
+          <span class="h6--accent">{{ article.comments_count }}</span>
+          {% render 'icon-comment' %}
+        </a>
+      {% endif %}
+      {% unless article.image %}
+        {% if article.tags.size > 0 and show_tags %}
+          <div class="article__card__tags">
+            {% for tag in article.tags %}
+              <a class="btn btn--pill" href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endunless %}
+    </div>
   </div>
 </div>
 
-<style>
-  .offer-header {
-    padding: 40px 20px;
-    text-align: center;
-  }
-  
-  .page-width {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .offer-header h1 {
-    margin: 0 0 15px;
-    font-size: 32px;
-    font-weight: 700;
-  }
-  
-  .offer-subtitle {
-    font-size: 18px;
-    line-height: 1.5;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  @media screen and (max-width: 749px) {
-    .offer-header {
-      padding: 30px 15px;
-    }
-    
-    .offer-header h1 {
-      font-size: 24px;
-    }
-    
-    .offer-subtitle {
-      font-size: 16px;
-    }
-  }
-</style>
-
-{% schema %}
-{
-  "name": "Offer Header",
-  "settings": [
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Heading",
-      "default": "Special Offer: Buy 3 for $99"
-    },
-    {
-      "type": "textarea",
-      "id": "subtitle",
-      "label": "Subheading",
-      "default": "Select any 3 items from our collection and get them for just $99!"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text Color",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "Background Color",
-      "default": "#f5f5f5"
-    }
-  ],
-  "presets": [
-    {
-      "name": "Offer Header",
-      "category": "Custom"
-    }
-  ]
-}
-{% endschema %}
 ```
 
 
-Example Snippet: offer-countdown.liquid
+Example Snippet: collection-grid-item
 ```liquid
-<div class="offer-countdown-section" style="background-color: {{ section.settings.background_color }};">
-  <div class="page-width">
-    {% if section.settings.heading != blank %}
-      <h2 class="countdown-heading" style="color: {{ section.settings.text_color }};">{{ section.settings.heading }}</h2>
+<!-- /snippets/collection-grid-item.liquid -->
+
+{% case section.settings.grid %}
+  {% when 2 %}
+    {%- assign grid_item_width = 'medium-up--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 3 %}
+    {%- assign grid_item_width = 'large-up--one-third medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 4 %}
+    {%- assign grid_item_width = 'large-up--one-quarter medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 5 %}
+    {%- assign grid_item_width = 'large-up--one-fifth medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 6 %}
+    {%- assign grid_item_width = 'large-up--one-sixth medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 7 %}
+    {%- assign grid_item_width = 'large-up--one-seventh medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 8 %}
+    {%- assign grid_item_width = 'large-up--one-eighth medium--one-half small--one-half mobile--nine-tenths' -%}
+{% endcase %}
+
+<div
+  class="grid__item {{ grid_item_width }}"
+  {{ block.shopify_attributes }}
+  {% if block.settings.content_color %}
+    style="--block-text:{{ block.settings.content_color }}"
+  {% endif %}
+  {% if section.settings.enable_slider %}
+    data-slide="{{ block.id }}" data-slide-index="{{ forloop.index0 }}"
+  {% endif %}
+>
+  <div class="collection-grid-item section--image {{ section.settings.place_text }} {{ section.settings.align_text }}">
+    {%- liquid
+      assign collection = collections[block.settings.collection]
+      if block.settings.collection_image
+        assign img_object = block.settings.collection_image
+      elsif collection.image
+        assign img_object = collection.image
+      elsif collection.products.first
+        assign img_object = collection.products.first.featured_media.preview_image
+      endif
+
+      assign collection_link = collection.url | default: '#'
+      if block.settings.link_override != blank
+        assign collection_link = block.settings.link_override
+      endif
+
+      assign collection_def_title = 'homepage.onboarding.collection_title' | t
+
+      assign collection_title = collection.title | default: collection_def_title
+      if block.settings.text != '' and block.settings.text != '<p></p>' and block.settings.text != blank
+        assign collection_title = block.settings.text
+      endif
+
+      assign aspect_ratio = section.settings.aspect_ratio | default: 0.6
+    -%}
+
+    <a href="{{ collection_link }}" class="link-over-image" aria-label="{{ collection_title | strip_html | escape }}"> </a>
+
+    {%- if img_object != blank -%}
+      {%- render 'image-fill', img_object: img_object, aspect_ratio: aspect_ratio -%}
+    {%- else -%}
+      <div class="image__fill" style="padding-top: {{ aspect_ratio | times: 100 }}%">
+        <div class="background-size-cover">
+          <span>
+            {% capture svg_name %}collection-apparel-{{ forloop.index | modulo: 5 | at_least: 1 }}{% endcapture %}
+            {{ svg_name | placeholder_svg_tag: 'placeholder-svg' }}
+          </span>
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div
+      class="collection-grid-item__content__wrapper"
+      {% if block.settings.content_bg %}
+        style="background-color: {{ block.settings.content_bg }};"
+      {% endif %}
+    >
+      <div class="collection-grid-item__content">
+        <div class="collection-grid-item__title {{ section.settings.use_font }}">{{ collection_title }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+```
+
+
+Example Section: customer-order
+```liquid
+<!-- /sections/customer-order.liquid -->
+
+<div class="{{ section.settings.color_bg }} customer-account"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;">
+  <div class="{{ section.settings.width }} section-padding">
+    <header role="banner" class="account-header">
+      <h1>{{ 'customer.account.title' | t }}</h1>
+      <a href="{{ routes.account_logout_url }}" class="btn--soft">{{ 'layout.customer.log_out' | t }}</a>
+    </header>
+
+    <div class="account__return">
+      <a class="btn--soft" href="{{ routes.account_url }}"><span class="back-arrow"></span> {{ 'customer.account.return' | t }}</a>
+    </div>
+
+    <h2 class="h4">{{ 'customer.order.title' | t: name: order.name }}</h2>
+
+    <p>{{ 'customer.order.date' | t: date: order.created_at | date: "%B %d, %Y %I:%M%p" }}</p>
+
+    {% if order.cancelled %}
+      {%- assign cancelled_at = order.cancelled_at | date: "%B %d, %Y %I:%M%p" -%}
+      <div class="form-errors">
+        <p><strong>{{ 'customer.order.cancelled' | t: date: cancelled_at }}</strong></p>
+        <p>{{ 'customer.order.cancelled_reason' | t: reason: order.cancel_reason }}</p>
+      </div>
     {% endif %}
-    
-    <div class="countdown-container" style="color: {{ section.settings.text_color }}; --accent-color: {{ section.settings.accent_color }};">
-      {% assign timer_id = 'offer-countdown-timer' %}
-      {% assign end_date = section.settings.end_date %}
-      {% render 'offer-timer', timer_id: timer_id, end_date: end_date %}
-    </div>
+
+    <table class="responsive-table table--orders">
+      <thead>
+        <tr>
+          <th>{{ 'customer.order.product' | t }}</th>
+          <th>{{ 'customer.order.sku' | t }}</th>
+          <th>{{ 'customer.order.price' | t }}</th>
+          <th>{{ 'customer.order.quantity' | t }}</th>
+          <th>{{ 'customer.order.total' | t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for line_item in order.line_items %}
+          {%- assign unit_price = false -%}
+          {%- if line_item.unit_price_measurement -%}
+            {%- assign unit_price = true -%}
+            {% capture unit_price_separator %}
+              <span aria-hidden="true">/</span><span class="visually-hidden">{{ 'general.accessibility.unit_price_separator' | t }}&nbsp;</span>
+            {% endcapture %}
+            {% capture unit_price_base_unit %}
+              {%- if line_item.unit_price_measurement.reference_value != 1 -%}
+                {{- line_item.unit_price_measurement.reference_value -}}
+              {%- endif -%}
+              {{ line_item.unit_price_measurement.reference_unit }}
+            {% endcapture %}
+          {%- endif -%}
+          {%- assign discounted = false -%}
+          {%- if line_item.original_price > line_item.final_price -%}
+            {%- assign discounted = true -%}
+          {%- endif -%}
+          <tr id="{{ line_item.key }}" class="responsive-table-row">
+            <td data-label="{{ 'customer.order.product' | t }}">
+              <p class="strong">{{ line_item.title | strip_html | escape | link_to: line_item.product.url }}</p>
+
+              {% if discounted %}
+                {%- for discount in line_item.line_level_discount_allocations -%}
+                  <p class="order__discount__title">
+                    <span class="order__icon--tags">
+                      {% render 'icon-tags' %}
+                    </span>
+                    <span>{{ discount.discount_application.title }}:</span>
+                    <span>
+                      {% if settings.currency_code_enable %}
+                        -{{ discount.amount | money_with_currency }}
+                      {% else %}
+                        -{{ discount.amount | money }}
+                      {% endif %}
+                    </span>
+                  </p>
+                {%- endfor -%}
+... (truncated) ...
+    </table>
+
+    <hr>
+    <h2 class="h4">{{ 'customer.order.billing_address' | t }}</h2>
+
+    <p>{{ 'customer.order.payment_status' | t }}: {{ order.financial_status_label }}</p>
+
+    {{ order.billing_address | format_address }}
+
+    <hr>
+    <h2 class="h4">{{ 'customer.order.shipping_address' | t }}</h2>
+
+    <p>{{ 'customer.order.fulfillment_status' | t }}: {{ order.fulfillment_status_label }}</p>
+
+    {{ order.shipping_address | format_address }}
   </div>
 </div>
 
-<style>
-  .offer-countdown-section {
-    padding: 30px 20px;
-    text-align: center;
-  }
-  
-  .countdown-heading {
-    margin: 0 0 20px;
-    font-size: 24px;
-    font-weight: 600;
-  }
-  
-  .countdown-container {
-    max-width: 500px;
-    margin: 0 auto;
-  }
-  
-  .offer-timer {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-  }
-  
-  .timer-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 70px;
-  }
-  
-  .timer-value {
-    font-size: 32px;
-    font-weight: 700;
-    background-color: var(--accent-color);
-    color: white;
-    border-radius: 5px;
-    padding: 10px 0;
-    width: 100%;
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  .timer-label {
-    font-size: 14px;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-  
-  @media screen and (max-width: 749px) {
-    .offer-countdown-section {
-      padding: 20px 15px;
-    }
-    
-    .countdown-heading {
-      font-size: 20px;
-    }
-    
-    .timer-block {
-      min-width: 60px;
-    }
-    
-    .timer-value {
-      font-size: 24px;
-      padding: 8px 0;
-    }
-    
-    .timer-label {
-      font-size: 12px;
-    }
-  }
-</style>
 
 {% schema %}
 {
-  "name": "Offer Countdown",
+  "name": "Customer order",
+  "tag": "section",
   "settings": [
     {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "Offer Ends In:"
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        { "value": "palette--light bg--neutral", "label": "Default" },
+        { "value": "palette--light bg--accent", "label": "Light" },
+        { "value": "palette--dark bg--invert", "label": "Dark" },
+        { "value": "palette--dark bg--invert--accent", "label": "Dark accent" }
+      ]
     },
     {
-      "type": "text",
-      "id": "end_date",
-      "label": "End Date (YYYY-MM-DDThh:mm:ss)",
-      "default": "2025-05-09T23:59:59",
-      "info": "Format: YYYY-MM-DDThh:mm:ss (e.g., 2025-05-09T23:59:59)"
+      "type": "header",
+      "content": "Section spacing"
     },
     {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text Color",
-      "default": "#000000"
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        { "value": "wrapper--full", "label": "Full width padded" },
+        { "value": "wrapper", "label": "Page width" },
+        { "value": "wrapper--narrow", "label": "Page width narrow" }
+      ]
     },
     {
-      "type": "color",
-      "id": "accent_color",
-      "label": "Accent Color",
-      "default": "#ff4d4d"
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "Background Color",
-      "default": "#ffffff"
-    }
-  ],
-  "presets": [
-    {
-      "name": "Offer Countdown",
-      "category": "Custom"
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
     }
   ]
 }
 {% endschema %}
+
 ```
 
 
-Example Snippet: offer-cta.liquid
+Referenced Files:
+
+Referenced Snippet: bgset
 ```liquid
-<div class="offer-cta-section" style="background-color: {{ section.settings.background_color }};">
-  <div class="page-width">
-    <div class="cta-container">
-      <button id="offer-cta-button" 
-              class="offer-cta-button disabled" 
-              disabled
-              style="--button-color: {{ section.settings.button_color }}; --button-text-color: {{ section.settings.button_text_color }}; --disabled-button-color: {{ section.settings.disabled_button_color }};">
-        {{ section.settings.button_text }}
-      </button>
-      <div id="offer-cta-message" class="offer-cta-message"></div>
+{%- if image.width != blank -%}
+  {% if image.width > 180 %}{{ image | img_url: '180x' }} 180w {{ 180 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 360 %}{{ image | img_url: '360x' }} 360w {{ 360 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 540 %}{{ image | img_url: '540x' }} 540w {{ 540 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 720 %}{{ image | img_url: '720x' }} 720w {{ 720 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 900 %}{{ image | img_url: '900x' }} 900w {{ 900 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 1080 %}{{ image | img_url: '1080x' }} 1080w {{ 1080 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 1296 %}{{ image | img_url: '1296x' }} 1296w {{ 1296 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 1512 %}{{ image | img_url: '1512x' }} 1512w {{ 1512 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 1728 %}{{ image | img_url: '1728x' }} 1728w {{ 1728 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 1950 %}{{ image | img_url: '1950x' }} 1950w {{ 1950 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 2100 %}{{ image | img_url: '2100x' }} 2100w {{ 2100 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 2260 %}{{ image | img_url: '2260x' }} 2260w {{ 2260 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 2450 %}{{ image | img_url: '2450x' }} 2450w {{ 2450 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 2700 %}{{ image | img_url: '2700x' }} 2700w {{ 2700 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 3000 %}{{ image | img_url: '3000x' }} 3000w {{ 3000 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 3350 %}{{ image | img_url: '3350x' }} 3350w {{ 3350 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 3750 %}{{ image | img_url: '3750x' }} 3750w {{ 3750 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {% if image.width > 4100 %}{{ image | img_url: '4100x' }} 4100w {{ 4100 | divided_by: image.aspect_ratio | round }}h,{% endif %}
+  {{ image | img_url: 'master' }}
+  {{ image.width }}w {{ image.height }}h
+{%- else -%}
+  {{ image }}
+{%- endif -%}
+
+```
+
+
+Referenced Snippet: cart-empty
+```liquid
+<!-- /snippets/cart-empty.liquid -->
+
+<div class="cart__empty align--middle-center">
+  <div class="wrapper">
+    <p class="h4--body m0">{{ 'cart.general.empty' | t }}</p>
+  </div>
+</div>
+<a href="{{ settings.cart_continue_browsing | default: routes.all_products_collection_url }}" class="cart__circle__wrapper">
+  <div class="cart__circle">
+    {% render 'icon-cart' %}
+  </div>
+  <p class="cart__continue__link">
+    {{ 'cart.general.continue_browsing' | t }}
+  </p>
+</a>
+
+```
+
+
+Referenced Snippet: cart-shipping
+```liquid
+<!-- /snippets/cart-shipping.liquid -->
+
+<div class="drawer__bottom__shipping drawer__accordion">
+  <button
+    class="accordion__title"
+    data-accordion-trigger="accordion-cart-shipping"
+    aria-controls="accordion-{{ key }}"
+    aria-haspopup="true"
+    aria-expanded="false"
+  >
+    {{ 'cart.shipping.estimate_shipping' | t }}
+  </button>
+  <div
+    class="accordion__body drawer__accordion__body"
+    data-accordion-body
+    id="accordion-cart-shipping"
+  >
+    <div class="shipping-calculator">
+      <div data-shipping-estimate-form>
+        <div class="hide">
+          {%- comment -%}Required for Shopify address handlers{%- endcomment -%}
+          <input type="text" name="address[first_name]" value="{{ form.first_name }}">
+          <input type="text" name="address[last_name]" value="{{ form.last_name }}">
+          <input type="text" name="address[company]" value="{{ form.company }}">
+          <input type="text" name="address[address1]" value="{{ form.address1 }}">
+          <input type="text" name="address[address2]" value="{{ form.address2 }}">
+          <input type="text" name="address[city]" value="{{ form.city }}">
+          <input type="tel" name="address[phone]" value="{{ form.phone }}">
+        </div>
+
+        <div class="custom-form__block form__field">
+          <label class="small" for="estimate_address_country">{{ 'customer.addresses.country' | t }}</label>
+          <select
+            id="estimate_address_country"
+            name="address[country]"
+            {% if shop.customer_accounts_enabled and customer %}
+              data-default="{{ customer.default_address.country_code }}"
+              data-default-fullname="{{ customer.default_address.country }}"
+            {% elsif default_country != '' %}
+              data-default="{{ default_country.iso_code }}"
+              data-default-fullname="{{ default_country }}"
+            {% endif %}
+          ></select>
+        </div>
+        <div class="custom-form__block form__field">
+          <label class="small" for="estimate_address_province">{{ 'customer.addresses.province' | t }}</label>
+          <select
+            id="estimate_address_province"
+            name="address[province]"
+            {% if shop.customer_accounts_enabled and customer and customer.default_address.province != '' %}
+              data-default="{{ customer.default_address.province_code }}"
+              data-default-fullname="{{ customer.default_address.province }}"
+            {% endif %}
+          ></select>
+        </div>
+        <div class="custom-form__block form__field">
+          <label class="small" for="estimate_address_zip">{{ 'customer.addresses.zip' | t }}</label>
+          <input
+            id="estimate_address_zip"
+            type="text"
+            name="address[zip]"
+            {% if shop.customer_accounts_enabled and customer %}
+              value="{{ customer.default_address.zip }}"
+            {% endif %}
+          >
+        </div>
+      </div>
+
+      <div class="cart__rates__wrapper" data-response-wrapper aria-live="assertive"></div>
+
+      <input type="button" data-submit-shipping class="btn--soft btn--primary btn--full btn--medium shipping__rates__button" value="{{ 'cart.shipping.estimate_shipping' | t }}">
     </div>
   </div>
 </div>
 
-<style>
-  .offer-cta-section {
-    padding: 40px 20px 60px;
-    text-align: center;
-  }
-  
-  .cta-container {
-    max-width: 500px;
-    margin: 0 auto;
-  }
-  
-  .offer-cta-button {
-    background-color: var(--button-color);
-    color: var(--button-text-color);
-    border: none;
-    border-radius: 5px;
-    padding: 15px 30px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .offer-cta-button:hover:not(.disabled) {
-    opacity: 0.9;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  }
-  
-  .offer-cta-button.disabled {
-    background-color: var(--disabled-button-color);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-  
-  .offer-cta-message {
-    margin-top: 15px;
-    min-height: 24px;
-    font-size: 16px;
-  }
-  
-  .offer-cta-message.success {
-    color: #4CAF50;
-  }
-  
-  .offer-cta-message.error {
-    color: #F44336;
-  }
-  
-  @media screen and (max-width: 749px) {
-    .offer-cta-section {
-      padding: 30px 15px 50px;
-    }
-    
-    .offer-cta-button {
-      padding: 12px 25px;
-      font-size: 16px;
-    }
-    
-    .offer-cta-message {
-      font-size: 14px;
-    }
-  }
-</style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const ctaButton = document.getElementById('offer-cta-button');
-    const ctaMessage = document.getElementById('offer-cta-message');
-    
-    // Initialize if selectedProducts doesn't exist
-    if (!window.selectedProducts) {
-      window.selectedProducts = [];
-    }
-    
-    // Listen for selection changes
-    document.addEventListener('offer:selection-changed', function(event) {
-      const { selectedProducts, isComplete } = event.detail;
-      
-      // Update button state
-      if (isComplete) {
-        ctaButton.classList.remove('disabled');
-        ctaButton.disabled = false;
-      } else {
-        ctaButton.classList.add('disabled');
-        ctaButton.disabled = true;
-      }
-      
-      // Clear any previous messages
-      ctaMessage.textContent = '';
-      ctaMessage.className = 'offer-cta-message';
-    });
-    
-    // Handle button click
-    ctaButton.addEventListener('click', function() {
-      if (window.selectedProducts.length !== 3) {
-        showMessage('Please select exactly 3 products.', 'error');
-        return;
-      }
-      
-      // Disable button during processing
-      ctaButton.disabled = true;
-      ctaButton.classList.add('disabled');
-      ctaButton.textContent = 'Adding to cart...';
-      
-      // Prepare items for cart
-      const items = window.selectedProducts.map(product => {
-        return {
-          id: product.variantId,
-          quantity: 1
-        };
-      });
-      
-      // Add items to cart with special price
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          items: items,
-          attributes: {
-            'Special Offer': 'Buy 3 for $99'
-          }
-        })
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Success - show message and redirect to cart
-        showMessage('Products added to cart!', 'success');
-        
-        // Reset button
-        ctaButton.textContent = '{{ section.settings.button_text }}';
-        
-        // Redirect to cart after a short delay
-        setTimeout(() => {
-          window.location.href = '/cart';
-        }, 1500);
-      })
-      .catch(error => {
-        console.error('Error adding to cart:', error);
-        showMessage('There was an error adding products to cart. Please try again.', 'error');
-        
-        // Reset button
-        ctaButton.disabled = false;
-        ctaButton.classList.remove('disabled');
-        ctaButton.textContent = '{{ section.settings.button_text }}';
-      });
-    });
-    
-    // Helper function to show messages
-    function showMessage(text, type) {
-      ctaMessage.textContent = text;
-      ctaMessage.className = 'offer-cta-message ' + type;
-    }
-  });
+<script data-response-template type="text/template">
+  {% raw %}
+    <ul class="shipping__rates {{it.class}}">
+      {{@each(it.items) => item}}
+        <li>
+          <p>
+            {{@if(item.title)}}
+              <span class="small midweight">{{ item.title | safe }}:</span>
+            {{/if}}
+            {{@if(item.value)}}
+              <span class="small">{{ item.value | safe }}</span>
+            {{/if}}
+          </p>
+        </li>
+      {{/each}}
+    </ul>
+  {% endraw %}
 </script>
 
-{% schema %}
-{
-  "name": "Offer CTA",
-  "settings": [
-    {
-      "type": "text",
-      "id": "button_text",
-      "label": "Button Text",
-      "default": "Add 3 Items to Cart for $99"
-    },
-    {
-      "type": "color",
-      "id": "button_color",
-      "label": "Button Color",
-      "default": "#ff4d4d"
-    },
-    {
-      "type": "color",
-      "id": "button_text_color",
-      "label": "Button Text Color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "disabled_button_color",
-      "label": "Disabled Button Color",
-      "default": "#cccccc"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "Background Color",
-      "default": "#f5f5f5"
-    }
-  ],
-  "presets": [
-    {
-      "name": "Offer CTA",
-      "category": "Custom"
-    }
-  ]
-}
-{% endschema %}
 ```
 
 
-Example Snippet: offer-timer.liquid
+Referenced Snippet: image-background
 ```liquid
-<div class="offer-timer" id="{{ timer_id }}">
-  <div class="timer-block">
-    <span class="timer-value" id="{{ timer_id }}-days">00</span>
-    <span class="timer-label">Days</span>
+<!-- /snippets/image-background.liquid -->
+
+{% comment %}
+  Required params:
+  img_object - Image object to use used
+  frame_height_class - css class to control frame height
+
+  This will set height for the containing section
+
+  Example:
+  {% render 'image-background', img_object: section.settings.image, frame_height_class: section.settings.image_height %}
+{% endcomment %}
+
+{% comment %} DEFAULTS - parallax just defaults to false {% endcomment %}
+{%- assign default_image = 'blank.svg' | asset_url -%}
+{%- assign height = frame_height_class | default: 'image-height' -%}
+{%- assign image = img_object | default: default_image -%}
+{%- assign aspect_ratio = image.aspect_ratio | default: 2.63 -%}
+
+<div
+  class="image__hero__frame fade-in-image-zoom {{ height }}"
+  data-overflow-background
+  {% if height contains 'use_image' %}
+    style="
+      padding-top: {{ 1 | divided_by: aspect_ratio | times: 100 }}%;
+      background-image: url('{{ image | img_url: '1x1' }}');
+    "
+  {% endif %}
+  {% if settings.parallax_enable %}
+    data-parallax-wrapper
+  {% endif %}
+>
+  <div class="image__hero__pane">
+    <div
+      class="image__hero__scale"
+      {% if settings.parallax_enable %}
+        style="height: {{ 1 | divided_by: aspect_ratio | times: 100 }}vw;"
+        data-aspect-ratio="{{ aspect_ratio }}"
+        data-parallax-img
+      {% endif %}
+    >
+      <div
+        class="background-size-cover lazyload"
+        data-bgset="{% render 'bgset', image: image %}"
+        style="background-position: {{ image.presentation.focal_point | default: '50.0% 50.0%' }};"
+        role="img"
+        aria-label="{{ image.alt | strip_html | escape }}"
+      ></div>
+    </div>
   </div>
-  <div class="timer-block">
-    <span class="timer-value" id="{{ timer_id }}-hours">00</span>
-    <span class="timer-label">Hours</span>
-  </div>
-  <div class="timer-block">
-    <span class="timer-value" id="{{ timer_id }}-minutes">00</span>
-    <span class="timer-label">Minutes</span>
-  </div>
-  <div class="timer-block">
-    <span class="timer-value" id="{{ timer_id }}-seconds">00</span>
-    <span class="timer-label">Seconds</span>
-  </div>
+  <noscript>
+    <img src="{{ image | img_url: '720x' }}" alt="{{ image.alt }}" class="responsive-wide-image">
+  </noscript>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Set the date we're counting down to
-    var countDownDate = new Date("{{ end_date }}").getTime();
-    var timerId = "{{ timer_id }}";
-    
-    // Update the countdown every 1 second
-    var x = setInterval(function() {
-      // Get current date and time
-      var now = new Date().getTime();
-      
-      // Find the distance between now and the countdown date
-      var distance = countDownDate - now;
-      
-      // If the countdown is finished, display zeros
-      if (distance < 0) {
-        clearInterval(x);
-        document.getElementById(timerId + "-days").innerHTML = "00";
-        document.getElementById(timerId + "-hours").innerHTML = "00";
-        document.getElementById(timerId + "-minutes").innerHTML = "00";
-        document.getElementById(timerId + "-seconds").innerHTML = "00";
-        return;
-      }
-      
-      // Time calculations for days, hours, minutes and seconds
-      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      
-      // Add leading zeros if needed
-      days = days < 10 ? "0" + days : days;
-      hours = hours < 10 ? "0" + hours : hours;
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      seconds = seconds < 10 ? "0" + seconds : seconds;
-      
-      // Display the result
-      document.getElementById(timerId + "-days").innerHTML = days;
-      document.getElementById(timerId + "-hours").innerHTML = hours;
-      document.getElementById(timerId + "-minutes").innerHTML = minutes;
-      document.getElementById(timerId + "-seconds").innerHTML = seconds;
-    }, 1000);
-  });
-</script>
+```
+
+
+Referenced Snippet: cart-line-items
+```liquid
+<!-- /snippets/cart-line-items.liquid -->
+
+{%- assign pair_products_index = '' -%}
+{%- assign cart_products = '' -%}
+
+<div class="cart__items">
+  {% for line_item in cart.items %}
+    <div class="cart__items__row" data-cart-item>
+      <div class="item--loadbar" style="display: none;">&nbsp;</div>
+      <div class="cart__items__grid" data-item>
+        <a
+          href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0"
+          class="cart__items__remove"
+          data-remove-key="{{ line_item.key }}"
+          tabindex="0"
+        >
+          <span class="cart__remove__icon">
+            {%- render 'icon-bin' -%}
+          </span>
+          <span class="cart__remove badge-bold">× {{ 'cart.general.remove' | t }}</span>
+        </a>
+        <div class="cart__items__image">
+          <a href="{{ line_item.url }}">
+            <img class="cart__items__img" src="{{ line_item | img_url: '180x' }}" alt="{{ line_item.title | strip_html | escape }}">
+          </a>
+        </div>
+
+        <div class="cart__items__title">
+          <p class="cart__items__title__product">
+            <a href="{{ line_item.url }}">
+              {{ line_item.product.title | strip_html | escape }}
+            </a>
+          </p>
+          <div class="cart__items__meta">
+            {% comment %} Vendor if enabled {% endcomment %}
+            {% if settings.cart_vendor_enable %}
+              <p class="small">{{ line_item.vendor }}</p>
+            {% endif %}
+
+            {% comment %} Variant as name/name/name {% endcomment %}
+            {% unless line_item.product.has_only_default_variant %}
+              <p class="small">{{ line_item.variant.title | replace: '/', '<em>•</em>' }}</p>
+            {% endunless %}
+
+            {% comment %} Subscription plan name {% endcomment %}
+            {% if line_item.selling_plan_allocation %}
+              <p class="small">{{ line_item.selling_plan_allocation.selling_plan.name }}</p>
+            {%- endif -%}
+
+            {% comment %} Line item properties, including files {% endcomment %}
+            {% assign property_size = line_item.properties | size %}
+            {%- if property_size > 0 -%}
+              {%- for p in line_item.properties -%}
+                {%- assign property_first_char = p.first | slice: 0 -%}
+                {%- if p.last != blank and property_first_char != '_' -%}
+                  <p class="small">
+                    <span>{{ p.first }}: </span>
+                    <span>
+                      {%- if p.last contains '/uploads/' -%}
+                        <a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
+                      {%- else -%}
+                        {{ p.last }}
+                      {%- endif -%}
+                    </span>
+                  </p>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+        </div>
+
+        <div class="cart__items__price">
+          <p class="line__price">
+            {%- assign discounted = false -%}
+            {%- if line_item.original_price > line_item.final_price -%}
+... (truncated) ...
+            <button type="button" class="quantity__button quantity__button--minus" data-decrease-quantity>&minus;</button>
+            <label for="updates_{{ line_item.key }}" class="visually-hidden">{{ 'cart.label.quantity' | t }}</label>
+            <input
+              data-quantity-input
+              data-update-cart="{{ line_item.key }}"
+              class="quantity__input"
+              type="number"
+              min="0"
+              size="4"
+              pattern="[0-9]*"
+              id="updates_{{ line_item.key }}"
+              name="updates[]"
+              value="{{ line_item.quantity }}"
+            >
+            <button type="button" class="quantity__button quantity__button--plus" data-increase-quantity>+</button>
+          </div>
+        </div>
+
+        <div class="cart__items__total">
+          {% if settings.currency_code_enable %}
+            {{ line_item.final_line_price | money_with_currency }}
+          {% else %}
+            {{ line_item.final_line_price | money }}
+          {% endif %}
+        </div>
+
+        {% if discounted and line_item.quantity >= 1 %}
+          {%- for discount in line_item.line_level_discount_allocations -%}
+            <div class="cart__items__savings">
+              <span class="item__total__savings">
+                <span class="cart__icon--tags">
+                  {% render 'icon-tags' %}
+                </span>
+                {{ 'cart.general.savings' | t }}
+                {% if settings.currency_code_enable %}
+                  {{ discount.amount | money_with_currency }}
+                {% else %}
+                  {{ discount.amount | money_without_trailing_zeros }}
+                {% endif %}
+                {{ 'cart.general.with' | t }}
+                {{ discount.discount_application.title }}
+              </span>
+            </div>
+          {%- endfor -%}
+        {% endif %}
+      </div>
+    </div>
+
+    {%- assign cart_products = cart_products | append: line_item.product.id | append: ',' -%}
+    {%- assign upsell = line_item.product.metafields.theme.upsell -%}
+
+    {%- if upsell.value != null and upsell.type == 'product_reference' -%}
+      {%- assign pair_products_index = pair_products_index | append: forloop.index0 | append: ',' -%}
+    {%- endif -%}
+  {% endfor %}
+</div>
+
+{%- if pair_products_index != '' -%}
+  {%- assign pair_products_index = pair_products_index | split: ',' -%}
+  {%- assign cart_products = cart_products | prepend: ',' -%}
+
+  {%- for index in pair_products_index -%}
+    {%- assign arr_index = index | plus: 0 -%}
+    {%- assign upsell_product = cart.items[arr_index].product.metafields.theme.upsell.value -%}
+
+    {%- if cart_products contains upsell_product.id or upsell_product.available == false -%}
+      {%- continue -%}
+    {%- endif -%}
+
+    {%- render 'upsell-product', upsell_product: upsell_product, section: section -%}
+
+    {%- break -%}
+  {%- endfor -%}
+{%- endif -%}
+
 ```

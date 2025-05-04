@@ -1,0 +1,171 @@
+<!-- /sections/section-timeline-tree.liquid -->
+
+<div
+  class="section-timeline-tree {{ section.settings.bg }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="timeline-tree"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <div class="timeline__wrapper">
+      {% for block in section.blocks %}
+        <div class="timeline__block" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            <div class="timeline__image__wrapper">
+              <div class="background-size-cover lazyload" data-bgset="{% render 'bgset', image: block.settings.image %}"></div>
+              <noscript>
+                <img src="{{ block.settings.image | img_url: '540x540', crop: 'center' }}" alt="{{ block.settings.image.alt | default: block.settings.title }}">
+              </noscript>
+            </div>
+          {% else %}
+            <div class="timeline__placemark"></div>
+          {% endif %}
+
+          {% if block.settings.date != blank %}
+            <p class="h6--accent timeline__date">{{ block.settings.date | escape }}</p>
+          {% endif %}
+          {% if block.settings.title != blank %}
+            <h2 class="h4--body timeline__title">{{ block.settings.title | escape }}</h2>
+          {% endif %}
+          {% if block.settings.story != blank %}
+            <div class="rte timeline__story">{{ block.settings.story }}</div>
+          {% endif %}
+          {% if block.settings.link_text != blank and block.settings.link != blank %}
+            <a href="{{ block.settings.link }}" class="border-bottom-link">
+              {{ block.settings.link_text | escape }}
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Timeline tree",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper--narrow",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"},
+        {"value": "wrapper--tiny", "label": "Page width extra narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "episode",
+      "name": "Timeline",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Timeline episode"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Date",
+          "default": "January 2021"
+        },
+        {
+          "type": "richtext",
+          "id": "story",
+          "label": "Text",
+          "default": "<p>This tab content type will accept <strong>rich text</strong> to help with adding styles and links to additional pages or content. Use this to add supplementary information to help your buyers.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Link"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link text",
+          "default": "Continued..."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Timeline tree",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "episode"
+        },
+        {
+          "type": "episode"
+        },
+        {
+          "type": "episode"
+        },
+        {
+          "type": "episode"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside", "footer"]
+  }
+}
+{% endschema %}

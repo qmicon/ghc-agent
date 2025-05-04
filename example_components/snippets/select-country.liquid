@@ -1,0 +1,81 @@
+<!-- /snippets/select-country.liquid -->
+
+{% comment %}
+  Renders country/currency popouts in Header, Sub-Footer
+
+  Accepts:
+  - wrapper_class: {String} Class name (optional)
+  - show_country_flag: {Boolean} True or false
+  - show_country_name: {Boolean} True or false
+  - unique: {String} Unique id - section.id or block.id
+
+  Usage:
+  {% render 'select-country',
+      wrapper_class: wrapper_class,
+      show_country_flag: show_country_flag,
+      show_country_name: show_country_name,
+      unique: section.id,
+    %}
+{% endcomment %}
+
+{%- assign wrapper_class = wrapper_class | default: '' -%}
+
+{%- capture currency -%}
+  {{- localization.country.currency.iso_code }}
+  {{ localization.country.currency.symbol -}}
+{%- endcapture -%}
+
+<div class="{{ wrapper_class }}">
+  <h2 class="visually-hidden" id="currency-heading-{{ unique }}">
+    {{ 'layout.footer.currency' | t }}
+  </h2>
+
+  <popout-select>
+    <div class="popout" data-popout>
+      <button type="button" class="popout__toggle" aria-expanded="false" aria-controls="currency-list-{{ unique }}" aria-describedby="currency-heading-{{ unique }}" data-popout-toggle>
+        {%- if show_country_flag -%}
+          {{ localization.country | image_url: width: 40 | image_tag: loading: 'lazy', class: 'popout__flag' }}
+        {%- endif -%}
+
+        {%- if show_country_name -%}
+          {{ localization.country.name }}
+
+          ({{ currency }})
+        {%- else -%}
+          {{ currency }}
+        {%- endif -%}
+
+        {%- render 'icon-arrow-down' -%}
+      </button>
+
+      <ul id="country-list-{{ unique }}" class="popout-list" data-popout-list data-scroll-lock-scrollable>
+        {% for country in localization.available_countries %}
+          <li class="popout-list__item{% if country == localization.country %} popout-list__item--current{% endif %}">
+            <a
+              class="popout-list__option"
+              href="#"
+              {% if country == localization.country %}
+                aria-current="true"
+              {% endif %}
+              data-value="{{ country.iso_code }}"
+              data-popout-option
+            >
+              {%- if show_country_flag -%}
+                {{ country | image_url: width: 40 | image_tag: loading: 'lazy', class: 'popout__flag' }}
+              {%- endif -%}
+
+              <span>
+                {{ country.name }}
+
+                ({{ country.currency.iso_code }}
+                {{ country.currency.symbol }})
+              </span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <input type="hidden" name="country_code" id="CountrySelector-{{ unique }}" value="{{ localization.country.iso_code }}" data-popout-input>
+    </div>
+  </popout-select>
+</div>

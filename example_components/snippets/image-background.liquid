@@ -1,0 +1,54 @@
+<!-- /snippets/image-background.liquid -->
+
+{% comment %}
+  Required params:
+  img_object - Image object to use used
+  frame_height_class - css class to control frame height
+
+  This will set height for the containing section
+
+  Example:
+  {% render 'image-background', img_object: section.settings.image, frame_height_class: section.settings.image_height %}
+{% endcomment %}
+
+{% comment %} DEFAULTS - parallax just defaults to false {% endcomment %}
+{%- assign default_image = 'blank.svg' | asset_url -%}
+{%- assign height = frame_height_class | default: 'image-height' -%}
+{%- assign image = img_object | default: default_image -%}
+{%- assign aspect_ratio = image.aspect_ratio | default: 2.63 -%}
+
+<div
+  class="image__hero__frame fade-in-image-zoom {{ height }}"
+  data-overflow-background
+  {% if height contains 'use_image' %}
+    style="
+      padding-top: {{ 1 | divided_by: aspect_ratio | times: 100 }}%;
+      background-image: url('{{ image | img_url: '1x1' }}');
+    "
+  {% endif %}
+  {% if settings.parallax_enable %}
+    data-parallax-wrapper
+  {% endif %}
+>
+  <div class="image__hero__pane">
+    <div
+      class="image__hero__scale"
+      {% if settings.parallax_enable %}
+        style="height: {{ 1 | divided_by: aspect_ratio | times: 100 }}vw;"
+        data-aspect-ratio="{{ aspect_ratio }}"
+        data-parallax-img
+      {% endif %}
+    >
+      <div
+        class="background-size-cover lazyload"
+        data-bgset="{% render 'bgset', image: image %}"
+        style="background-position: {{ image.presentation.focal_point | default: '50.0% 50.0%' }};"
+        role="img"
+        aria-label="{{ image.alt | strip_html | escape }}"
+      ></div>
+    </div>
+  </div>
+  <noscript>
+    <img src="{{ image | img_url: '720x' }}" alt="{{ image.alt }}" class="responsive-wide-image">
+  </noscript>
+</div>

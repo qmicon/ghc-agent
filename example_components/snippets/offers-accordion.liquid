@@ -1,0 +1,211 @@
+<style>
+  .offers-accordion{
+    padding: 4%;
+    padding-left:0%;
+    background: #E8FAF4;
+    border: 1px dashed #429E7D;
+    border-radius: 10px;
+    margin-bottom:2%;
+    margin-top:7%;
+  }
+.accordion {
+  background-color: #E8FAF4;
+  color: #177D5D;
+  cursor: pointer;
+      padding: 0px 0px 0px 16px;
+/*   padding: 18px; */
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.4s;
+  border-radius: 0px !important;
+  
+}
+
+.active, .accordion:hover {
+/*   background-color: #efefef; */
+}
+
+.accordion:after {
+  content: url(https://cdn.shopify.com/s/files/1/0477/0345/7956/files/down_20.png?v=1684866554);
+    /* color: #777; */
+    /* font-weight: bold; */
+    float: right;
+}
+
+.active:after {
+  content: url(https://cdn.shopify.com/s/files/1/0477/0345/7956/files/up__20.png?v=1684866969);
+}
+.section{
+      padding: 12px 18px 12px 18px;
+}
+.panel {
+      overflow: hidden;
+    background-color: #E8FAF4;
+    transition: max-height 0.2s ease-out;
+    box-shadow: none;
+  max-height:0px;
+  margin-bottom:0px;
+  border:none;
+}
+  .offers-accordion .about{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  @media only screen and (min-width: 767px) {
+    .offers-accordion{
+       width:100%;
+      padding:3%;
+    }
+  }
+</style>
+
+<div class="offers-accordion"> 
+<button class="accordion active"><img src="https://cdn.shopify.com/s/files/1/0477/0345/7956/files/Vector_13.png?v=1684333779" width=5% style="margin-top: -0.6%; margin-right:3%"/>
+  {% if request.locale.iso_code == 'de' %}
+  Verfügbare Angebote
+  {% else %}  
+  Available offers
+    {% endif %}
+</button>
+<div class="panel">
+  <div class="section acc-description">
+    <div class="about" style="font-size:16px"> 
+      <div style="font-weight:700">
+        {% if request.locale.iso_code == 'de' %}
+        KOSTENLOSE LIEFERUNG :
+          {% else %}
+        FREE DELIVERY : 
+          {% endif %}
+        <span style="font-weight:400">
+          {% if request.locale.iso_code == 'de' %}
+            🚚KOSTENLOSE LIEFERUNG bei Bestellungen über
+          {% else %}  
+             🚚FREE DELIVERY on orders 
+           {% endif %} 
+        <span>
+          {% if localization.available_countries.size > 1 %}
+            {% for rates in shop.metaobjects['shipping_rates']['shipping-rates-mkaje8fz']['shipping_rate'].value%}
+              {% if localization.country.name  contains rates.country %}
+                <span style="font-weight:700">{{ rates.shipping_rate }}</span>
+              {% endif %}
+            {% endfor %}
+    {% endif %}
+      </span>
+          {% if request.locale.iso_code == 'de' %}
+            zu erhalten
+          {% else %}
+            & above.
+          {% endif %}
+      <span style="display:none"> shipping for orders under 
+        <span >
+          {% if localization.available_countries.size > 1 %}
+  
+      {% if localization.country.name  contains 'Canada' %}
+        <span style="font-weight:700">$49.99.</span>
+      {% elsif localization.country.name  contains 'United Kingdom' %}
+         <span style="font-weight:700">£40.</span>
+      {% elsif localization.country.name  contains 'Australia' %}
+          <span style="font-weight:700">$60.</span>
+      {% elsif localization.country.name contains 'United States' %}
+          <span style="font-weight:700">$40.</span>
+      {% else %}
+          <span style="font-weight:700">$40.</span>
+      {% endif %}
+{% endif %}
+      </span>
+      </span>
+      </span></div>
+      <div style="font-weight:700">
+        {% if request.locale.iso_code == 'de' %}
+          20% Rabatt:
+        {% else %}
+        Flat 20% OFF : 
+          {% endif %}
+        <span style="font-weight:400">
+          {% if request.locale.iso_code == 'de' %}
+             Verwenden Sie den Code <span style="font-weight:700">'SHOP20'</span> um 20% Rabatt auf Bestellungen ab 
+          {% else %}
+          Use code <span style="font-weight:700">'SHOP20'</span> to get 20% OFF on orders 
+          {% endif %}  
+        <span>
+          {% if localization.available_countries.size > 1 %}
+  
+      {% if localization.country.name  contains 'Canada' %}
+        <span>$100.00 </span>
+      {% elsif localization.country.name  contains 'United Kingdom' %}
+         <span>£100.00 </span>
+      {% elsif localization.country.name  contains 'Australia' %}
+          <span>$100.00 </span>
+      {% elsif localization.country.name contains 'United States' %}
+          <span>$100</span>
+      {% else %}
+          <span>$100 </span>
+      {% endif %}
+{% endif %}
+      </span></span> <span style="font-weight:400;">
+        {% if request.locale.iso_code == 'de' %}
+          zu erhalten.
+        {% else %}
+        & above
+         {% endif %} 
+          </span></div>
+      {% if request.locale.iso_code == 'de' %}
+     <div style="font-weight:700">
+        FLAT 10% Rabatt : <span style="font-weight:400"> Benutzen Sie den Code <span style="font-weight:700">'FIRST10'</span> um 10% Rabatt auf Ihre ERSTE Bestellung zu erhalten</span></div>
+        {% else %}
+      <div style="font-weight:700">
+        FLAT 10% OFF : <span style="font-weight:400">Use code <span style="font-weight:700">'FIRST10'</span> to get 10% off on your FIRST order</span></div>
+       {% endif %} 
+        <!-- <div style="font-weight:700">Buy 1 Get any 1 FREE : <span style="font-weight:400"><a href="/pages/buy-one-get-one" style="color: #333333;text-decoration: underline !important;">Choose your products</a></span></div>  -->
+        <!-- <div style="font-weight:700">Buy 4 Pay for 2 : <span style="font-weight:400"><a href="/pages/buy-4-pay-for-2" style="color: #333333;text-decoration: underline !important;">Choose your products</a></span></div>  -->
+<!--       <div style="font-weight:700">Buy 4 Pay for 2 : <span style="font-weight:400">Applicable on all products</span></div> -->
+<!--        <div style="font-weight:700">Buy 2 @699 :<span style="font-weight:400;margin-left:10px"><a href="/pages/salaryday-699" style="color: #333333;text-decoration: underline;">Choose your products</a></span></div>  
+       <div style="font-weight:700">Buy 3 @999 :<span style="font-weight:400;margin-left:10px"><a href="/pages/salaryday-999" style="color: #333333;text-decoration: underline;">Choose your products</a></span>  </div> -->
+    </div> 
+  </div> 
+</div>
+
+
+</div>
+
+  
+<script>
+// var acc = document.getElementsByClassName("accordion");
+// var i;
+
+// for (i = 0; i < acc.length; i++) {
+//   acc[i].addEventListener("click", function() {
+//     this.classList.toggle("active");
+//     var panel = this.nextElementSibling;
+//     if (panel.style.maxHeight) {
+//       panel.style.maxHeight = null;
+//     } else {
+//       panel.style.maxHeight = panel.scrollHeight + "px";
+//     } 
+//   });
+// }
+  var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.maxHeight) {
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    } 
+  });
+
+  // Open the panels by default
+  acc[i].classList.add("active");
+  var panel = acc[i].nextElementSibling;
+  panel.style.maxHeight = panel.scrollHeight + "px";
+}
+</script>

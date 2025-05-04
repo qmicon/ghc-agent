@@ -1,0 +1,360 @@
+<!-- /sections/collection.liquid -->
+
+{%- assign grid_offset = '' -%}
+{%- assign products_count = collection.products_count -%}
+
+{%- case section.settings.grid_setting_large -%}
+  {%- when 1 -%}
+    {%- assign grid_width_large = 'large-up--one-whole' -%}
+  {%- when 2 -%}
+    {%- assign grid_width_large = 'large-up--one-half' -%}
+    {%- if products_count == 1 -%}
+      {%- assign grid_offset = 'large-up--push-one-quarter' -%}
+    {%- endif -%}
+  {%- when 3 -%}
+    {%- assign grid_width_large = 'large-up--one-third' -%}
+    {%- if products_count == 1 -%}
+      {%- assign grid_offset = 'large-up--push-one-third' -%}
+    {%- elsif products_count == 2 -%}
+      {%- assign grid_offset = 'large-up--push-one-sixth' -%}
+    {%- endif -%}
+  {%- when 4 -%}
+    {%- assign grid_width_large = 'large-up--one-quarter' -%}
+    {%- if products_count == 1 -%}
+      {%- assign grid_offset = 'large-up--push-three-eighths' -%}
+    {%- elsif products_count == 2 -%}
+      {%- assign grid_offset = 'large-up--push-one-quarter' -%}
+    {%- elsif products_count == 3 -%}
+      {%- assign grid_offset = 'large-up--push-one-eighth' -%}
+    {%- endif -%}
+  {%- when 5 -%}
+    {%- assign grid_width_large = 'large-up--one-fifth' -%}
+    {%- if products_count == 1 -%}
+      {%- assign grid_offset = 'large-up--push-two-fifths' -%}
+    {%- elsif products_count == 2 -%}
+      {%- assign grid_offset = 'large-up--push-three-tenths' -%}
+    {%- elsif products_count == 3 -%}
+      {%- assign grid_offset = 'large-up--push-one-fifth' -%}
+    {%- elsif products_count == 4 -%}
+      {%- assign grid_offset = 'large-up--push-one-tenth' -%}
+    {%- endif -%}
+  {%- when 6 -%}
+    {%- assign grid_width_large = 'large-up--one-sixth' -%}
+    {%- if products_count == 1 -%}
+      {%- assign grid_offset = 'large-up--push-five-twelfths' -%}
+    {%- elsif products_count == 2 -%}
+      {%- assign grid_offset = 'large-up--push-two-sixths' -%}
+    {%- elsif products_count == 3 -%}
+      {%- assign grid_offset = 'large-up--push-three-twelfths' -%}
+    {%- elsif products_count == 4 -%}
+      {%- assign grid_offset = 'large-up--push-one-sixth' -%}
+    {%- elsif products_count == 5 -%}
+      {%- assign grid_offset = 'large-up--push-one-twelfth' -%}
+    {%- endif -%}
+{%- endcase -%}
+
+{%- case section.settings.grid_setting_medium -%}
+  {%- when 1 -%}
+    {%- assign grid_width_medium = 'medium--one-whole' -%}
+  {%- when 2 -%}
+    {%- assign grid_width_medium = 'medium--one-half' -%}
+  {%- when 3 -%}
+    {%- assign grid_width_medium = 'medium--one-third' -%}
+  {%- when 4 -%}
+    {%- assign grid_width_medium = 'medium--one-quarter' -%}
+{%- endcase -%}
+
+{%- case section.settings.grid_setting_small -%}
+  {%- when 1 -%}
+    {%- assign grid_width_small = 'small-down--one-whole' -%}
+  {%- when 2 -%}
+    {%- assign grid_width_small = 'small-down--one-half' -%}
+  {%- when 3 -%}
+    {%- assign grid_width_small = 'small-down--one-third' -%}
+{%- endcase -%}
+
+{% capture grid_strings %} {{ grid_offset }} {{ grid_width_small }} {{ grid_width_medium }} {{ grid_width_large }} {% endcapture %}
+{%- assign excluded_collections_strict = settings.exclude_collections_strict | split: ',' -%}
+{%- assign excluded_collections = settings.exclude_collections_contain | split: ',' -%}
+
+{%- paginate collection.products by section.settings.pagination_count -%}
+
+  <div class="collection {{ section.settings.bg }}"
+    data-section-id="{{ section.id }}"
+    data-section-type="collection"
+    data-sort-enabled="{{ section.settings.collection_sorting }}"
+    style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;">
+    <div class="{{ section.settings.width }} section-padding">
+
+      {%- if section.settings.show_title -%}
+        {% render 'decos', direction: 'down' %}
+        <div class="title-decoration"></div>
+        <h1 class="title--decorated h3">{{ collection.title }}</h1>
+      {%- endif -%}
+
+      {%- if section.settings.show_collection_nav -%}
+        <ul class="inline-nav inline-nav--{{ section.settings.align_nav }}">
+          {% if section.settings.collection_custom_nav_list != blank %}
+            {% assign custom_nav_list = section.settings.collection_custom_nav_list | handleize %}
+            {% for link in linklists[custom_nav_list].links %}
+              <li {% if link.active %}class="inline-nav--active"{% endif %}>
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          {% elsif collections.size > 1 %}
+            {% for collection_link in collections %}
+              {%- assign skip_collection = false -%}
+
+              {%- for exclude in excluded_collections_strict -%}
+                {%- assign exclude_handle = exclude | handle -%}
+
+                {%- if exclude_handle == collection_link.handle -%}
+                  {%- assign skip_collection = true -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- for exclude in excluded_collections -%}
+                {%- assign exclude_handle = exclude | handle -%}
+
+                {%- if collection_link.handle contains exclude_handle -%}
+                  {%- assign skip_collection = true -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- unless skip_collection -%}
+                <li {% if collection.handle == collection_link.handle %}class="inline-nav--active"{% endif %}>
+                  <a href="{{ routes.collections_url }}/{{ collection_link.handle }}">{{ collection_link.title }}</a>
+                </li>
+              {%- endunless -%}
+            {% endfor %}
+          {% endif %}
+        </ul>
+      {% endif %}
+
+      {% if section.settings.filters %}
+        {%- render 'filters-active' -%}
+      {% endif %}
+
+      <div class="grid collection-contents" data-collection-sidebar>
+        {%- if section.settings.collection_sorting or section.settings.filters -%}
+          <div class="collection-filters__mobile-buttons medium-up--hide">
+            {%- if section.settings.filters -%}
+              <button type="button" class="filters__button" data-filters-toggle="filters-form">
+                {{ 'collections.sidebar.tags' | t }}
+
+                {%- assign filter_count = 0 -%}
+                {%- for filter in collection.filters -%}
+                  {%- assign filter_count = filter_count | plus: filter.active_values.size -%}
+                {%- endfor -%}
+                {%- if filter_count > 0 -%}
+                  <span class="filters__active-count">{{ filter_count }}</span>
+                {%- endif -%}
+              </button>
+            {%- endif -%}
+
+            {%- if section.settings.collection_sorting -%}
+              {%- render 'collection-sorting', class: 'filters__button', unique: 'mobile' -%}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {% if section.settings.collection_sorting or section.settings.filters %}
+          <div class="grid__item large-up--one-quarter medium-up--one-third collection-filters" id="collectionFilters">
+            {%- if section.settings.collection_sorting -%}
+              {%- render 'collection-sorting' class: 'small-down--hide', unique: 'desktop' -%}
+            {%- endif -%}
+
+            {%- if section.settings.filters -%}
+              {%- render 'filters' -%}
+            {%- endif -%}
+          </div>
+        {% endif %}
+
+        {% if section.settings.collection_sorting or section.settings.filters %}
+          <div class="grid__item large-up--three-quarters medium-up--two-thirds">
+        {% else  %}
+          <div class="grid__item one-whole">
+        {% endif %}
+
+          <div class="grid grid--uniform">
+            {% for product in collection.products %}
+              {% render 'product-grid-item', product: product, grid_strings: grid_strings %}
+            {% else %}
+              <div class="grid__item">
+                <p>{{ 'collections.general.no_matches' | t }}</p>
+
+                {% if collection.products_count == 0 and collection.filters.size > 0 %}
+                  {% assign sort_by_string = '' %}
+
+                  {% if collection.sort_by != blank %}
+                    {% assign sort_by_string = '?sort_by=' | append: collection.sort_by %}
+                  {% endif -%}
+
+                  <a class="btn caps btn--primary" href="{{ collection.url | append: sort_by_string }}"><span>{{ 'collections.general.reset' | t }}</span></a>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+          {% if paginate.pages > 1 %}
+            <hr>
+            <div class="text-center">
+              {% render 'pagination', paginate: paginate %}
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endpaginate %}
+
+<script>
+  window.theme = window.theme || {};
+  theme.collectionStrings = {
+    sortBy: '{{ collection.sort_by | default: collection.default_sort_by }}'
+  }
+</script>
+
+
+{% schema %}
+{
+  "name": "Collection page",
+  "settings": [
+    {
+      "type": "select",
+      "id": "bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        { "value": "palette--light bg--neutral", "label": "Default" },
+        { "value": "palette--light bg--accent", "label": "Light" },
+        { "value": "palette--dark bg--invert", "label": "Dark" },
+        { "value": "palette--dark bg--invert--accent", "label": "Dark accent" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Products per page"
+    },
+    {
+      "type": "range",
+      "id": "pagination_count",
+      "min": 3,
+      "max": 50,
+      "step": 1,
+      "label": "Products per page",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Products per row"
+    },
+    {
+      "type":    "range",
+      "id":      "grid_setting_large",
+      "min":     1,
+      "max":     6,
+      "step":    1,
+      "label":   "Desktop",
+      "default": 3
+    },
+    {
+      "type":    "range",
+      "id":      "grid_setting_medium",
+      "min":     1,
+      "max":     4,
+      "step":    1,
+      "label":   "Tablet",
+      "default": 2
+    },
+    {
+      "type":    "range",
+      "id":      "grid_setting_small",
+      "min":     1,
+      "max":     3,
+      "step":    1,
+      "label":   "Mobile",
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Collection navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_nav",
+      "default": true,
+      "label": "Show collection navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "collection_custom_nav_list",
+      "label": "Replace collection list with custom menu",
+      "info": "If no menu is selected all collections will show"
+    },
+    {
+      "type": "select",
+      "id": "align_nav",
+      "label": "Position",
+      "options": [
+        { "value": "inline-nav", "label": "Left"},
+        { "value": "inline-nav inline-nav--center", "label": "Center"}
+      ],
+      "default": "inline-nav"
+    },
+    {
+      "type": "header",
+      "content": "Collection sidebar"
+    },
+    {
+      "type": "checkbox",
+      "id": "collection_sorting",
+      "default": true,
+      "label": "Show collection sort options"
+    },
+    {
+      "type": "checkbox",
+      "id": "filters",
+      "default": true,
+      "label": "Enable filters"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Section width",
+      "default": "wrapper",
+      "options": [
+        { "value": "wrapper--none", "label": "Full width" },
+        { "value": "wrapper--full", "label": "Full width padded" },
+        { "value": "wrapper", "label": "Page width" },
+        { "value": "wrapper--narrow", "label": "Page width narrow" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 64
+    }
+  ]
+}
+{% endschema %}

@@ -211,7 +211,18 @@ async def generate_offer_plan(shopify_url):
     6. When you need to retrieve the first item from a filtered collection, use the first filter instead of combining where with limit.
     7. Range settings in the section schema must have at least 3 steps, which means the difference between the min and max value should be at least 3 times the step value.
 
-    Here are some examples of how the code developed by shopify developers looks like, this is just for your reference and should not be used as a template:
+    Below are some examples of how the code developed by shopify developers looks like, it has two types of examples:
+    1. OFFER PAGE IMPLEMENTATION CODE EXAMPLES: Complete implementation examples from similar offer pages, showing the structure and patterns used in production.
+    2. RELEVANT CODE EXAMPLES FOR UI COMPONENTS: Reusable UI components and patterns that can be adapted for the offer requirements.
+
+    Use these examples as reference for:
+    - File structure and organization
+    - Component architecture and patterns
+    - Implementation approaches
+    - Best practices for Shopify theme development
+
+    Do not copy the examples directly - instead, understand the patterns and adapt them to the mentioned requirements.
+
     {examples}
     """
 

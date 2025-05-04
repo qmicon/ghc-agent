@@ -1,0 +1,38 @@
+{% if product.tags contains 'no-trustmarker' %}
+{% else %}
+  <div class="trust-markers">
+    <img src="https://cdn.shopify.com/s/files/1/0632/5439/7077/files/Frame_1618872822_1.jpg?v=1736326985">
+    <img src="https://cdn.shopify.com/s/files/1/0632/5439/7077/files/Frame_1618872821_1.jpg?v=1736326985">
+    <img src="https://cdn.shopify.com/s/files/1/0632/5439/7077/files/Frame_1618872823_2.jpg?v=1736328234">
+    <img src="https://cdn.shopify.com/s/files/1/0632/5439/7077/files/Frame_1618872824_2.jpg?v=1736328233">
+
+    <img src="https://cdn.shopify.com/s/files/1/0632/5439/7077/files/Frame_1618872807_2.jpg?v=1737457392">
+  </div>
+{% endif %}
+
+<style>
+  .trust-markers{
+    display:flex;
+    margin: 10px 0px 15px -20px !important;
+  }
+  .trust-markers img{
+      width:20%;
+    height:auto;
+  }
+  @media screen and (max-width: 747px) {
+      .trust-markers{
+      margin: 10px 0px 15px -15px !important;
+    }
+    {% if product.tags contains 'no-trustpilot' %}
+           .trust-markers img{
+              width:70px;
+              height:auto;
+            }
+      {% else %}
+          .trust-markers img{
+              width:75px;
+              height:auto;
+            }
+      {% endif %}
+  }
+</style>

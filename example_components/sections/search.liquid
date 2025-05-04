@@ -1,0 +1,235 @@
+<!-- /templates/search.liquid -->
+
+{%- liquid
+  assign has_filters = false
+  if search.filters != empty and section.settings.show_filters
+    assign has_filters = true
+  endif
+-%}
+
+{% paginate search.results by section.settings.pagination_count %}
+  <div
+    class="section-search {{ section.settings.color_bg }}"
+    data-section-type="search-page"
+    data-section-id="{{ section.id }}"
+    style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+  >
+    <div class="{{ section.settings.width }} section-padding">
+      <h1 class="h4--body">
+        {% if search.performed %}
+          {% if search.results_count == 0 %}
+            {{ 'general.search.no_results_html' | t: terms: search.terms }}
+          {% else %}
+            {{ 'general.search.results_for_html' | t: terms: search.terms }}
+          {% endif %}
+        {% else %}
+          {{ 'general.search.title' | t }}
+        {% endif %}
+      </h1>
+
+      <main-search>
+        <form action="{{ routes.search_url }}" method="get" role="search" class="form--search">
+          <label for="Search" class="label-hidden">
+            {{ 'general.search.placeholder' | t }}
+          </label>
+          <div class="input-group">
+            <input
+              type="search"
+              class="input-group-field"
+              name="q"
+              id="Search"
+              value="{{ search.terms | escape }}"
+              placeholder="{{ 'general.search.placeholder' | t }}"
+            >
+
+            <button type="reset" class="search-reset{% if search.terms == blank %} is-hidden{% endif %}" aria-label="{{ 'general.search.reset' | t }}">
+              {{- 'general.search.clear' | t -}}
+            </button>
+
+            <span class="input-group-btn">
+              <button type="submit" class="btn--soft btn--secondary">
+                {% render 'icon-search' %}
+                <span class="icon-fallback-text">{{ 'general.search.submit' | t }}</span>
+              </button>
+            </span>
+          </div>
+        </form>
+      </main-search>
+
+      {% if search.performed %}
+        {% if has_filters %}
+          {%- render 'filters-active', filters: search.filters, filter_search: true -%}
+        {% endif %}
+
+        <div class="margin-top-vertical {% if has_filters or section.settings.sorting %} grid collection-contents{% endif %}">
+          {% capture search_results %}
+            {% for item in search.results %}
+              <div class="search__item__generic">
+                {% if item.image or item.featured_media.preview_image %}
+                  {% assign featured_image = item.featured_media.preview_image | default: item.image %}
+                  {%- assign featured_image_api = featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+                  <div class="search__item__generic__image">
+                    <div>
+                      <a href="{{ item.url }}" title="{{ item.title | escape }}">
+                        <img class="lazyload fade-in"
+                          alt="{{ featured_image.alt | default: item.title | strip_html | escape }}"
+                          data-src="{{ featured_image_api }}"
+                          data-widths="[40, 70, 140, 180, 360, 540]"
+                          data-aspectratio="{{ featured_image.aspect_ratio }}"
+                          data-sizes="auto"/>
+                      </a>
+                      <noscript>
+                        <img src="{{ featured_image | img_url: '70x' }}" alt="{{ item.featured_media.preview_image.alt | default: item.title | strip_html | escape }}">
+                      </noscript>
+                    </div>
+                  </div>
+
+
+                {% endif %}
+                <div class="search__item__generic__text">
+                  <p class="search__item__generic__title">
+                    {{ item.title | strip_html | escape | link_to: item.url }}
+                  </p>
+
+                  {% if item.object_type == 'product' %}
+                    <p class="h5--accent">
+                      <span {% if item.compare_at_price > item.price %} class="on-sale money"{% endif %}>
+                        {%- if settings.currency_code_enable -%}
+                          {{ item.price | money_with_currency }}
+                        {%- else -%}
+                          {{ item.price | money }}
+                        {%- endif -%}
+                      </span>
+
+                      {%- if item.compare_at_price > item.price -%}
+                        <s>
+                          {%- if settings.currency_code_enable -%}
+                            {{ item.compare_at_price | money_with_currency }}
+                          {%- else -%}
+                            {{ item.compare_at_price | money }}
+                          {%- endif -%}
+                        </s>
+                      {%- endif -%}
+                    </p>
+
+                    {%- if settings.product_grid_show_rating and item.metafields.reviews.rating.value != blank -%}
+                      <div class="rating__wrapper__search">
+                        {% render 'product-rating', product: item, show_rating_count: settings.product_grid_show_rating_count %}
+                      </div>
+                    {%- endif -%}
+                  {% endif %}
+
+                </div>
+              </div>
+
+              {% unless forloop.last %}<hr>{% endunless %}
+            {% endfor %}
+          {% endcapture %}
+
+          {% if has_filters or section.settings.sorting %}
+            <div class="grid__item large-up--one-quarter medium-up--one-third collection-filters" id="collectionFilters">
+              {%- if section.settings.sorting -%}
+                {%- render 'collection-sorting', class: 'small-down--hide', unique: 'desktop' -%}
+              {%- endif -%}
+
+              {%- if has_filters -%}
+                {%- render 'filters', filters: search.filters, filter_search: true -%}
+              {%- endif -%}
+            </div>
+
+            <div class="grid__item large-up--three-quarters medium-up--two-thirds">
+              {{ search_results }}
+            </div>
+          {% else %}
+            {{ search_results }}
+          {% endif %}
+        </div>
+
+        {% if paginate.pages > 1 %}
+          <div class="margin-top-vertical">{% render 'pagination', paginate: paginate %}</div>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Search",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Search"
+    },
+    {
+      "type": "checkbox",
+      "id": "sorting",
+      "default": true,
+      "label": "Show sort options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "default": true,
+      "label": "Show product filters"
+    },
+    {
+      "type": "range",
+      "id": "pagination_count",
+      "min": 3,
+      "max": 50,
+      "step": 1,
+      "label": "Results per page",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

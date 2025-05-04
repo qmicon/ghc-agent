@@ -1,0 +1,157 @@
+<!-- /sections/page-default.liquid -->
+
+{%- assign page_nav = linklists[section.settings.page_nav] -%}
+
+{%- assign page_nav_enable = false -%}
+{%- if page_nav.links.size > 0 -%}
+  {%- assign page_nav_enable = true -%}
+{%- endif -%}
+
+{%- assign page_grid = 'one-whole' -%}
+
+{%- if page_nav_enable %}
+  {%- assign page_grid = 'medium-up--three-quarters' -%}
+{%- endif -%}
+
+<div
+  class="section-default-page {{ section.settings.bg }} {{ section.settings.alignment }}"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <div class="grid">
+      <div class="grid__item one-whole">
+        {%- if section.settings.show_title -%}
+          {% render 'decos', direction: 'down' %}
+          <div class="title-decoration"></div>
+          <h1 class="title--decorated h3">{{ page.title | escape }}</h1>
+        {%- endif -%}
+      </div>
+
+      {%- if page_nav_enable -%}
+        <div class="grid__item medium-up--hide">
+          <ul class="inline-nav">
+            {% for link in page_nav.links %}
+              <li
+                {% if link.active %}
+                  class="inline-nav--active"
+                {% endif %}
+              >
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="grid__item medium-up--one-quarter">
+          <ul class="vertical-nav small-down--hide">
+            {% for link in page_nav.links %}
+              <li
+                {% if link.active %}
+                  class="vertical-nav--active"
+                {% endif %}
+              >
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <div class="grid__item {{ page_grid }}">
+        {% if section.settings.show_content %}
+          <div class="rte">
+            {{ page.content }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show page title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_content",
+      "label": "Show page content",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Text alignment",
+      "options": [
+        {"value": "text-left", "label": "Left"},
+        {"value": "text-center", "label": "Center"},
+        {"value": "text-right", "label": "Right"}
+      ],
+      "default": "text-left"
+    },
+    {
+      "type": "link_list",
+      "id": "page_nav",
+      "label": "Secondary page navigation",
+      "info": "This menu won't show dropdown items"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

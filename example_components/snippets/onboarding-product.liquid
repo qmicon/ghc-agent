@@ -1,0 +1,49 @@
+<!-- /snippets/onboarding-product.liquid -->
+
+{% comment %}
+  Renders an empty product
+
+  Accepts:
+  - section: {Object} section contianer with settings and blocks (optional)
+
+  Usage:
+  {% render 'onboarding-product', section: section %}
+{% endcomment %}
+
+<div class="{{ section.settings.width }} section-padding">
+  <div class="grid">
+    <div class="grid__item medium-up--one-half">
+      <div class="product__slides product-single__photos">
+        <div class="product__photo">
+          {{ 'product-5' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      </div>
+    </div>
+    <div class="grid__item medium-up--one-half">
+      <div class="product__title__wrapper">
+        <h3 class="product__title">{{ 'homepage.onboarding.product_title' | t }}</h3>
+      </div>
+
+      <div class="product__price__wrap">
+        <div class="product__price h5--accent">
+          <span>
+            {% if settings.currency_code_enable %}
+              {{ '1999' | money_with_currency }}
+            {% else %}
+              {{ '1999' | money }}
+            {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <div class="product__form">
+        <button class="btn btn--large" disabled>
+          <span>{{ 'products.product.add_to_cart' | t }}</span>
+        </button>
+      </div>
+      <div class="product__description rte">
+        {{ 'homepage.onboarding.no_content' | t }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div data-api-content>
+  <div class="upsell-product" data-upsell-product>
+    <div
+      class="upsell-product__slideshow"
+      {% if product.media.size > 1 %}
+        data-product-slideshow data-options='{"prevNextButtons": false, "pageDots": false, "adaptiveHeight": false, "wrapAround": true, "contain": true, "fade": false}'
+      {% endif %}
+    >
+      {%- if product.media.size > 0 -%}
+        {% for media in product.media %}
+          {% render 'media', media: media, section: section, aspect_ratio: settings.product_grid_aspect_ratio %}
+        {% endfor %}
+
+        {% assign first_3d_model = product.media | where: 'media_type', 'model' | first %}
+        {% if first_3d_model %}
+          <button
+            class="btn btn--ar uppercase"
+            data-shopify-xr
+            data-shopify-model3d-id="{{ first_3d_model.id }}"
+            data-shopify-title="{{ product.title | strip_html | escape }}"
+            data-shopify-xr-hidden
+          >
+            {% render 'icon-media-model' %}
+            <span>{{ 'products.product.view_in_space' | t }}</span>
+          </button>
+        {% endif %}
+      {%- endif -%}
+    </div>
+
+    <div class="upsell-product__info">
+      <div class="upsell-product__title-price">
+        {%- render 'product-title', product: product, block: block -%}
+        {%- render 'product-price', product: product, block: block -%}
+      </div>
+
+      {%- render 'product-form', product: product, block: block, enable_popup_trigger: true -%}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<!-- /snippets/article-column-item.liquid -->
+
+{% comment %}
+  Renders list of articles in sidebar
+
+  Accepts:
+  - article: {Object} currenct collection
+
+  Usage:
+  {% render 'article-column-item', article: article, show_meta: show_meta %}
+{% endcomment %}
+
+<a href="{{ article.url }}" class="article__card--small">
+  {% if article.image %}
+    <div class="article__card__image__wrapper--small">
+      <div class="article__card__image--small lazyload" data-bgset="{% render 'bgset', image: article.image %}"></div>
+    </div>
+  {% endif %}
+  <div class="article__card__contents--small">
+    <p class="h6--body article__card__title--small">{{ article.title }}</p>
+    {%- if show_meta -%}
+      <span class="meta--light">{{ article.author }}</span>
+    {%- endif -%}
+  </div>
+</a>

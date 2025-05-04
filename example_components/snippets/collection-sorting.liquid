@@ -1,0 +1,59 @@
+<!-- /snippets/collection-sorting.liquid -->
+
+{% comment %}
+  Renders a sorting dropdown for a collection
+
+  Accepts:
+  - collection: {Object} currenct collection
+
+  Usage:
+  {%- render 'collection-sorting' collection: collection -%}
+{% endcomment %}
+
+{%- assign sort_options = search.sort_options | default: collection.sort_options -%}
+{%- assign sort_by = search.sort_by | default: collection.sort_by -%}
+{%- assign sort_translation = 'collections.sorting.title' | t -%}
+{%- assign currently_selected = sort_options | where: 'value', sort_by | first -%}
+
+<div class="popout--sort">
+  <h2 class="visually-hidden" id="sort-heading-{{ unique }}">
+    {{ sort_translation }}
+  </h2>
+  <popout-select>
+    <div class="popout" data-sort-enabled data-popout>
+      <button
+        type="button"
+        class="popout__toggle {{ class }}"
+        aria-expanded="false"
+        aria-controls="sort-list-{{ unique }}"
+        aria-describedby="sort-heading-{{ unique }}"
+        data-popout-toggle
+      >
+        {{ currently_selected.name | default: sort_translation }}
+
+        {% render 'icon-arrow-medium-right' %}
+      </button>
+      <ul id="sort-list-{{ unique }}" class="popout-list" data-popout-list data-scroll-lock-scrollable>
+        {% for option in sort_options %}
+          {% assign active = false %}
+          {%- if sort_by.name contains option.name -%}
+            {% assign active = true %}
+          {%- endif -%}
+          <li class="popout-list__item {% if active %}popout-list__item--current{% endif %}">
+            <a
+              class="popout-list__option"
+              data-value="{{ option.value }}"
+              href="#"
+              {% if active %}
+                aria-current="true"
+              {% endif %}
+              data-sort-link
+            >
+              <span>{{ option.name }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </popout-select>
+</div>

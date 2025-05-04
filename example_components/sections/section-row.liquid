@@ -1,0 +1,257 @@
+<!-- /sections/section-row.liquid -->
+{%- liquid
+  capture shape_class
+    case section.settings.shape
+      when 'none'
+        echo ''
+      when 'circle'
+        echo ' image-shape-circle'
+      when 'keyhole'
+        echo ' image-shape-keyhole'
+      when 'blob-one'
+        echo ' image-shape-blob-one'
+      when 'blob-two'
+        echo ' image-shape-blob-two'
+      when 'blob-three'
+        echo ' image-shape-blob-three'
+      when 'blob-four'
+        echo ' image-shape-blob-four'
+    endcase
+  endcapture
+-%}
+
+<div
+  class="section-row {{ section.settings.color_bg }}"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    {% capture image_layout %}
+      <div class="overlap__item overlap__image{{ shape_class }}">
+        {% if section.settings.image != blank %}
+          {%- render 'image-fill', img_object: section.settings.image, aspect_ratio: section.settings.aspect_ratio -%}
+        {% else %}
+          <span class="image__fill fade-in-image" style="padding-top: {{ section.settings.aspect_ratio | times: 100 }}%;">
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          </span>
+        {% endif %}
+      </div>
+    {% endcapture %}
+
+    <div class="overlap">
+      {% if section.settings.layout == 'left' %}
+        {{ image_layout }}
+      {% endif %}
+
+      <div class="overlap__item overlap__text {{ section.settings.color_text_bg }}">
+        <div class="overlap__content__wrapper">
+          {% if section.settings.title != blank %}
+            {% assign heading_size_class = section.settings.text_size | prepend: 'heading-size-' %}
+            <h2 class="{{ heading_size_class }}">{{ section.settings.title | escape }}</h2>
+          {% endif %}
+          {% if section.settings.text != blank %}
+            <div class="rte-setting section--rte overlap__rte">{{ section.settings.text }}</div>
+          {% endif %}
+          {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+            <a href="{{ section.settings.button_link }}" class="overlap__button {{ section.settings.button_style }} {{ section.settings.button_color }}">
+              {{ section.settings.button_label | escape }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if section.settings.layout == 'right' %}
+        {{ image_layout }}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "class": "section-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "shape",
+      "label": "Image shape",
+      "default": "none",
+      "info": "1:1 aspect ratio recommended",
+      "options": [
+        {"value": "none", "label": "None"},
+        {"value": "circle", "label": "Circle"},
+        {"value": "keyhole", "label": "Keyhole"},
+        {"value": "blob-one", "label": "Blob 1"},
+        {"value": "blob-two", "label": "Blob 2"},
+        {"value": "blob-three", "label": "Blob 3"},
+        {"value": "blob-four", "label": "Blob 4"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "aspect_ratio",
+      "min": 0.5,
+      "max": 1.5,
+      "step": 0.1,
+      "unit": ":1",
+      "label": "Photo aspect ratio",
+      "info": "Wide to tall",
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Image placement",
+      "default": "left",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "right", "label": "Right"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Image with text"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 1,
+      "max": 15,
+      "step": 1,
+      "default": 7
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Pair large text with an image to give focus to your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>"
+    },
+    {
+      "type": "select",
+      "id": "color_text_bg",
+      "label": "Background color",
+      "default": "palette--light bg--accent",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "default": "btn",
+      "options": [
+        {"value": "btn", "label": "Solid button"},
+        {"value": "btn--soft", "label": "Soft button"},
+        {"value": "btn--outline", "label": "Outlined button"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "button_color",
+      "label": "Color",
+      "default": "btn--neutral",
+      "options": [
+        {"value": "btn--primary", "label": "Primary accent"},
+        {"value": "btn--secondary", "label": "Secondary accent"},
+        {"value": "btn--neutral", "label": "Text color"},
+        {"value": "btn--black", "label": "Black"},
+        {"value": "btn--white", "label": "White"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text",
+      "category": "Image"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

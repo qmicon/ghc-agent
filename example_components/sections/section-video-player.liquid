@@ -1,0 +1,614 @@
+<!-- /sections/section-video-player.liquid -->
+
+{%- assign video_on_play_id = '' -%}
+{%- assign video_image_hide = true -%}
+{%- assign video_bg_show = false -%}
+{%- assign video_autoplay = true -%}
+{%- assign video_loop = true -%}
+{%- assign video_button_html = '' -%}
+{%- assign hide_text_wrapper = false -%}
+{%- assign show_background_html = false -%}
+{%- assign show_content_padding_top = false -%}
+
+{%- if section.settings.video_link_bg != blank -%}
+  {%- assign video_link_bg_downcase = section.settings.video_link_bg | downcase -%}
+  {%- if video_link_bg_downcase contains '.mp4' -%}
+    {%- assign video_bg_show = true -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if section.settings.show_image_placeholder -%}
+  {%- assign video_image_hide = false -%}
+  {%- assign video_loop = false -%}
+{%- else -%}
+  {%- assign video_autoplay = false -%}
+{%- endif -%}
+
+{%- if section.settings.video_link != blank -%}
+  {%- assign video_on_play_id = section.settings.video_link.id -%}
+
+  {%- capture video_button_html -%}
+    <div class="video__play--set {{ section.settings.button_color }}{% if video_image_hide %} hide{% endif %}" style="--PLAY-WIDTH: {{ section.settings.button_width }}px">
+      {% render 'video-popup', video: section.settings.video_link, unique: section.id, autoplay: video_autoplay, loop: video_loop %}
+    </div>
+  {%- endcapture -%}
+{%- endif -%}
+
+{%- if section.blocks.size < 1 and video_image_hide -%}
+  {%- assign hide_text_wrapper = true -%}
+{%- elsif section.blocks.size < 1 and video_image_hide != true and video_on_play_id == '' -%}
+  {%- assign hide_text_wrapper = true -%}
+{%- endif -%}
+
+{%- if video_image_hide != true -%}
+  {%- assign show_background_html = true -%}
+{%- elsif video_image_hide and section.blocks.size < 1 and video_on_play_id == '' -%}
+  {%- assign show_background_html = true -%}
+{%- endif -%}
+
+{%- if video_image_hide and section.blocks.size < 1 and video_bg_show -%}
+  {%- assign show_content_padding_top = true -%}
+{%- endif -%}
+
+<section
+  class="section-video {% if video_image_hide %}section-video--not-background{% else %}section-video--with-background{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="video-player"
+  {% if video_image_hide %}
+    data-section-video-onload
+  {% endif %}
+  {% if section.settings.width == 'wrapper--none' and section.settings.padding_top == 0 %}
+    data-overlay-header
+  {% endif %}
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding {{ section.settings.flex_align }}">
+    <div class="video__player__inner">
+      {%- if video_on_play_id != '' -%}
+        <div class="video-holder">
+          <div class="video-wrapper" data-player="{{ video_on_play_id }}-{{ section.id }}" style="--VIDEO-ASPECT-RATIO: {{ section.settings.ratio | times: 100 }}%">
+            <div data-video-id="{{ video_on_play_id }}"></div>
+            <div data-replace></div>
+          </div>
+        </div>
+
+        {%- if video_image_hide -%}
+          {{ video_button_html }}
+        {%- endif -%}
+      {%- endif -%}
+
+      <div
+        class="section--image{% if show_content_padding_top %} section--image-empty{% endif %} fade-in-child js-overflow-container use_image{% if hide_text_wrapper and show_background_html != true %} hide{% endif %}"
+        {% if video_bg_show %}
+          {% if section.settings.image != blank %}
+            style="padding-top: {{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%;"
+          {% elsif video_image_hide != true or show_content_padding_top %}
+            style="padding-top: {{ section.settings.ratio | times: 100 }}%;"
+          {% endif %}
+        {% endif %}
+      >
+        <div class="hero__content__wrapper {{ section.settings.flex_align }}{% if hide_text_wrapper %} hide{% endif %}">
+          <div class="hero__content {{ section.settings.color_bg }} js-overflow-content">
+            <div class="text__standard {{ section.settings.color }} {{ section.settings.align_text }}">
+              {% for block in section.blocks %}
+                {% case block.type %}
+                  {% when 'kicker' %}
+                    {% assign font_size_class = block.settings.text_size | prepend: 'body-size-' %}
+                    {% assign caps_class = block.settings.enable_caps | prepend: 'caps-' %}
+                    <div class="standard__kicker hero__kicker {{ font_size_class }} {{ caps_class }}" {{ block.shopify_attributes }}>{{ block.settings.kicker }}</div>
+                  {% when 'heading' %}
+                    {% assign heading_size_class = block.settings.text_size | prepend: 'heading-size-' %}
+                    <div class="standard__heading hero__title h1 {{ heading_size_class }}" {{ block.shopify_attributes }}>{{ block.settings.heading }}</div>
+                  {% when 'text' %}
+                    {% assign font_size_class = block.settings.text_size | prepend: 'body-size-' %}
+                    {% assign text_columns_class = block.settings.text_columns | prepend: 'columns--' %}
+                    <div class="standard__rte hero__description h5--body {{ font_size_class }} {{ text_columns_class }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+                  {% when 'button' %}
+                    <a
+                      href="{{ block.settings.button_url }}"
+                      {{ block.shopify_attributes }}
+                      class="standard__cta hero__btn {{ block.settings.button_style }} {{ block.settings.button_size }} {{ block.settings.button_color }}"
+                    >
+                      {{ block.settings.button_text }}
+                    </a>
+                  {% when 'icon' %}
+                    <div class="standard__icon" {{ block.shopify_attributes }} style="--stroke: {{ block.settings.icon_color }};">
+                      {%- render 'icons', filename: block.settings.icon_name -%}
+                    </div>
+                  {% when 'image' %}
+                    <div class="standard__image" {{ block.shopify_attributes }} style="width: {{ block.settings.image_max_limit | append: 'px' }}; max-width: 100%;">
+                      {%- if block.settings.image_link != blank -%}<a href="{{ block.settings.image_link }}">{%- endif -%}
+                      {%- if block.settings.image != blank -%}
+                        <img
+                          loading="lazy"
+                          width="{{ block.settings.image.width }}"
+                          height="{{ block.settings.image.height }}"
+                          alt="{{ block.settings.image.alt | strip_html | escape }}"
+                          src="{{ block.settings.image | image_url: '540x540' }}"
+                          srcset="
+                            {% if block.settings.image.width < 90 %}{{ block.settings.image | img_url }} {{ block.settings.image.width }}w,{% endif %}
+                            {% if block.settings.image.width >= 90 %}{{ block.settings.image | img_url: '90x' }} 90w,{% endif %}
+                            {% if block.settings.image.width >= 180 %}{{ block.settings.image | img_url: '180x' }} 180w,{% endif %}
+                            {% if block.settings.image.width >= 360 %}{{ block.settings.image | img_url: '360x' }} 360w,{% endif %}
+                            {% if block.settings.image.width >= 540 %}{{ block.settings.image | img_url: '540x' }} 5400w,{% endif %}
+                            {% if block.settings.image.width >= 720 %}{{ block.settings.image | img_url: '720x' }} 720w,{% endif %}
+                            {% if block.settings.image.width >= 1080 %}{{ block.settings.image | img_url: '1080x' }} 1080w,{% endif %}
+                            {% if block.settings.image.width >= 1440 %}{{ block.settings.image | img_url: '1440x' }} 1440w,{% endif %}
+                            {% if block.settings.image.width >= 1980 %}{{ block.settings.image | img_url: '1980x' }} 1980w{% endif %}
+                          "
+                          sizes="
+                            (min-width: 768px), 90vw,
+                            100vw
+                          "
+                        >
+                      {%- else -%}
+                        {{ 'logo' | placeholder_svg_tag: 'placeholder-svg' }}
+                      {%- endif -%}
+                      {%- if block.settings.image_link != blank -%}</a>{%- endif -%}
+                    </div>
+                {% endcase %}
+              {% endfor %}
+
+              {% if video_button_html != '' and video_image_hide != true %}
+                {{ video_button_html }}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        {%- if show_background_html -%}
+          <div class="image-overlay" style="--bg:{{ section.settings.overlay_color }}; opacity:{{ section.settings.overlay_opacity | times: 0.01 }};"></div>
+
+          {%- if video_bg_show -%}
+            <div class="video-background-wrapper">
+              <video
+                data-background-video
+                {% if section.settings.image != blank %}
+                  poster="{{ section.settings.image.src | img_url: '720x' }}"
+                {% endif %}
+                style="object-position: {{ section.settings.object_position | replace: '-', ' ' }};"
+                playsinline
+                autoplay
+                loop
+                muted
+              >
+                <source src="{{ section.settings.video_link_bg }}" type="video/mp4">
+              </video>
+            </div>
+          {%- else -%}
+            {% render 'image-fill', img_object: section.settings.image.src, aspect_ratio: section.settings.ratio %}
+          {% endif %}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Video player",
+  "settings": [
+    {
+      "type": "video_url",
+      "id": "video_link",
+      "label": "Video link",
+      "accept": ["youtube", "vimeo"],
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+    },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "Video aspect ratio",
+      "default": "0.5626",
+      "options": [
+        {"value": "0.5626", "label": "Horizontal 16:9"},
+        {"value": "1.7777", "label": "Vertical 9:16"},
+        {"value": "0.75", "label": "Horizontal 4:3"},
+        {"value": "1.3333", "label": "Vertical 3:4"},
+        {"value": "0.6666", "label": "Horizontal 3:2"},
+        {"value": "1.50", "label": "Vertical 2:3"},
+        {"value": "0.50", "label": "Horizontal 2:1"},
+        {"value": "2.00", "label": "Vertical 1:2"},
+        {"value": "1.00", "label": "Square 1:1"}
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image_placeholder",
+      "label": "Show placeholders",
+      "info": "Placeholder images delay the need to load the YouTube player. They can speed up the inital page load.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Placeholder button"
+    },
+    {
+      "type": "range",
+      "id": "button_width",
+      "label": "Play button width",
+      "min": 20,
+      "max": 200,
+      "step": 2,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "button_color",
+      "label": "Color",
+      "default": "text--primary",
+      "options": [
+        {"value": "text--neutral", "label": "Normal text"},
+        {"value": "text--white", "label": "White"},
+        {"value": "text--primary", "label": "Primary accent"},
+        {"value": "text--secondary", "label": "Secondary accent"},
+        {"value": "text--black", "label": "Black"},
+        {"value": "text--invert--primary", "label": "Primary dark accent"},
+        {"value": "text--invert--secondary", "label": "Secondary dark accent"},
+        {"value": "text--invert", "label": "Inverted text color"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Placeholder Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "label": "Image overlay opacity",
+      "info": "Increase contrast for legible text.",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000"
+    },
+    {
+      "type": "header",
+      "content": "Placeholder background video"
+    },
+    {
+      "type": "text",
+      "id": "video_link_bg",
+      "label": "Video background link",
+      "info": "MP4 video link from [files](/admin/settings/files)."
+    },
+    {
+      "type": "select",
+      "id": "object_position",
+      "label": "Background video position",
+      "default": "center-center",
+      "options": [
+        {"label": "Top", "value": "center-top"},
+        {"label": "Right", "value": "right-center"},
+        {"label": "Center", "value": "center-center"},
+        {"label": "Left", "value": "left-center"},
+        {"label": "Bottom", "value": "center-bottom"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Block content"
+    },
+    {
+      "type": "select",
+      "id": "flex_align",
+      "label": "Alignment",
+      "default": "align--top-center",
+      "options": [
+        {"value": "align--top-left", "label": "Top left"},
+        {"value": "align--top-center", "label": "Top center"},
+        {"value": "align--top-right", "label": "Top right"},
+        {"value": "align--middle-left", "label": "Middle left"},
+        {"value": "align--middle-center", "label": "Absolute center"},
+        {"value": "align--middle-right", "label": "Middle right"},
+        {"value": "align--bottom-left", "label": "Bottom left"},
+        {"value": "align--bottom-center", "label": "Bottom center"},
+        {"value": "align--bottom-right", "label": "Bottom right"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "color",
+      "label": "Text color",
+      "default": "text--neutral",
+      "options": [
+        {"value": "text--neutral", "label": "Normal text"},
+        {"value": "text--white", "label": "White"},
+        {"value": "text--primary", "label": "Primary accent"},
+        {"value": "text--secondary", "label": "Secondary accent"},
+        {"value": "text--black", "label": "Black"},
+        {"value": "text--invert--primary", "label": "Primary dark accent"},
+        {"value": "text--invert--secondary", "label": "Secondary dark accent"},
+        {"value": "text--invert", "label": "Inverted text color"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "hero__content--transparent",
+      "options": [
+        {"value": "hero__content--transparent", "label": "Transparent"},
+        {"value": "palette--light bg--neutral", "label": "White"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--none", "label": "Full width"},
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"},
+        {"value": "wrapper--tiny", "label": "Page width extra narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "kicker",
+      "name": "Kicker",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "kicker",
+          "label": "Kicker",
+          "default": "<p>Introducing</p>"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_caps",
+          "label": "Capitalize",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "text_size",
+          "label": "Text size",
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "Heading",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "heading",
+          "label": "Heading",
+          "default": "<p>Video player</p>"
+        },
+        {
+          "type": "range",
+          "id": "text_size",
+          "label": "Text size",
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Describe your video</p>"
+        },
+        {
+          "type": "range",
+          "id": "text_size",
+          "label": "Text size",
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "default": 6
+        },
+        {
+          "type": "range",
+          "id": "text_columns",
+          "label": "Columns",
+          "min": 1,
+          "max": 3,
+          "step": 1,
+          "default": 1,
+          "info": "Desktop only"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Text",
+          "default": "Learn More"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Link"
+        },
+        {
+          "type": "select",
+          "id": "button_size",
+          "label": "Size",
+          "default": "btn--large",
+          "options": [
+            {"value": "btn--small", "label": "Small button"},
+            {"value": "", "label": "Medium button"},
+            {"value": "btn--large", "label": "Large button"}
+          ]
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "Style",
+          "default": "hero__btn btn",
+          "options": [
+            {"value": "text-link", "label": "Text link"},
+            {"value": "hero__btn btn", "label": "Solid button"},
+            {"value": "hero__btn btn--soft", "label": "Soft button"},
+            {"value": "hero__btn btn--outline", "label": "Outlined button"}
+          ]
+        },
+        {
+          "type": "select",
+          "id": "button_color",
+          "label": "Color",
+          "default": "btn--white",
+          "options": [
+            {"value": "btn--primary", "label": "Primary accent"},
+            {"value": "btn--secondary", "label": "Secondary accent"},
+            {"value": "btn--neutral", "label": "Text color"},
+            {"value": "btn--black", "label": "Black"},
+            {"value": "btn--white", "label": "White"}
+          ]
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "name": "Icon",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon_name",
+          "label": "Icon",
+          "default": "icon-award",
+          "options": [
+            {"value": "icon-animal", "label": "Animal"},
+            {"value": "icon-animal-paw", "label": "Animal paw"},
+            {"value": "icon-award", "label": "Award"},
+            {"value": "icon-basket-like", "label": "Basket like"},
+            {"value": "icon-basket-return", "label": "Basket return"},
+            {"value": "icon-cart-check", "label": "Cart check"},
+            {"value": "icon-cart-message", "label": "Cart message"},
+            {"value": "icon-chat", "label": "Chat"},
+            {"value": "icon-dollar", "label": "Dollar"},
+            {"value": "icon-earth", "label": "Earth"},
+            {"value": "icon-email", "label": "Email"},
+            {"value": "icon-gluten-free", "label": "Gluten free"},
+            {"value": "icon-iron", "label": "Iron"},
+            {"value": "icon-leaf", "label": "Leaf"},
+            {"value": "icon-legal", "label": "Legal"},
+            {"value": "icon-lock-card", "label": "Lock card"},
+            {"value": "icon-lock-shield", "label": "Lock shield"},
+            {"value": "icon-lock-window", "label": "Lock window"},
+            {"value": "icon-payment", "label": "Payment"},
+            {"value": "icon-phone", "label": "Phone"},
+            {"value": "icon-rating", "label": "Rating"},
+            {"value": "icon-star-rating", "label": "Rating star"},
+            {"value": "icon-recycled", "label": "Recycled"},
+            {"value": "icon-ruler", "label": "Ruler"},
+            {"value": "icon-send", "label": "Send"},
+            {"value": "icon-sewing-machine", "label": "Sewing machine"},
+            {"value": "icon-shipment-world", "label": "Shipment world"},
+            {"value": "icon-shipment", "label": "Shipment"},
+            {"value": "icon-shoes", "label": "Shoes"},
+            {"value": "icon-store", "label": "Store"},
+            {"value": "icon-support-headphones", "label": "Support headphones"},
+            {"value": "icon-thread", "label": "Thread"},
+            {"value": "icon-truck", "label": "Truck"},
+            {"value": "icon-washer", "label": "Washer"},
+            {"value": "icon-water", "label": "Water"}
+          ]
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon color",
+          "default": "#060F9E"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "image_max_limit",
+          "min": 10,
+          "max": 900,
+          "step": 10,
+          "unit": "px",
+          "label": "Max width",
+          "default": 300
+        },
+        {
+          "type": "url",
+          "id": "image_link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video player",
+      "category": "Image"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

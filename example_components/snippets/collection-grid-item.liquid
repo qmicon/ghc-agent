@@ -1,0 +1,82 @@
+<!-- /snippets/collection-grid-item.liquid -->
+
+{% case section.settings.grid %}
+  {% when 2 %}
+    {%- assign grid_item_width = 'medium-up--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 3 %}
+    {%- assign grid_item_width = 'large-up--one-third medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 4 %}
+    {%- assign grid_item_width = 'large-up--one-quarter medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 5 %}
+    {%- assign grid_item_width = 'large-up--one-fifth medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 6 %}
+    {%- assign grid_item_width = 'large-up--one-sixth medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 7 %}
+    {%- assign grid_item_width = 'large-up--one-seventh medium--one-half small--one-half mobile--nine-tenths' -%}
+  {% when 8 %}
+    {%- assign grid_item_width = 'large-up--one-eighth medium--one-half small--one-half mobile--nine-tenths' -%}
+{% endcase %}
+
+<div
+  class="grid__item {{ grid_item_width }}"
+  {{ block.shopify_attributes }}
+  {% if block.settings.content_color %}
+    style="--block-text:{{ block.settings.content_color }}"
+  {% endif %}
+  {% if section.settings.enable_slider %}
+    data-slide="{{ block.id }}" data-slide-index="{{ forloop.index0 }}"
+  {% endif %}
+>
+  <div class="collection-grid-item section--image {{ section.settings.place_text }} {{ section.settings.align_text }}">
+    {%- liquid
+      assign collection = collections[block.settings.collection]
+      if block.settings.collection_image
+        assign img_object = block.settings.collection_image
+      elsif collection.image
+        assign img_object = collection.image
+      elsif collection.products.first
+        assign img_object = collection.products.first.featured_media.preview_image
+      endif
+
+      assign collection_link = collection.url | default: '#'
+      if block.settings.link_override != blank
+        assign collection_link = block.settings.link_override
+      endif
+
+      assign collection_def_title = 'homepage.onboarding.collection_title' | t
+
+      assign collection_title = collection.title | default: collection_def_title
+      if block.settings.text != '' and block.settings.text != '<p></p>' and block.settings.text != blank
+        assign collection_title = block.settings.text
+      endif
+
+      assign aspect_ratio = section.settings.aspect_ratio | default: 0.6
+    -%}
+
+    <a href="{{ collection_link }}" class="link-over-image" aria-label="{{ collection_title | strip_html | escape }}"> </a>
+
+    {%- if img_object != blank -%}
+      {%- render 'image-fill', img_object: img_object, aspect_ratio: aspect_ratio -%}
+    {%- else -%}
+      <div class="image__fill" style="padding-top: {{ aspect_ratio | times: 100 }}%">
+        <div class="background-size-cover">
+          <span>
+            {% capture svg_name %}collection-apparel-{{ forloop.index | modulo: 5 | at_least: 1 }}{% endcapture %}
+            {{ svg_name | placeholder_svg_tag: 'placeholder-svg' }}
+          </span>
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div
+      class="collection-grid-item__content__wrapper"
+      {% if block.settings.content_bg %}
+        style="background-color: {{ block.settings.content_bg }};"
+      {% endif %}
+    >
+      <div class="collection-grid-item__content">
+        <div class="collection-grid-item__title {{ section.settings.use_font }}">{{ collection_title }}</div>
+      </div>
+    </div>
+  </div>
+</div>

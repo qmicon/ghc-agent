@@ -1,0 +1,78 @@
+<!-- /snippets/article-grid-item.liquid -->
+
+{% comment %}
+  Renders list of articles in grid layout
+
+  Accepts:
+  - article: {Object} currenct collection
+  - grid_strings: {String} contains a string of grid offset
+
+  (Optional) arguments:
+  - show_excerpt
+  - show_meta
+  - show_tags
+  - show_comments
+
+  Usage:
+  {% render 'article-grid-item', article: article, grid_strings: grid_strings, show_excerpt: section.settings.show_excerpt, show_meta: section.settings.show_meta, show_tags: section.settings.show_tags, show_comments: section.settings.show_comments %}
+{% endcomment %}
+
+<div
+  class="grid__item {{ grid_strings }}"
+  {% if block %}
+    {{- block.shopify_attributes -}}
+  {% endif %}
+>
+  <div class="article__card{% if article.image %} article__card--image{% endif %}">
+    {% if article.image %}
+      <a href="{{ article.url }}">
+        <div class="article__card__image__wrapper">
+          {%- render 'image-fill', img_object: article.image, aspect_ratio: section.settings.aspect_ratio -%}
+        </div>
+      </a>
+    {% endif %}
+    {% if article.image and article.tags.size > 0 and show_tags %}
+      <div class="article__card__tags">
+        {% for tag in article.tags %}
+          <a class="btn btn--pill" href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <div class="article__card__content">
+      <a href="{{ article.url }}" class="h5--body article__card__title">{{ article.title }}</a>
+      {% if show_meta %}
+        <p class="article__card__meta {% if show_comments and article.comments_count > 0 %}article__card__meta--comments{% endif %}">
+          <span class="meta--light">{{ 'blogs.article.by' | t }}</span>
+          <span class="meta--dark">{{ article.author }}</span>
+          <span class="meta--light">{{ 'blogs.article.on' | t }}</span>
+          <span class="meta--dark">{{ article.published_at | date: '%b %d, %Y' }}</span>
+        </p>
+      {% endif %}
+      {% if show_excerpt %}
+        <div class="article__card__text">
+          {% if article.excerpt == blank %}
+            <p class="rte">{{ article.content | strip_html | truncate: 210 }}</p>
+          {% else %}
+            <p class="rte">{{ article.excerpt | strip_html }}</p>
+          {% endif %}
+          <a class="h6--body border-bottom-link" href="{{ article.url }}">{{ 'blogs.article.read_more' | t }}</a>
+        </div>
+      {% endif %}
+      {% if show_comments and article.comments_count > 0 %}
+        <a class="article__card__comments" href="{{ article.url }}/#comments">
+          <span class="h6--accent">{{ article.comments_count }}</span>
+          {% render 'icon-comment' %}
+        </a>
+      {% endif %}
+      {% unless article.image %}
+        {% if article.tags.size > 0 and show_tags %}
+          <div class="article__card__tags">
+            {% for tag in article.tags %}
+              <a class="btn btn--pill" href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endunless %}
+    </div>
+  </div>
+</div>

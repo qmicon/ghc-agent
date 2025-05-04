@@ -1,0 +1,163 @@
+<!-- /sections/section-newsletter.liquid -->
+
+<div
+  class="newsletter {{ section.settings.color_bg }} {{ section.settings.text_color }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="newsletter"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <div class="newsletter__wrapper">
+      <div class="newsletter__content">
+        {% if section.settings.title != '' %}
+          <h2 class="h3 newsletter__title">{{ section.settings.title | escape }}</h2>
+        {% endif %}
+        {% if section.settings.richtext != blank %}
+          <div class="newsletter__text rte subtitle--decorated">
+            {{ section.settings.richtext }}
+          </div>
+        {% endif %}
+        <div class="newsletter__button">
+          {% assign unique = 'default-newsletter-' | append: section.id %}
+          {% render 'newsletter-form', unique: unique, show_discount_message: true, success_text: section.settings.success, color: section.settings.button_color, style: section.settings.button_style %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Newsletter"
+    },
+    {
+      "id": "richtext",
+      "type": "richtext",
+      "label": "Text",
+      "default": "<p>Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.  We promise to send emails you will love.</p>"
+    },
+    {
+      "type": "textarea",
+      "id": "success",
+      "label": "Success message",
+      "default": "Success! Use code CLUB10 to save 10%",
+      "info": "Include your discount code and a message to be displayed."
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "text--neutral",
+      "options": [
+        {"value": "text--neutral", "label": "Normal text"},
+        {"value": "text--white", "label": "White"},
+        {"value": "text--primary", "label": "Primary accent"},
+        {"value": "text--secondary", "label": "Secondary accent"},
+        {"value": "text--black", "label": "Black"},
+        {"value": "text--invert--primary", "label": "Primary dark accent"},
+        {"value": "text--invert--secondary", "label": "Secondary dark accent"},
+        {"value": "text--invert", "label": "Inverted text color"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "select",
+      "id": "button_color",
+      "label": "Button color",
+      "default": "btn--neutral",
+      "options": [
+        {"value": "btn--primary", "label": "Bright accent"},
+        {"value": "btn--secondary", "label": "Secondary accent"},
+        {"value": "btn--neutral", "label": "Text color"},
+        {"value": "btn--black", "label": "Black"},
+        {"value": "btn--white", "label": "White"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "default": "btn--soft",
+      "options": [
+        {"value": "border-bottom-link", "label": "Plain text"},
+        {"value": "btn", "label": "Solid button"},
+        {"value": "btn--soft", "label": "Soft button"},
+        {"value": "btn--outline", "label": "Outlined button"}
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": "Subscribers are under 'Accepts Marketing' in your [customer admin](/admin/customers)."
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter",
+      "category": "Text"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

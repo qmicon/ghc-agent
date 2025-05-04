@@ -1,0 +1,253 @@
+<!-- /sections/section-reviews.liquid -->
+
+{%- assign slide_style = '3' -%}
+{% case section.blocks.size %}
+  {% when 1 %}
+    {%- assign slide_style = '1' -%}
+  {% when 2 %}
+    {%- assign slide_style = '2' -%}
+{% endcase %}
+
+<div
+  class="section-reviews {{ section.settings.background_color }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="reviews"
+  data-slide-style="{{ slide_style }}"
+  data-slide-count="{{ section.blocks.size }}"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="{{ section.settings.width }} section-padding">
+    <div class="section-reviews__inner">
+      <div class="section-reviews__head">
+        {% if section.settings.title != blank %}
+          {% render 'decos', direction: 'down' %}
+          <div class="title-decoration"></div>
+          <h1 class="title--decorated h3">{{ section.settings.title | escape }}</h1>
+        {% endif %}
+        {% if section.settings.description != blank %}
+          <div class="subtitle--decorated rte">
+            {{ section.settings.description }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="slider-actions" data-slider-actions>
+        <button type="button" class="slider-arrow slider-arrow--prev" data-prev-arrow disabled>
+          <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+        </button>
+
+        <button type="button" class="slider-arrow slider-arrow--next" data-next-arrow>
+          <span class="visually-hidden">{{ 'general.accessibility.prev' | t }}</span>
+        </button>
+      </div>
+    </div>
+    <div class="reviews reviews--{{ section.blocks.size }}">
+      <div class="review__dots medium-up--hide">
+        {% render 'decos', direction: 'right' %}
+      </div>
+      <div class="grid flickity-disabled-mobile grid--inner-offsets" data-slideshow="{{ section.settings.grid }}" data-custom-scrollbar-items data-block-scroll>
+        {% case section.settings.grid %}
+          {% when 2 %}
+            {%- assign grid_item_width = 'one-half mobile--nine-tenths' -%}
+          {% when 3 %}
+            {%- assign grid_item_width = 'large-up--one-third medium--one-half small--one-half mobile--nine-tenths' -%}
+          {% when 4 %}
+            {%- assign grid_item_width = 'large-up--one-quarter medium--one-half small--one-half mobile--nine-tenths' -%}
+        {% endcase %}
+
+        {% for block in section.blocks %}
+          {%- assign author_image = block.settings.image -%}
+
+          <div class="grid__item review__item slide--left {{ grid_item_width }}" data-slide="{{ block.id }}" data-slide-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+            <div class="review__card">
+              {%- if author_image -%}
+                <div class="review__image__align">
+                  <div class="review__image__wrapper">
+                    <div class="background-size-cover lazyload" data-bgset="{% render 'bgset', image: author_image %}"></div>
+                    <noscript>
+                      <img src="{{ author_image | img_url: '540x540', crop: 'center' }}" alt="{{ author_image.alt | default: block.settings.title }}">
+                    </noscript>
+                  </div>
+                </div>
+              {%- endif -%}
+
+              <div class="review__card__text">
+                <div class="review__card__text__contents">
+                  {% if block.settings.title != blank %}
+                    <h2 class="review__name h5">{{ block.settings.title | escape }}</h2>
+                  {% endif %}
+
+                  {% if block.settings.job != blank %}
+                    <p class="review__title subtitle--decorated">{{ block.settings.job | escape }}</p>
+                  {% endif %}
+
+                  {%- if block.settings.stars > 0 -%}
+                    <ul class="review__stars unstyled">
+                      {% for i in (1..block.settings.stars) %}
+                        <li>{% render 'icon-star' %}</li>
+                      {% endfor %}
+                    </ul>
+                  {%- endif -%}
+
+                  {% if block.settings.text != blank %}
+                    <div class="review__content rte">{{ block.settings.text }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="custom-scrollbar small-down--show" data-custom-scrollbar>
+        <div class="custom-scrollbar__track" data-custom-scrollbar-track></div>
+      </div>
+    </div>
+    {% if section.blocks.size == 0 %}
+      {% render 'no-blocks' %}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Testimonials"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Text",
+      "default": "<p>Use this area to describe your testimonials.</p>"
+    },
+    {
+      "type": "range",
+      "id": "grid",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Testimonials per row",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "palette--light bg--accent",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name",
+          "default": "Testimonial name"
+        },
+        {
+          "type": "text",
+          "id": "job",
+          "label": "Context",
+          "default": "Founder, Company"
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "label": "Stars",
+          "info": "Set to zero to disable",
+          "default": 5
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Testimonial",
+          "default": "<p>Use this text to showcase a review from one of your customers.  A great review is honest and relatable.  A great reviewer is a person who represents your target audience and can speak to concerns that might block your customers from buying.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "review"
+        },
+        {
+          "type": "review"
+        },
+        {
+          "type": "review"
+        },
+        {
+          "type": "review"
+        },
+        {
+          "type": "review"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

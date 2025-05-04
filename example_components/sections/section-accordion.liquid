@@ -1,0 +1,289 @@
+<!-- /templates/section-accordion.liquid -->
+
+{%- liquid
+  assign font_size_class = section.settings.text_size | plus: 1 | prepend: 'font--'
+  assign blocks_content = ''
+  assign blocks_images = ''
+  assign class_placeholder = '#####open-class-placeholder#####'
+  assign class_open = ''
+  assign section_image = section.settings.image
+  assign images_counter = 0
+  assign expand_default_image = true
+-%}
+
+{% for block in section.blocks %}
+  {%- capture blocks_images -%}
+    {{- blocks_images -}}
+
+    {%- if block.settings.image != blank -%}
+      {%- liquid
+        assign expand_class = ''
+        assign images_counter = images_counter | plus: 1
+        if section_image != blank and forloop.first
+          assign expand_class = ' is-expanded'
+          assign expand_default_image = false
+        elsif section_image == blank and images_counter == 1
+          assign expand_class = ' is-expanded'
+        endif
+      -%}
+
+      <div class="accordion__image{{ expand_class }} {{ section.settings.height }}" data-accordion-image="{{ section.id }}-accordion-{{ block.id }}">
+        {%- render 'image-fill', img_object: block.settings.image -%}
+      </div>
+    {%- endif -%}
+  {%- endcapture -%}
+
+  {%- capture blocks_content -%}
+    {{- blocks_content -}}
+
+    <div class="accordion__wrapper">
+      <button
+        class="accordion__title {{ font_size_class }}{% if forloop.first %} {{ class_placeholder }}{% endif %}"
+        data-accordion-trigger="{{ section.id }}-accordion-{{ block.id }}"
+        aria-controls="{{ section.id }}-accordion-{{ block.id }}"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        {{ block.settings.title }}
+      </button>
+      <div
+        class="accordion__body rte {{ font_size_class }}"
+        data-accordion-body
+        id="{{ section.id }}-accordion-{{ block.id }}"
+      >
+        <span {{ block.shopify_attributes }}></span>
+        {{ block.settings.content }}
+      </div>
+    </div>
+  {%- endcapture -%}
+{% endfor %}
+
+<section
+  class="section-faq {{ section.settings.text_color }} {{ section.settings.bg }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="accordion"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+>
+  <div
+    class="{{ section.settings.width }} section-padding accordion__container{% if section.settings.width != 'wrapper--narrow' and section.settings.width != 'wrapper--tiny' %} accordion__container--grid{% endif %}"
+    data-accordion-group
+  >
+    {%- if section_image != blank or blocks_images != '' -%}
+      {%- assign class_open = 'accordion-is-open' -%}
+      <div class="accordion__column">
+        <div class="accordion__images">
+          {%- if section_image != blank -%}
+            <div class="accordion__image{% if expand_default_image %} is-expanded{% endif %} {{ section.settings.height }}" data-accordion-image>
+              {%- render 'image-fill', img_object: section_image -%}
+            </div>
+          {%- endif -%}
+
+          {%- if blocks_images != '' -%}
+            {{- blocks_images -}}
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div class="text__standard">
+      {% if section.settings.title != blank %}
+        <h2 class="accordion__heading {{ section.settings.align_text }} {{ font_size_class }}">
+          {{ section.settings.title }}
+        </h2>
+      {% endif %}
+
+      <div class="page-accordion">
+        {%- if blocks_content != '' -%}
+          {{- blocks_content | replace: class_placeholder, class_open -}}
+        {%- else -%}
+          <div class="homepage-page__content rte">
+            {{ 'homepage.onboarding.no_content' | t }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Accordion group",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "align_text",
+      "label": "Heading alignment",
+      "default": "text-left",
+      "options": [
+        {"value": "text-left", "label": "Left"},
+        {"value": "text-center", "label": "Centered"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "text--neutral",
+      "options": [
+        {"value": "text--neutral", "label": "Normal text"},
+        {"value": "text--white", "label": "White"},
+        {"value": "text--primary", "label": "Primary accent"},
+        {"value": "text--secondary", "label": "Secondary accent"},
+        {"value": "text--black", "label": "Black"},
+        {"value": "text--invert--primary", "label": "Primary dark accent"},
+        {"value": "text--invert--secondary", "label": "Secondary dark accent"},
+        {"value": "text--invert", "label": "Inverted text color"}
+      ]
+    },
+    {
+      "type": "select",
+      "id": "bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "default": "use_screen_full",
+      "options": [
+        {"value": "use_screen_full", "label": "Full screen height"},
+        {"value": "use_screen_three_quarters", "label": "Three quarters of screen height"},
+        {"value": "use_screen_two_thirds", "label": "Two thirds of screen height"},
+        {"value": "use_screen_one_half", "label": "One half of screen height"},
+        {"value": "use_screen_one_third", "label": "One third of screen height"},
+        {"value": "use_screen_one_fifth", "label": "One fifth of screen height"},
+        {"value": "use_pixels_800", "label": "800px"},
+        {"value": "use_pixels_650", "label": "650px"},
+        {"value": "use_pixels_500", "label": "500px"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"},
+        {"value": "wrapper--tiny", "label": "Page width extra narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text block",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Text"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Frequently asked question"
+        },
+        {
+          "id": "content",
+          "type": "richtext",
+          "label": "Text",
+          "default": "<p>Share details about your shipping policies, item returns, or customer service.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Accordion group",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "aside"]
+  }
+}
+{% endschema %}

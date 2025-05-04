@@ -1,0 +1,343 @@
+<!-- /snippets/filters.liquid -->
+
+{%- assign counter = 0 -%}
+{%- assign filters = filters | default: collection.filters -%}
+
+{%- capture filters_markup -%}
+  {%- for filter in filters -%}
+    {%- liquid
+      assign is_swatch_option = false
+      assign counter = counter | plus: filter.active_values.size
+
+      if settings.swatches_enable
+        capture swatch_translation
+          echo 'general.swatches.color' | t
+        endcapture
+        assign translation_array = swatch_translation | append: ',' | split: "," | uniq
+        assign is_theme_swatch_option = false
+        assign is_shopify_swatch_option = false
+        assign option_handle = filter.label | downcase | lstrip | rstrip | escape_once
+
+        for translation in translation_array
+          assign translation_handle = translation | downcase | lstrip | rstrip | escape_once
+
+          if translation_handle == option_handle
+            assign is_theme_swatch_option = true
+            break
+          endif
+
+          if filter.presentation == 'swatch'
+            assign is_shopify_swatch_option = true
+          endif
+        endfor
+      endif
+
+      if is_theme_swatch_option or is_shopify_swatch_option
+        assign is_swatch_option = true
+      endif
+    -%}
+
+    <div class="filter"{% if is_swatch_option %} data-color-filter{% endif %}>
+      <div class="filter__inner" data-swapper-wrapper>
+        <button
+          class="filter__heading accordion-is-open"
+          data-accordion-trigger="accordion-{{ filter.label | handle }}-{{ forloop.index }}"
+          aria-controls="accordion-{{ filter.label | handle }}-{{ forloop.index }}"
+          aria-haspopup="true"
+          aria-expanded="true"
+        >
+          <span class="filter__heading-label">{{ filter.label }}</span>
+
+          {% if is_swatch_option %}
+            <span class="filter__heading-value" data-swapper-target></span>
+          {% endif %}
+
+          <span class="filter__heading-chevron">
+            {% render 'icon-arrow-medium-right' %}
+
+            <span class="a11y__show visually-hidden">{{ 'general.accessibility.expand_menu' | t }}</span>
+
+            <span class="a11y__hide visually-hidden">{{ 'general.accessibility.hide_menu' | t }}</span>
+          </span>
+        </button>
+
+        {%- case filter.type -%}
+          {%- when 'list' or 'boolean' -%}
+            <ul class="filter__options filter__navigation__list" data-accordion-body id="accordion-{{ filter.label | handle }}-{{ forloop.index }}">
+              {%- for filter_value in filter.values -%}
+                {%- if is_swatch_option -%}
+                  {%- if is_shopify_swatch_option -%}
+                    {%- case filter_value.display.type -%}
+                      {%- when 'colors' -%}
+                        {% liquid
+                          assign size_limit = filter_value.value.size | at_most: 4
+                          assign rotation = '0deg'
+                          if size_limit == 2
+                            assign rotation = '45deg'
+                          endif
+
+                          assign angle_increment = 360 | divided_by: size_limit
+                          assign angle = 0
+
+                          assign is_white = false
+                          if filter_value.display.value[0] == '#ffffff'
+                            assign is_white = true
+                          endif
+                        %}
+
+                        {%- capture conic_gradient -%}
+                          {%- for color in filter_value.display.value limit: size_limit -%}
+                            {{ color }} {{ angle }}deg{%- assign angle = angle | plus: angle_increment %} {{ angle }}deg{%- unless forloop.last %}, {%- endunless -%}
+                          {%- endfor -%}
+                        {%- endcapture -%}
+
+                        {%- capture label -%}
+                          <label
+                            for="filter-{{ filter.label | handle }}-{{ forloop.index }}"
+                            data-swapper-hover="{{ filter_value.label | escape_once }}"
+                            {% if is_white %}
+                              data-swatch="white"
+                            {% endif %}
+                            style="background: conic-gradient({{ conic_gradient }}); transform: rotateZ({{ rotation }});"
+                          >
+                            <span class="visually-hidden">{{ filter_value.label }}</span>
+                          </label>
+                        {%- endcapture -%}
+
+                      {%- when 'image' -%}
+                        {%- capture label -%}
+                          <label
+                            for="filter-{{ filter.label | handle }}-{{ forloop.index }}"
+                            data-swapper-hover="{{ filter_value.label | escape_once }}"
+                          >
+                            {%- render 'image-fill' img_object: filter_value.display.value -%}
+                            <span class="visually-hidden">{{ filter_value.label }}</span>
+                          </label>
+                        {%- endcapture -%}
+
+                      {%- else -%}
+                        {%- capture label -%}
+                          <label
+                            for="filter-{{ filter.label | handle }}-{{ forloop.index }}"
+                            data-swapper-hover="{{ filter_value.label | escape_once }}"
+                            style="border: 1px dashed var(--text-light);"
+                          >
+                            <span class="visually-hidden">{{ filter_value.label }}</span>
+                          </label>
+                        {%- endcapture -%}
+                    {%- endcase -%}
+                  {%- else -%}
+                    {%- capture label -%}
+                      <label
+                        for="filter-{{ filter.label | handle }}-{{ forloop.index }}"
+                        data-swapper-hover="{{ filter_value.label | escape_once }}"
+                        data-swatch="{{ filter_value.label | escape_once }}"
+                      >
+                        <span class="visually-hidden">{{ filter_value.label }}</span>
+                      </label>
+                    {%- endcapture -%}
+                  {%- endif -%}
+
+                  <li class="swatch__button {% if forloop.index > 10 %} is-hidden{% endif %}">
+                    <radio-swatch data-tooltip="{{ filter_value.value }}">
+                      <input
+                        type="checkbox"
+                        name="{{ filter_value.param_name }}"
+                        value="{{ filter_value.value }}"
+                        id="filter-{{ filter.label | handle }}-{{ forloop.index }}"
+                        {% if filter_value.active -%}
+                          checked
+                        {%- endif %}
+                        {% if filter_value.count == 0 and filter_value.active == false -%}
+                          disabled
+                        {%- endif %}
+                      >
+                        {{ label }}
+                    </radio-swatch>
+                  </li>
+                {%- else -%}
+                  <li class="filter__option {% if forloop.index > 10 %} is-hidden{% endif %}">
+                    <input
+                      type="checkbox"
+                      name="{{ filter_value.param_name }}"
+                      value="{{ filter_value.value }}"
+                      id="filter-{{ filter.label | handle }}-{{ forloop.index }}"
+                      {% if filter_value.active -%}
+                        checked
+                      {%- endif %}
+                      {% if filter_value.count == 0 and filter_value.active == false -%}
+                        disabled
+                      {%- endif %}
+                    >
+
+                    <label for="filter-{{ filter.label | handle }}-{{ forloop.index }}">
+                      {%- render 'icon-check-slim' -%}
+
+                      {{ filter_value.label | escape }}
+
+                      <span class="filters__counter-products">{{ filter_value.count }}</span>
+                    </label>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+
+            {% if filter.values.size > 10 %}
+              <button type="button" data-show-more class="filter__show-more">{{ 'collections.sidebar.show_more' | t }}</button>
+            {% endif %}
+          {%- when 'price_range' -%}
+            <div class="filter__options filter__price" data-accordion-body data-range-holder id="accordion-{{ filter.label | handle }}-{{ forloop.index }}">
+              {%- if shop.money_format contains 'comma_separator' -%}
+                {%- assign filter_max_money = filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '.' | floor -%}
+              {%- else -%}
+                {%- assign filter_max_money = filter.range_max | money_without_currency | replace: ',', '' | floor -%}
+              {%- endif -%}
+
+              {%- assign filter_max_money_ceil = filter_max_money | ceil -%}
+              {%- assign filter_min_value = 0 -%}
+              {%- assign filter_max_value = filter_max_money_ceil -%}
+
+              {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+                {%- assign counter = counter | plus: 1 -%}
+              {%- endif -%}
+
+              {%- if filter.min_value.value -%}
+                {%- if shop.money_format contains 'comma_separator' -%}
+                  {%- assign filter_min_value = filter.min_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' | floor -%}
+                {%- else -%}
+                  {%- assign filter_min_value = filter.min_value.value | money_without_currency | replace: ',', '' | floor -%}
+                {%- endif -%}
+              {%- endif %}
+
+              {%- if filter.max_value.value -%}
+                {%- if shop.money_format contains "comma_separator" -%}
+                  {%- assign filter_max_value = filter.max_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' | floor -%}
+                {%- else -%}
+                  {%- assign filter_max_value = filter.max_value.value | money_without_currency | replace: ',', '' | floor -%}
+                {%- endif -%}
+              {%- endif -%}
+
+              <div class="filter__price__range range" data-range-slider data-range-filter-update data-se-min="0" data-se-step="1" data-se-min-value="{{ filter_min_value }}" data-se-max-value="{{ filter_max_value }}" data-se-max="{{ filter_max_money_ceil }}">
+                <div class="range__dot range__dot--left" data-range-left>
+                  <span>&nbsp;</span>
+                </div>
+
+                <div class="range__dot range__dot--right" data-range-right>
+                  <span>&nbsp;</span>
+                </div>
+
+                <div class="range__line">
+                  <span data-range-line>&nbsp;</span>
+                </div>
+              </div>
+
+              <div class="filter__price__fields">
+                <div class="filter__price__field filter__price__from">
+                  <span>{{ cart.currency.symbol }}</span>
+
+                  <input
+                    data-field-price-min
+                    class="filter__price__input"
+                    name="{{ filter.min_value.param_name }}"
+                    id="filter-price-from-{{ filter.label }}-{{ forloop.index }}"
+                    {% if filter_min_value %}
+                      value="{{ filter_min_value }}"
+                    {% endif %}
+                    type="number"
+                    placeholder="{{ filter_min_value }}"
+                    min="0"
+                    max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                  >
+
+                  <label for="filter-price-from-{{ filter.label }}-{{ forloop.index }}" class="visually-hidden">{{ 'products.general.from' | t }}</label>
+                </div>
+
+                <div class="filter__price__spacer">-</div>
+
+                <div class="filter__price__field filter__price__to">
+                  <span>{{ cart.currency.symbol }}</span>
+
+                  <input
+                    data-field-price-max
+                    class="filter__price__input"
+                    name="{{ filter.max_value.param_name }}"
+                    id="filter-price-to-{{ filter.label }}-{{ forloop.index }}"
+                    {% if filter.max_value.value %}
+                      value="{{ filter_max_value }}"
+                    {% endif %}
+                    type="number"
+                    placeholder="{{ filter_max_value }}"
+                    min="0"
+                    max="{{ filter_max_money_ceil }}"
+                  >
+
+                  <label for="filter-price-to-{{ filter.label }}-{{ forloop.index }}" class="visually-hidden">To</label>
+                </div>
+              </div>
+            </div>
+          {%- else -%}
+        {%- endcase -%}
+      </div>
+    </div>
+  {%- endfor -%}
+{%- endcapture -%}
+
+<div class="filters__holder" data-filters="filters">
+  <button type="button" class="filters__button small-down--hide" data-filters-toggle="filters-form">
+    {{ 'collections.sidebar.tags' | t }}
+
+    {%- if counter > 0 -%}
+      <span class="filters__active-count">{{ counter }}</span>
+    {%- endif -%}
+
+    {%- unless filter_search -%}
+      {%- assign one_result = 'collections.sidebar.with_count.one' | t -%}
+      {%- assign other_results = 'collections.sidebar.with_count.other' | t -%}
+
+      <span class="filters__counter-products small-down--hide">
+        {{- collection.products_count }}
+        {{ collection.products_count | pluralize: one_result, other_results -}}
+      </span>
+    {%- endunless -%}
+  </button>
+
+  <form data-sidebar-filter-form="filters-form" data-scroll-lock-scrollable>
+    {%- if filter_search -%}
+      <input type="hidden" name="q" value="{{ search.terms }}">
+    {%- endif -%}
+
+    {% if collection.current_type %}
+      <input type="hidden" name="q" value="{{ collection.current_type }}">
+    {% endif %}
+
+    {% if collection.current_vendor %}
+      <input type="hidden" name="q" value="{{ collection.current_vendor }}">
+    {% endif %}
+
+    {% if collection %}
+      <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
+    {% endif %}
+
+    <button type="button" class="filters__button" data-filters-toggle="filters-form">
+      {{ 'collections.sidebar.tags' | t }}
+
+      {%- if counter > 0 -%}
+        <span class="filters__active-count">{{ counter }}</span>
+      {%- endif -%}
+
+      {%- unless filter_search -%}
+        {%- assign one_result = 'collections.sidebar.with_count.one' | t -%}
+        {%- assign other_results = 'collections.sidebar.with_count.other' | t -%}
+
+        <span class="filters__counter-products">
+          {{- collection.products_count }}
+          {{ collection.products_count | pluralize: one_result, other_results -}}
+        </span>
+      {%- endunless -%}
+
+      {% render 'icon-close' %}
+    </button>
+
+    {{ filters_markup }}
+  </form>
+</div>

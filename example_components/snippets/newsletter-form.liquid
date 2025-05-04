@@ -1,0 +1,310 @@
+<div id="newsletter-main">
+  <h3 id="newsletter-heading">Join our community and be the first one to get new offers & updates</h3>
+  <div id="input-form">
+    <form id="userForm">
+      <!-- First Name -->
+      <!--
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName">
+      -->
+
+      <!-- Last Name -->
+      <!--
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName">
+      -->
+
+      <!-- Email (Required) -->
+      <!-- <label for="email">Email:</label> -->
+      <div>
+        <input type="email" id="email" name="email" placeholder="Enter your email*" required>
+        <small id="emailWarning" style="color: red;"></small>
+      </div>
+
+      <!-- Phone Number -->
+      <!-- <label for="phoneNumber">Phone Number:</label> -->
+
+      <div>
+         <div id="phone-div">
+            <span id="input-prefix"></span>
+            <span id="input-prefix-pipe">|</span>
+            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Phone no.(optional)">
+        </div>
+      <small id="phoneWarning" style="color: red;"></small>
+      </div>
+     
+      <!-- Submit Button -->
+      <input type="submit" value="Join" id="submitButton" disabled>
+    </form>
+  </div>
+  <div id="success-form"></div>
+</div>
+
+<style>
+    @media screen and (max-width:640px) {
+    #userForm {
+      flex-direction: column;
+      gap:16px;
+    }
+    #newsletter-main{
+      text-align : center;
+      background-image: url(https://cdn.shopify.com/s/files/1/0667/1849/9050/files/mob-newletter.jpg?v=1707226443) !important;
+      min-width: auto !important;
+    }
+    #newsletter-heading{
+      font-size: 20px !important;
+      margin-bottom: 24px !important;
+    }
+    #submitButton{
+      margin-top:8px !important;
+      height: 36px !important;
+    }
+    #newsletter-main input[type="submit"] {
+      margin-top: 8px !important;
+      margin: 0 !important;
+    }
+    #newsletter-main input{
+      margin-right : 0px !important;
+      font-size: 16px;
+      height: 38px !important;
+      padding: 8px !important;
+    }
+    #email {
+      width:100%;
+    }
+    #phoneNumber {
+     width:100%;
+    }
+    #success-form {
+      line-height: 24px !important;
+    }
+  }
+
+  #newsletter-main * {
+    margin: 0;
+    padding: 0;
+  }
+
+  #input-prefix {
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    border-radius: 6px 0px 0px 6px;
+    height: 35px;
+    margin-right : -1px;
+  }
+
+  #input-prefix-pipe {
+    margin-right : -4px;
+    background-color: #FFFFFF;
+    font-size: x-large;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    color: #D9D9D9;
+  }
+
+
+  #newsletter-main {
+    background-image: url(https://cdn.shopify.com/s/files/1/0667/1849/9050/files/Rectangle_69_0b85499f-45dd-49a4-b048-0646cdc954da.jpg?v=1707226182);
+    padding: 16px !important;
+    border-radius: 6px;
+    position: relative;
+    width: fit-content;
+    background-size: cover;
+    min-width: 710px;
+  }
+
+  #userForm {
+    display: flex;
+    margin-top : 10px !important;
+  }
+
+  #newsletter-heading {
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  #newsletter-main input {
+    height: 35px !important;
+    border: none;
+    padding: 5px !important;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    box-shadow: none !important;
+    outline: none !important;
+    margin-right: 8px;
+    padding : 8px !important;
+  }
+
+
+  #newsletter-main input::placeholder {
+    color: rgba(51, 51, 51, 0.88);
+  }
+
+  #newsletter-main input[type="submit"] {
+    background-color: #FF8277;
+    color: #FFFFFF;
+    min-width : 122px;
+    margin-right: 0 !important;
+  }
+
+  #newsletter-main input[type="submit"]:disabled {
+    border: none;
+    background: #F2F2F2;
+    color: #7D7D7D;
+  }
+
+  #newsletter-main input:focus {
+    border: 1px solid #333333;
+  }
+
+  #emailWarning, #phoneWarning {
+    display: none;
+    text-align: left;
+  }
+  #email {
+    min-width : 275px;
+  }
+  #phoneNumber {
+    min-width : 220px;
+    border-radius: 6px;
+  }
+  #success-form{
+    display : none;
+    color: black;
+    line-height: 40px;
+    font-weight: 600;
+  }
+    #phone-div{
+      display : flex;
+    }
+</style>
+
+<script>
+    // JavaScript to enable/disable submit button and show warning based on email validation
+
+    {% if localization.available_countries.size > 1 %}
+        {% for codes in shop.metaobjects['std_codes']['std-codes-rjnozvbn']['std_code'].value %}
+            {% if localization.country.name contains codes.country %}
+  {% assign country_code = codes.std_code %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+      document.getElementById("input-prefix").textContent = '{{country_code}}';
+
+
+    const newsletterMain = document.getElementById('newsletter-main');
+
+    const apiEndpoint = 'https://appapi.marsghc.com/api/shopify/create/customer/consent';
+    const emailInput = document.getElementById('email');
+    const phoneNumberInput = document.getElementById("phoneNumber");
+    const emailWarning = document.getElementById('emailWarning');
+    const phoneWarning = document.getElementById('phoneWarning');
+    const submitButton = document.getElementById('submitButton');
+    const userForm = document.getElementById('userForm');
+    const phone = document.getElementById('phoneNumber');
+    const firstName = document.getElementById('firstName');
+    const lastName = document.getElementById('lastName');
+    const emailTag = "EMAIL_MARKETING_CONSENT";
+    const emailSmsTag = "EMAIL_MARKETING_CONSENT, SMS_MARKETING_CONSENT";
+    const subscribeConsentObject = {
+      "state": "subscribed",
+      "opt_in_level": "confirmed_opt_in"
+    }
+
+  phoneNumberInput.addEventListener("input", function(event) {
+    document.getElementById('success-form').style.display = 'none';
+    const currentValue = phoneNumberInput.value;
+    const newValue = currentValue.replace(/\D/g, '');
+    phoneNumberInput.value = newValue;
+
+    if (newValue.length < 9 || newValue.length > 10) {
+      phoneWarning.textContent = 'Please enter a valid phone number';
+      phoneWarning.style.display = 'block';
+    } else {
+      phoneWarning.textContent = '';
+      phoneWarning.style.display = 'none';
+    }
+  });
+
+    emailInput.addEventListener('input', function () {
+      // Check if the email is valid
+      document.getElementById('success-form').style.display = 'none';
+      if (isValidEmail(emailInput.value)) {
+        emailWarning.textContent = ''; // Clear the warning
+        submitButton.disabled = false;
+        emailWarning.style.display = 'none';
+        console.log("vaild");
+      } else {
+        emailWarning.textContent = 'Please enter a valid email address';
+        submitButton.disabled = true;
+        emailWarning.style.display = 'block';
+        console.log("notvaild");
+      }
+    });
+
+    userForm.addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent default form submission
+
+      let customerData = {
+        "customerInfo": {}
+      };
+      if (firstName?.value) {
+        customerData["customerInfo"].first_name = firstName.value;
+      }
+      if (lastName?.value) {
+        customerData["customerInfo"].last_name = lastName.value;
+      }
+      customerData["customerInfo"].email = emailInput.value;
+      customerData["customerInfo"].email_marketing_consent = subscribeConsentObject;
+      if (phone.value) {
+        customerData["customerInfo"].phone = '{{country_code}}' + phone.value;
+        customerData["customerInfo"].sms_marketing_consent = subscribeConsentObject;
+        customerData["customerInfo"].tags = emailSmsTag;
+      } else {
+        customerData["customerInfo"].tags = emailTag;
+      }
+      fetch(apiEndpoint, {
+        method: 'POST',
+        body: JSON.stringify(customerData),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('API Response:', data);
+          if(data.success) {
+            document.getElementById('newsletter-heading').innerHTML = `Congratulations! You're now part of our community. You'll be <br> the first to know about new offers and updates.`;
+            document.getElementById('input-form').style.display = 'none';
+            document.getElementById('success-form').style.color = '#1E1E1E';
+            document.getElementById('success-form').textContent = "Thank you for joining us! Let's start exploring together."
+          } else {
+            if(data.error && JSON.parse(data.error).phone.length) {
+              phoneWarning.style.display = 'none';
+              document.getElementById('success-form').textContent = JSON.parse(data.error).phone[0];
+              document.getElementById('success-form').style.color = 'red';
+              
+            }  
+          }
+          document.getElementById('success-form').style.display = 'block';
+          
+        })
+        .catch(error => {
+          console.error('Error in newsletter:', error);
+        })
+        ;
+    });
+
+
+
+    // Function to validate email format
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+</script>

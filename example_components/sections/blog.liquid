@@ -1,0 +1,289 @@
+<!-- /sections/blog.liquid -->
+
+{%- assign product_count = section.settings.pagination_count | default: 12 -%}
+{% paginate blog.articles by product_count %}
+  <div
+    class="page-blog {{ section.settings.color_bg }}"
+    data-section-id="{{ section.id }}"
+    data-section-type="blog"
+    style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;"
+  >
+    <div class="{{ section.settings.width }} section-padding">
+      {% if section.settings.show_title or section.settings.show_rss %}
+        {% render 'decos', direction: 'down' %}
+        <div class="title-decoration"></div>
+      {% endif %}
+      {% if section.settings.show_title %}
+        <h1 class="title--decorated inline-block">{{ blog.title | escape }}</h1>
+      {% endif %}
+      {% if section.settings.show_rss %}
+        <a class="blog__rss" href="{{ blog.url }}.atom" title="{{ shop.name }} RSS" target="_blank">
+          {% render 'icon-rss' %}
+        </a>
+      {% endif %}
+
+      {%- if section.settings.show_tag_navigation -%}
+        <ul class="{{ section.settings.align_nav }} capitalize">
+          <li
+            {% if current_tags == blank %}
+              class="inline-nav--active"
+            {% endif %}
+          >
+            <a href="{{ blog.url }}">{{ 'blogs.general.all' | t }}</a>
+          </li>
+          {% for tag in blog.all_tags %}
+            <li
+              {% if current_tags contains tag %}
+                class="inline-nav--active"
+              {% endif %}
+            >
+              {{ tag | link_to_tag: tag }}
+            </li>
+          {% endfor %}
+        </ul>
+      {%- endif -%}
+
+      {%- if section.blocks and current_tags == blank and paginate.current_page == 1 -%}
+        <div class="grid grid--uniform">
+          {%- assign pinned = '' -%}
+          {% for block in section.blocks %}
+            {% assign grid_width_large = 'large-up--one-half' %}
+            {% assign grid_width_medium = 'medium--one-half' %}
+            {% assign grid_width_small = 'small--one-whole' %}
+            {% capture grid_strings %}
+              {{ grid_width_small }}
+              {{ grid_width_medium }}
+              {{ grid_width_large }}
+            {% endcapture %}
+
+            {%- assign article = articles[block.settings.pinned_post] -%}
+
+            {% if article != blank or page.empty? %}
+              {% render 'article-grid-item',
+                article: article,
+                grid_strings: grid_strings,
+                show_excerpt: section.settings.show_excerpt,
+                show_meta: section.settings.show_meta,
+                show_tags: section.settings.show_tags,
+                show_comments: section.settings.show_comments,
+                aspect_ratio: section.settings.aspect_ratio,
+                block: block
+              %}
+              {%- assign pinned = pinned | append: article.id | append: ', ' -%}
+            {% else %}
+              {% comment %}    Onboarding content    {% endcomment %}
+              <div class="grid__item {{ grid_width_small }} {{ grid_width_medium }} {{ grid_width_large }}" {{ block.shopify_attributes }}>
+                <div class="article__card article__card--image">
+                  <div class="lazy-image article__card__image__wrapper">
+                    <span>
+                      {% capture imgCount %}{% cycle 1, 2, 3, 4 %}{% endcapture %}
+                      {% capture svg_name %}blog-apparel-{{ imgCount }}{% endcapture %}
+                      {{ svg_name | placeholder_svg_tag: 'placeholder-svg' }}
+                    </span>
+                  </div>
+                  <div class="article__card__content">
+                    <p class="h5--body article__card__title">{{ 'homepage.onboarding.blog_title' | t }}</p>
+                    <div class="article__card__text">
+                      <p>{{ 'homepage.onboarding.blog_excerpt' | t }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% comment %}    End onboarding content    {% endcomment %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {%- endif -%}
+
+      <div class="grid grid--uniform">
+        {% for article in blog.articles %}
+          {% if current_page == 1 and forloop.index < 2 and section.settings.blocks == empty %}
+            {% assign grid_width_large = 'large-up--one-half' %}
+            {% assign grid_width_medium = 'medium--one-half' %}
+            {% assign grid_width_small = 'small--one-whole' %}
+          {% else %}
+            {% assign grid_width_large = 'large-up--one-third' %}
+            {% assign grid_width_medium = 'medium--one-third' %}
+            {% assign grid_width_small = 'small--one-whole' %}
+          {% endif %}
+          {% capture grid_strings %}
+            {{ grid_width_small }}
+            {{ grid_width_medium }}
+            {{ grid_width_large }}
+          {% endcapture %}
+
+          {%- unless pinned contains article.id -%}
+            {% render 'article-grid-item',
+              article: article,
+              grid_strings: grid_strings,
+              show_excerpt: section.settings.show_excerpt,
+              show_meta: section.settings.show_meta,
+              show_tags: section.settings.show_tags,
+              show_comments: section.settings.show_comments
+            %}
+          {%- endunless -%}
+        {% endfor %}
+      </div>
+      {% if section.settings.show_view_all %}
+        <div class="text-center">
+          <a href="{{ blog.url }}" class="btn">
+            {{ 'blogs.general.view_all' | t }}
+          </a>
+        </div>
+      {% endif %}
+
+      {% if paginate.pages > 1 %}
+        {% render 'pagination', paginate: paginate %}
+      {% endif %}
+    </div>
+  </div>
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tag_navigation",
+      "default": false,
+      "label": "Show tag navigation"
+    },
+    {
+      "type": "select",
+      "id": "align_nav",
+      "label": "Navigation position",
+      "options": [
+        {"value": "inline-nav", "label": "Left"},
+        {"value": "inline-nav inline-nav--center", "label": "Center"}
+      ],
+      "default": "inline-nav"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show blog title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rss",
+      "label": "Show RSS",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "pagination_count",
+      "min": 3,
+      "max": 50,
+      "step": 1,
+      "label": "Posts per page",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "aspect_ratio",
+      "min": 0.5,
+      "max": 1.5,
+      "step": 0.1,
+      "unit": ":1",
+      "label": "Photo aspect ratio",
+      "info": "Wide to tall",
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {"value": "palette--light bg--neutral", "label": "Default"},
+        {"value": "palette--light bg--accent", "label": "Light"},
+        {"value": "palette--dark bg--invert", "label": "Dark"},
+        {"value": "palette--dark bg--invert--accent", "label": "Dark accent"}
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Article grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_meta",
+      "label": "Show date and author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comments",
+      "default": true,
+      "label": "Show article comment count"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "default": false,
+      "label": "Show article excerpt"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "default": false,
+      "label": "Show article tags"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {"value": "wrapper--full", "label": "Full width padded"},
+        {"value": "wrapper", "label": "Page width"},
+        {"value": "wrapper--narrow", "label": "Page width narrow"}
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "pinned_post",
+      "name": "Pinned post",
+      "settings": [
+        {
+          "type": "article",
+          "id": "pinned_post",
+          "label": "Pinned post",
+          "info": "Feature a popular post at the top of the blog"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
