@@ -1,0 +1,183 @@
+{
+  "sections": {
+    "offer-hero": {
+      "type": "offer-hero",
+      "settings": {
+        "heading": "Festive Holiday Sale",
+        "subheading": "Limited time offers on our best seasonal items",
+        "background_color": "#f8e8e8",
+        "text_color": "#333333",
+        "button_text": "Shop Now",
+        "button_url": "/collections/male",
+        "countdown_end_date": "2025-12-25T23:59:59",
+        "show_countdown": true,
+        "image": ""
+      }
+    },
+    "offer-featured-products": {
+      "type": "offer-featured-products",
+      "settings": {
+        "title": "Featured Holiday Deals",
+        "collection": "male",
+        "products_to_show": 4,
+        "show_sale_badge": true,
+        "show_discount_tag": true,
+        "background_color": "#ffffff",
+        "text_color": "#333333"
+      }
+    },
+    "offer-grid": {
+      "type": "offer-grid",
+      "settings": {
+        "heading": "Special Holiday Offers",
+        "grid_layout": "3-column",
+        "background_color": "#f9f9f9",
+        "text_color": "#333333"
+      },
+      "blocks": {
+        "offer-1": {
+          "type": "offer",
+          "settings": {
+            "title": "Holiday Bundle",
+            "description": "Get 20% off when you buy 2 or more items",
+            "image": "",
+            "button_text": "Shop Bundle",
+            "button_url": "/collections/male",
+            "discount_text": "20% OFF"
+          }
+        },
+        "offer-2": {
+          "type": "offer",
+          "settings": {
+            "title": "Gift Sets",
+            "description": "Perfect presents for everyone on your list",
+            "image": "",
+            "button_text": "Shop Gifts",
+            "button_url": "/collections/male",
+            "discount_text": "Buy 1 Get 1 50% OFF"
+          }
+        },
+        "offer-3": {
+          "type": "offer",
+          "settings": {
+            "title": "Last Minute Deals",
+            "description": "Fast shipping on selected items",
+            "image": "",
+            "button_text": "Shop Now",
+            "button_url": "/collections/male",
+            "discount_text": "Up to 30% OFF"
+          }
+        }
+      },
+      "block_order": [
+        "offer-1",
+        "offer-2",
+        "offer-3"
+      ]
+    },
+    "offer-message": {
+      "type": "offer-message",
+      "settings": {
+        "heading": "Celebrate the Season with Style",
+        "message": "Our holiday collection features festive designs perfect for gifting or treating yourself. Limited quantities available!",
+        "background_color": "#e8f8e8",
+        "text_color": "#333333",
+        "button_text": "Learn More",
+        "button_url": "/pages/about-us",
+        "image": ""
+      }
+    },
+    "offer-testimonials": {
+      "type": "offer-testimonials",
+      "settings": {
+        "heading": "What Our Customers Say",
+        "background_color": "#ffffff",
+        "text_color": "#333333"
+      },
+      "blocks": {
+        "testimonial-1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "The quality exceeded my expectations! Perfect holiday gift.",
+            "author": "Sarah M."
+          }
+        },
+        "testimonial-2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Fast shipping and beautiful packaging. Will order again!",
+            "author": "James T."
+          }
+        },
+        "testimonial-3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Love my new purchase. The holiday discount made it even better!",
+            "author": "Emma R."
+          }
+        }
+      },
+      "block_order": [
+        "testimonial-1",
+        "testimonial-2",
+        "testimonial-3"
+      ]
+    },
+    "offer-faq": {
+      "type": "offer-faq",
+      "settings": {
+        "heading": "Frequently Asked Questions",
+        "background_color": "#f9f9f9",
+        "text_color": "#333333"
+      },
+      "blocks": {
+        "faq-1": {
+          "type": "faq",
+          "settings": {
+            "question": "How long will the sale last?",
+            "answer": "Our festive sale runs until December 25th or while supplies last."
+          }
+        },
+        "faq-2": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I combine multiple discounts?",
+            "answer": "Unless otherwise stated, discounts cannot be combined with other offers."
+          }
+        },
+        "faq-3": {
+          "type": "faq",
+          "settings": {
+            "question": "What is your return policy for sale items?",
+            "answer": "Sale items follow our standard 30-day return policy. Please see our returns page for details."
+          }
+        }
+      },
+      "block_order": [
+        "faq-1",
+        "faq-2",
+        "faq-3"
+      ]
+    },
+    "offer-newsletter": {
+      "type": "offer-newsletter",
+      "settings": {
+        "heading": "Get Exclusive Offers",
+        "subheading": "Subscribe to our newsletter for early access to sales and special promotions",
+        "background_color": "#f8e8f8",
+        "text_color": "#333333",
+        "button_text": "Subscribe",
+        "success_message": "Thanks for subscribing! Check your email for a special discount code."
+      }
+    }
+  },
+  "order": [
+    "offer-hero",
+    "offer-featured-products",
+    "offer-grid",
+    "offer-message",
+    "offer-testimonials",
+    "offer-faq",
+    "offer-newsletter"
+  ]
+}

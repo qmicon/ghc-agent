@@ -1,0 +1,140 @@
+<div class="offer-countdown" data-end-date="{{ end_date }}">
+  <div class="offer-countdown__container">
+    <div class="offer-countdown__item">
+      <div class="offer-countdown__value offer-countdown__days">00</div>
+      <div class="offer-countdown__label">Days</div>
+    </div>
+    <div class="offer-countdown__separator">:</div>
+    <div class="offer-countdown__item">
+      <div class="offer-countdown__value offer-countdown__hours">00</div>
+      <div class="offer-countdown__label">Hours</div>
+    </div>
+    <div class="offer-countdown__separator">:</div>
+    <div class="offer-countdown__item">
+      <div class="offer-countdown__value offer-countdown__minutes">00</div>
+      <div class="offer-countdown__label">Minutes</div>
+    </div>
+    <div class="offer-countdown__separator">:</div>
+    <div class="offer-countdown__item">
+      <div class="offer-countdown__value offer-countdown__seconds">00</div>
+      <div class="offer-countdown__label">Seconds</div>
+    </div>
+  </div>
+  <div class="offer-countdown__expired" style="display: none;">
+    This offer has expired
+  </div>
+</div>
+
+<style>
+.offer-countdown {
+  margin: 20px 0;
+}
+
+.offer-countdown__container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.offer-countdown__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.offer-countdown__value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  padding: 8px 12px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.offer-countdown__label {
+  font-size: 0.8rem;
+  margin-top: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.offer-countdown__separator {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 -2px;
+  align-self: flex-start;
+  padding-top: 8px;
+}
+
+.offer-countdown__expired {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 10px;
+  color: #cc0000;
+}
+
+@media screen and (max-width: 480px) {
+  .offer-countdown__value {
+    font-size: 1.4rem;
+    min-width: 50px;
+  }
+  
+  .offer-countdown__separator {
+    font-size: 1.4rem;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const countdownElements = document.querySelectorAll('.offer-countdown');
+  
+  countdownElements.forEach(countdown => {
+    const endDateStr = countdown.getAttribute('data-end-date');
+    if (!endDateStr) return;
+    
+    const endDate = new Date(endDateStr).getTime();
+    const daysEl = countdown.querySelector('.offer-countdown__days');
+    const hoursEl = countdown.querySelector('.offer-countdown__hours');
+    const minutesEl = countdown.querySelector('.offer-countdown__minutes');
+    const secondsEl = countdown.querySelector('.offer-countdown__seconds');
+    const expiredEl = countdown.querySelector('.offer-countdown__expired');
+    const containerEl = countdown.querySelector('.offer-countdown__container');
+    
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = endDate - now;
+      
+      if (distance < 0) {
+        // Countdown expired
+        clearInterval(interval);
+        containerEl.style.display = 'none';
+        expiredEl.style.display = 'block';
+        return;
+      }
+      
+      // Calculate time units
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      // Update elements with leading zeros
+      daysEl.textContent = days.toString().padStart(2, '0');
+      hoursEl.textContent = hours.toString().padStart(2, '0');
+      minutesEl.textContent = minutes.toString().padStart(2, '0');
+      secondsEl.textContent = seconds.toString().padStart(2, '0');
+    }
+    
+    // Initial update
+    updateCountdown();
+    
+    // Update every second
+    const interval = setInterval(updateCountdown, 1000);
+  });
+});
+</script>

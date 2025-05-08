@@ -1,0 +1,273 @@
+<div class="offer-grid" 
+     style="background-color: {{ section.settings.background_color }}; 
+            color: {{ section.settings.text_color }};">
+  <div class="offer-grid__container page-width">
+    <h2 class="offer-grid__heading">{{ section.settings.heading }}</h2>
+    
+    <div class="offer-grid__items offer-grid__items--{{ section.settings.grid_layout }}">
+      {% for block in section.blocks %}
+        {% if block.type == 'offer' %}
+          <div class="offer-grid__item" {{ block.shopify_attributes }}>
+            <div class="offer-grid__item-inner">
+              {% if block.settings.image != blank %}
+                <div class="offer-grid__item-image">
+                  <img src="{{ block.settings.image | img_url: 'master' }}" 
+                       alt="{{ block.settings.title }}"
+                       loading="lazy"
+                       width="{{ block.settings.image.width }}"
+                       height="{{ block.settings.image.height }}">
+                </div>
+              {% endif %}
+              
+              <div class="offer-grid__item-content">
+                {% if block.settings.discount_text != blank %}
+                  <div class="offer-grid__item-discount">
+                    {% render 'offer-discount-tag', text: block.settings.discount_text %}
+                  </div>
+                {% endif %}
+                
+                <h3 class="offer-grid__item-title">{{ block.settings.title }}</h3>
+                
+                {% if block.settings.description != blank %}
+                  <p class="offer-grid__item-description">{{ block.settings.description }}</p>
+                {% endif %}
+                
+                {% if block.settings.button_text != blank and block.settings.button_url != blank %}
+                  <a href="{{ block.settings.button_url }}" class="offer-grid__item-button button">
+                    {{ block.settings.button_text }}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Offer Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Special Holiday Offers"
+    },
+    {
+      "type": "select",
+      "id": "grid_layout",
+      "label": "Grid Layout",
+      "options": [
+        {
+          "value": "2-column",
+          "label": "2 Columns"
+        },
+        {
+          "value": "3-column",
+          "label": "3 Columns"
+        },
+        {
+          "value": "4-column",
+          "label": "4 Columns"
+        }
+      ],
+      "default": "3-column"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "offer",
+      "name": "Offer",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Special Offer"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Limited time offer on selected items"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Text",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button URL"
+        },
+        {
+          "type": "text",
+          "id": "discount_text",
+          "label": "Discount Text",
+          "default": "20% OFF"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Grid",
+      "category": "Promotional",
+      "blocks": [
+        {
+          "type": "offer"
+        },
+        {
+          "type": "offer"
+        },
+        {
+          "type": "offer"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-grid {
+  padding: 60px 0;
+}
+
+.offer-grid__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.offer-grid__heading {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 40px;
+  font-weight: 700;
+}
+
+.offer-grid__items {
+  display: grid;
+  gap: 30px;
+  grid-template-columns: 1fr;
+}
+
+@media screen and (min-width: 768px) {
+  .offer-grid__items--2-column {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .offer-grid__items--3-column {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .offer-grid__items--4-column {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .offer-grid__items--3-column {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .offer-grid__items--4-column {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.offer-grid__item {
+  height: 100%;
+}
+
+.offer-grid__item-inner {
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.offer-grid__item-inner:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.offer-grid__item-image {
+  position: relative;
+  padding-bottom: 66%;
+  overflow: hidden;
+}
+
+.offer-grid__item-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offer-grid__item-content {
+  padding: 20px;
+  position: relative;
+}
+
+.offer-grid__item-discount {
+  position: absolute;
+  top: -30px;
+  right: 20px;
+}
+
+.offer-grid__item-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.offer-grid__item-description {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #666666;
+}
+
+.offer-grid__item-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #333333;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.offer-grid__item-button:hover {
+  background-color: #555555;
+}
+</style>

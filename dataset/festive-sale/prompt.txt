@@ -1,8 +1,1 @@
-Create a festive sale product page with special holiday or seasonal promotions.
-
-Required Features:
-- Build holiday-themed product displays
-- Implement special sale pricing
-- Add limited time offer functionality
-- Create festive countdown timers
-- Add seasonal promotional messaging
+Festive sale

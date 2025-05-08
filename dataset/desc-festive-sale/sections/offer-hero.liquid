@@ -1,0 +1,188 @@
+<div class="offer-hero" 
+     style="background-color: {{ section.settings.background_color }}; 
+            color: {{ section.settings.text_color }};">
+  <div class="offer-hero__container page-width">
+    <div class="offer-hero__content">
+      <h1 class="offer-hero__heading">{{ section.settings.heading }}</h1>
+      <p class="offer-hero__subheading">{{ section.settings.subheading }}</p>
+      
+      {% if section.settings.show_countdown %}
+        <div class="offer-hero__countdown">
+          {% render 'offer-countdown-timer', end_date: section.settings.countdown_end_date %}
+        </div>
+      {% endif %}
+      
+      {% if section.settings.button_text != blank and section.settings.button_url != blank %}
+        <a href="{{ section.settings.button_url }}" class="offer-hero__button button">
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+    
+    {% if section.settings.image != blank %}
+      <div class="offer-hero__image">
+        <img src="{{ section.settings.image | img_url: 'master' }}" 
+             alt="{{ section.settings.heading }}"
+             loading="lazy"
+             width="{{ section.settings.image.width }}"
+             height="{{ section.settings.image.height }}">
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Offer Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Festive Holiday Sale"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Limited time offers on our best seasonal items"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f8e8e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "text",
+      "id": "countdown_end_date",
+      "label": "Countdown End Date (YYYY-MM-DDTHH:MM:SS)",
+      "info": "Format: 2025-12-25T23:59:59",
+      "default": "2025-12-25T23:59:59"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show Countdown Timer",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Hero",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-hero {
+  padding: 60px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.offer-hero__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media screen and (min-width: 768px) {
+  .offer-hero__container {
+    flex-direction: row;
+    text-align: left;
+    justify-content: space-between;
+  }
+}
+
+.offer-hero__content {
+  flex: 1;
+  max-width: 600px;
+  margin-bottom: 30px;
+}
+
+@media screen and (min-width: 768px) {
+  .offer-hero__content {
+    margin-bottom: 0;
+    margin-right: 40px;
+  }
+}
+
+.offer-hero__heading {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.offer-hero__subheading {
+  font-size: 1.2rem;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.offer-hero__countdown {
+  margin: 25px 0;
+}
+
+.offer-hero__button {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #333333;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.offer-hero__button:hover {
+  background-color: #555555;
+}
+
+.offer-hero__image {
+  flex: 1;
+  max-width: 500px;
+}
+
+.offer-hero__image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.page-width {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+</style>

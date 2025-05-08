@@ -1,0 +1,195 @@
+<div class="offer-faq" 
+     style="background-color: {{ section.settings.background_color }}; 
+            color: {{ section.settings.text_color }};">
+  <div class="offer-faq__container page-width">
+    <h2 class="offer-faq__heading">{{ section.settings.heading }}</h2>
+    
+    <div class="offer-faq__items">
+      {% for block in section.blocks %}
+        {% if block.type == 'faq' %}
+          <div class="offer-faq__item" {{ block.shopify_attributes }}>
+            <button class="offer-faq__question" aria-expanded="false">
+              {{ block.settings.question }}
+              <svg class="offer-faq__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="offer-faq__answer">
+              <div class="offer-faq__answer-inner">
+                {{ block.settings.answer }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How long will the sale last?"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "Our festive sale runs until December 25th or while supplies last."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "category": "Promotional",
+      "blocks": [
+        {
+          "type": "faq"
+        },
+        {
+          "type": "faq"
+        },
+        {
+          "type": "faq"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-faq {
+  padding: 60px 0;
+}
+
+.offer-faq__container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.offer-faq__heading {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 40px;
+  font-weight: 700;
+}
+
+.offer-faq__items {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.offer-faq__item {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.offer-faq__question {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 20px;
+  text-align: left;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.offer-faq__question:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.offer-faq__icon {
+  transition: transform 0.3s ease;
+}
+
+.offer-faq__question[aria-expanded="true"] .offer-faq__icon {
+  transform: rotate(180deg);
+}
+
+.offer-faq__answer {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+.offer-faq__answer-inner {
+  padding: 0 20px 20px;
+  line-height: 1.6;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const faqItems = document.querySelectorAll('.offer-faq__item');
+  
+  faqItems.forEach(item => {
+    const question = item.querySelector('.offer-faq__question');
+    const answer = item.querySelector('.offer-faq__answer');
+    const answerInner = item.querySelector('.offer-faq__answer-inner');
+    
+    question.addEventListener('click', () => {
+      const expanded = question.getAttribute('aria-expanded') === 'true';
+      
+      // Close all other FAQs
+      faqItems.forEach(otherItem => {
+        if (otherItem !== item) {
+          const otherQuestion = otherItem.querySelector('.offer-faq__question');
+          const otherAnswer = otherItem.querySelector('.offer-faq__answer');
+          
+          otherQuestion.setAttribute('aria-expanded', 'false');
+          otherAnswer.style.height = '0';
+        }
+      });
+      
+      // Toggle current FAQ
+      question.setAttribute('aria-expanded', !expanded);
+      
+      if (!expanded) {
+        answer.style.height = answerInner.offsetHeight + 'px';
+      } else {
+        answer.style.height = '0';
+      }
+    });
+  });
+});
+</script>

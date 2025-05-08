@@ -1,0 +1,204 @@
+<div class="offer-newsletter" 
+     style="background-color: {{ section.settings.background_color }}; 
+            color: {{ section.settings.text_color }};">
+  <div class="offer-newsletter__container page-width">
+    <h2 class="offer-newsletter__heading">{{ section.settings.heading }}</h2>
+    <p class="offer-newsletter__subheading">{{ section.settings.subheading }}</p>
+    
+    <div class="offer-newsletter__form-wrapper">
+      <form method="post" action="/contact#contact_form" id="offer-newsletter-form" accept-charset="UTF-8" class="offer-newsletter__form">
+        <input type="hidden" name="form_type" value="customer">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        
+        <div class="offer-newsletter__field-group">
+          <input type="email" 
+                 name="contact[email]" 
+                 id="offer-newsletter-email" 
+                 class="offer-newsletter__input" 
+                 placeholder="Your email address" 
+                 required>
+          
+          <button type="submit" class="offer-newsletter__submit button">
+            {{ section.settings.button_text }}
+          </button>
+        </div>
+        
+        <div class="offer-newsletter__success" style="display: none;">
+          {{ section.settings.success_message }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Newsletter Signup",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Get Exclusive Offers"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Subscribe to our newsletter for early access to sales and special promotions"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f8e8f8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "textarea",
+      "id": "success_message",
+      "label": "Success Message",
+      "default": "Thanks for subscribing! Check your email for a special discount code."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter Signup",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-newsletter {
+  padding: 60px 0;
+}
+
+.offer-newsletter__container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.offer-newsletter__heading {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.offer-newsletter__subheading {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.offer-newsletter__form-wrapper {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.offer-newsletter__field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media screen and (min-width: 550px) {
+  .offer-newsletter__field-group {
+    flex-direction: row;
+  }
+}
+
+.offer-newsletter__input {
+  flex-grow: 1;
+  padding: 12px 15px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.offer-newsletter__submit {
+  padding: 12px 24px;
+  background-color: #333333;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+
+.offer-newsletter__submit:hover {
+  background-color: #555555;
+}
+
+.offer-newsletter__success {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: rgba(0, 128, 0, 0.1);
+  border-radius: 4px;
+  color: #006400;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('offer-newsletter-form');
+  const successMessage = document.querySelector('.offer-newsletter__success');
+  
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('offer-newsletter-email').value;
+      
+      // Simple email validation
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address');
+        return;
+      }
+      
+      // Submit the form using fetch
+      fetch('/contact#contact_form', {
+        method: 'POST',
+        body: new FormData(form),
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => {
+        // Show success message
+        form.reset();
+        successMessage.style.display = 'block';
+        
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+        }, 5000);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('There was an error submitting the form. Please try again.');
+      });
+    });
+  }
+});
+</script>

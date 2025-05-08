@@ -1,0 +1,167 @@
+<div class="offer-featured-products" 
+     style="background-color: {{ section.settings.background_color }}; 
+            color: {{ section.settings.text_color }};">
+  <div class="offer-featured-products__container page-width">
+    <h2 class="offer-featured-products__title">{{ section.settings.title }}</h2>
+    
+    <div class="offer-featured-products__grid">
+      {% assign collection = collections[section.settings.collection] %}
+      {% if collection != blank %}
+        {% assign products_to_show_num = section.settings.products_to_show | plus: 0 %}
+        {% for product in collection.products limit: products_to_show_num %}
+          <div class="offer-featured-products__item">
+            {% render 'offer-product-card', 
+              product: product, 
+              show_sale_badge: section.settings.show_sale_badge,
+              show_discount_tag: section.settings.show_discount_tag
+            %}
+          </div>
+        {% else %}
+          <div class="offer-featured-products__empty">
+            <p>No products found in this collection.</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="offer-featured-products__empty">
+          <p>Collection not found.</p>
+        </div>
+      {% endif %}
+    </div>
+    
+    {% if collection != blank %}
+      <div class="offer-featured-products__view-all">
+        <a href="{{ collection.url }}" class="button">View All Products</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Featured Holiday Deals"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "label": "Products to Show",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_badge",
+      "label": "Show Sale Badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discount_tag",
+      "label": "Show Discount Tag",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-featured-products {
+  padding: 60px 0;
+}
+
+.offer-featured-products__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.offer-featured-products__title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 40px;
+  font-weight: 700;
+}
+
+.offer-featured-products__grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+@media screen and (min-width: 550px) {
+  .offer-featured-products__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .offer-featured-products__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .offer-featured-products__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.offer-featured-products__empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.offer-featured-products__view-all {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.offer-featured-products__view-all .button {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #333333;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.offer-featured-products__view-all .button:hover {
+  background-color: #555555;
+}
+</style>

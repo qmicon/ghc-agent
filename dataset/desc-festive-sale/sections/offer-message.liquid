@@ -1,0 +1,158 @@
+<div class="offer-message" 
+     style="background-color: {{ section.settings.background_color }}; 
+            color: {{ section.settings.text_color }};">
+  <div class="offer-message__container page-width">
+    <div class="offer-message__content">
+      <h2 class="offer-message__heading">{{ section.settings.heading }}</h2>
+      <div class="offer-message__text">{{ section.settings.message }}</div>
+      
+      {% if section.settings.button_text != blank and section.settings.button_url != blank %}
+        <a href="{{ section.settings.button_url }}" class="offer-message__button button">
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+    
+    {% if section.settings.image != blank %}
+      <div class="offer-message__image">
+        <img src="{{ section.settings.image | img_url: 'master' }}" 
+             alt="{{ section.settings.heading }}"
+             loading="lazy"
+             width="{{ section.settings.image.width }}"
+             height="{{ section.settings.image.height }}">
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Promotional Message",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Celebrate the Season with Style"
+    },
+    {
+      "type": "textarea",
+      "id": "message",
+      "label": "Message",
+      "default": "Our holiday collection features festive designs perfect for gifting or treating yourself. Limited quantities available!"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#e8f8e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotional Message",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.offer-message {
+  padding: 60px 0;
+}
+
+.offer-message__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media screen and (min-width: 768px) {
+  .offer-message__container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.offer-message__content {
+  flex: 1;
+  max-width: 600px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+@media screen and (min-width: 768px) {
+  .offer-message__content {
+    text-align: left;
+    margin-bottom: 0;
+    margin-right: 40px;
+  }
+}
+
+.offer-message__heading {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.offer-message__text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.offer-message__button {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #333333;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.offer-message__button:hover {
+  background-color: #555555;
+}
+
+.offer-message__image {
+  flex: 1;
+  max-width: 500px;
+}
+
+.offer-message__image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+</style>
