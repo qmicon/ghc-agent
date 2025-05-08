@@ -1,0 +1,4 @@
+Buy 3 for 99" offer page with:
+      1. Countdown timer
+      2. Horizontal product selector (choose exactly 3)
+      3. CTA button that activates only after 3 picks

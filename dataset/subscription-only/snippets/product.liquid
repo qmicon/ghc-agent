@@ -1,0 +1,285 @@
+{% assign description_position = '' %}
+{%- assign product_description_content = product.description -%}
+{%- assign has_tabs = false -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'tab_description' -%}
+	{%- assign has_tabs = true -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if has_tabs -%}
+  {%- assign product_description_content = product_description_content | split: '<h6>' | first -%}
+{%- endif -%}
+{% if product_description_content contains '[split]' %}
+  {% assign description_position = 'both' %}
+  {% endif %}
+  {% assign removeImageIndex = '' %}
+{% assign variantImageIndex = -1 %}
+{% assign indexCounter = 0 %}
+{% for media in product.media %}
+  {% assign outer_loop = forloop %}
+  {% assign isRemoved = false %}
+  {% for variant in product.variants %}
+	{% if variant.id != product.selected_or_first_available_variant.id and variant.image.src == media.preview_image.src %}
+  	{% assign isRemoved = true %}
+  	{% assign removeImageIndex = removeImageIndex | append:  outer_loop.index | append: ',' %}
+	{% endif %}
+  {% endfor %}
+  {% if isRemoved == false  %}
+	{% assign indexCounter = indexCounter | plus: 1 %}
+  {% endif %}
+  {% if product.selected_or_first_available_variant.featured_media.position %}
+	{% assign tempImageIndex = product.selected_or_first_available_variant.featured_media.position | minus: 1 %}
+	{% if tempImageIndex == outer_loop.index  %}
+  	{% assign variantImageIndex = indexCounter %}
+	{% endif %}
+  {% endif %}
+{% endfor %}
+{% assign removeImageIndex = removeImageIndex | split: ',' %}
+{% if variantImageIndex < 0  %}
+  {% assign variantImageIndex = 0 %}
+{% endif %}
+
+<style>
+	.nitric-accordion {
+    	width: 100%;
+    	max-width: 800px;
+    	margin: 8px auto;
+    	border-radius: 5px;
+	}
+
+	.nitric-accordion-item {
+    	border-bottom: 1px solid #ccc;
+    	margin-bottom: 3px;
+	}
+
+	.nitric-accordion-item:last-child {
+    	border-bottom: none;
+	}
+
+	.nitric-accordion-header {
+    	padding: 8px;
+    	cursor: pointer;
+    	font-weight: bold;
+    	display: flex;
+    	justify-content: space-between;
+    	align-items: center;
+	}
+
+	.nitric-accordion-header .indicator {
+    	font-size: 1.3em;
+    	margin-left: 8px;
+    	transition: transform 0.3s ease;
+	}
+
+	.nitric-accordion-item.active .indicator {
+    	content: '-';
+    	transform: rotate(180deg);
+	}
+
+	.nitric-accordion-content {
+    	max-height: 0;
+    	overflow: hidden;
+    	padding: 0 10px;
+    	transition: max-height 0.3s ease, padding 0.3s ease;
+	}
+
+	.nitric-accordion-content p {
+    	margin: 8px 0;
+	}
+
+	.active .nitric-accordion-content {
+    	max-height: 1000px;
+    	padding: 8px 10px;
+	}
+	.nitric-faq-accordion {
+    	width: 100%;
+    	max-width: 800px;
+    	margin: 8px auto;
+    	border-radius: 5px;
+	}
+
+	.nitric-faq-accordion-item {
+    	border-bottom: 1px solid #ccc;
+    	margin-bottom: 3px;
+	}
+
+	.nitric-faq-accordion-item:last-child {
+    	border-bottom: none;
+	}
+
+	.nitric-faq-accordion-header {
+    	padding: 8px;
+    	cursor: pointer;
+    	font-weight: bold;
+    	display: flex;
+    	justify-content: space-between;
+    	align-items: center;
+	}
+
+	.nitric-faq-accordion-header .indicator {
+    	font-size: 1.3em;
+    	margin-left: 8px;
+    	transition: transform 0.3s ease;
+	}
+
+	.nitric-faq-accordion-item.active .indicator {
+    	content: '⌃';
+    	transform: rotate(360deg);
+	}
+
+	.nitric-faq-accordion-content {
+    	max-height: 0;
+    	overflow: hidden;
+    	padding: 0 10px;
+    	transition: max-height 0.3s ease, padding 0.3s ease;
+	}
+
+	.nitric-faq-accordion-content p {
+    	margin: 8px 0;
+	}
+
+	.active .nitric-faq-accordion-content {
+    	max-height: 1000px;
+    	padding: 8px 10px;
+	}
+</style>
+
+<div class="wrapper page-margin--product">
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+
+  <div class="grid">
+	<div class="grid__item medium-up--one-half" data-product-wrapper>
+  	{%- include 'product-slideshow' -%}
+	</div>
+
+	<div class="grid__item medium-up--one-half product__form__wrapper">
+  	{%- include 'product-subonly-hiya-form' -%}
+  	<div class="nitric-accordion">
+    	{%- assign detail_items = product.metafields.custom.hiya_details -%}
+    	{% for item in detail_items.value %}
+      	<div class="nitric-accordion-item">
+          	<div class="nitric-accordion-header">
+              	{{ item.title }}<span class="indicator">+</span>
+          	</div>
+          	<div class="nitric-accordion-content">
+              	{{ item.content }}
+          	</div>
+      	</div>
+    	{%- endfor -%}
+  	</div>
+  	{% if request.locale.iso_code == 'en' %}  
+    	{% render 'quinn-carousel' %}
+  	{% endif %}
+  	<h4>Frequently Asked Questions</h4>
+    	{%- assign faq_items = product.metafields.custom.hiya_faq -%}
+    	{% for item in faq_items.value %}
+      	<div class="nitric-faq-accordion-item">
+    	<div class="nitric-faq-accordion-header">
+        	{{ item.title }}<span class="indicator">⌄</span>
+    	</div>
+    	<div class="nitric-faq-accordion-content">
+        	<p>
+            	{{ item.content }}
+        	</p>
+    	</div>
+	</div>
+    	{%- endfor -%}
+
+	</div>
+  </div>
+</div>
+
+<script>
+	function handleAccordionClick(event) {
+    	const item = event.target.closest('.nitric-accordion-item');
+    	if (item) {
+        	item.classList.toggle('active');
+        	const indicator = item.querySelector('.indicator');
+        	if (item.classList.contains('active')) {
+            	indicator.textContent = '-';
+        	} else {
+            	indicator.textContent = '+';
+        	}
+    	}
+	}
+	document.querySelectorAll('.nitric-accordion-header').forEach(header => {
+    	header.addEventListener('click', handleAccordionClick);
+	});
+	function handleAccordionFaqClick(event) {
+    	const item = event.target.closest('.nitric-faq-accordion-item');
+    	if (item) {
+        	item.classList.toggle('active');
+        	const indicator = item.querySelector('.indicator');
+        	if (item.classList.contains('active')) {
+            	indicator.textContent = '⌃';
+        	} else {
+            	indicator.textContent = '⌄';
+        	}
+    	}
+	}
+	document.querySelectorAll('.nitric-faq-accordion-header').forEach(header => {
+    	header.addEventListener('click', handleAccordionFaqClick);
+	});
+</script>
+
+<style>
+  {% if request.locale.iso_code == 'de' %}
+ 	.bottom-button-marsbyghc{
+   	font-size: 14px !important;
+ 	}
+	{% endif %}
+  .bottom-button-container-marsbyghc {
+	visibility: hidden;
+	left: 0;
+	position: fixed;
+	bottom: 0px;
+	z-index: 101;
+	width: 100%;
+	display: none;
+	padding: 5px;
+  }
+
+  .bottom-button-container-marsbyghc.active {
+	display: flex;
+  }
+ 
+  .bottom-button-marsbyghc {
+	width: 100%;
+	height: 60px;
+	border: 0px;
+	font-size: 16px;
+	text-transform: uppercase;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 5px;
+  }
+ 
+  .add-to-cart-button-marsbyghc {
+  	background-color: #FFF;
+  	color: #FE8276;
+  }
+ 
+  .buy-now-button-marsbyghc {
+  	background-color: #FE8276;
+  	color: #FFF;
+  }
+ 
+  @media only screen and (max-width: 480px) {
+  	.bottom-button-container-marsbyghc {
+  	visibility: visible;
+	}
+  }
+</style>
+
+<script>
+  function clickedBottomBuyNowCutom() {
+	document.querySelector('#NitricAddToCart').click()
+  }
+
+</script>
+
+<div class="bottom-button-container-marsbyghc">
+	<div class="bottom-button-marsbyghc buy-now-button-marsbyghc" onclick="clickedBottomBuyNowCutom()">Try Now</div>
+</div>
+<div id="loader" class="loader"></div>

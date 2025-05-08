@@ -320,6 +320,54 @@ CONTENT:
 ```
 ---"""
 
+async def get_dataset_purposes() -> dict:
+    """Read purposes from prompt.txt files in dataset directories."""
+    purposes = {}
+    dataset_dir = "dataset"
+    
+    if not os.path.exists(dataset_dir):
+        print(f"Warning: {dataset_dir} not found")
+        return purposes
+    
+    for dir_name in os.listdir(dataset_dir):
+        prompt_path = os.path.join(dataset_dir, dir_name, "prompt.txt")
+        if os.path.exists(prompt_path):
+            try:
+                with open(prompt_path, "r", encoding="utf-8") as f:
+                    # Get first line as purpose
+                    purpose = f.readline().strip()
+                    purposes[dir_name] = purpose
+            except Exception as e:
+                print(f"Warning: Could not read {prompt_path}: {e}")
+    
+    return purposes
+
+async def find_most_relevant_dataset(requirements: str) -> str:
+    """Find the most relevant dataset directory based on requirements."""
+    # Get purposes from prompt.txt files
+    dataset_purposes = await get_dataset_purposes()
+    
+    # Format purposes for prompt
+    purposes_text = "\n".join([f"{dir_name}: {purpose}" for dir_name, purpose in dataset_purposes.items()])
+    
+    prompt = f"""
+    Given these offer page requirements:
+    ---
+    {requirements}
+    ---
+
+    And these dataset directories with their purposes:
+    ---
+    {purposes_text}
+    ---
+
+    Return ONLY the name of the most relevant dataset directory that best matches the requirements, no other text.
+    Return format should be just the directory name, nothing else.
+    """
+    
+    resp = await keyword_llm.ainvoke([HumanMessage(content=prompt)])
+    return resp.content.strip()
+
 async def generate_examples():
     # Read requirements from file
     try:
@@ -338,20 +386,18 @@ async def generate_examples():
     print(f"Primary keywords: {', '.join(primary_keywords)}")
     print(f"Secondary keywords: {', '.join(secondary_keywords)}")
     
+    # Find most relevant dataset directory
+    print("\nFinding most relevant dataset directory...")
+    relevant_dataset = await find_most_relevant_dataset(requirements)
+    print(f"Selected dataset: {relevant_dataset}")
+    
     # Extract UI component examples from workspace
     print("\nSearching for relevant UI component examples...")
     ui_examples = extract_code_examples("example_components", primary_keywords, secondary_keywords, max_examples=20)
     
-    # Extract implementation examples from dataset
-    print("\nExtracting implementation examples from dataset...")
-    dataset_dirs = [
-        "dataset/desc-buy-x-for-y"
-    ]
-    
-    implementation_examples = []
-    for dataset_dir in dataset_dirs:
-        examples = extract_code_examples_from_dataset(dataset_dir)
-        implementation_examples.extend(examples)
+    # Extract implementation examples from selected dataset
+    print(f"\nExtracting implementation examples from {relevant_dataset}...")
+    implementation_examples = extract_code_examples_from_dataset(f"dataset/{relevant_dataset}")
     
     if not ui_examples and not implementation_examples:
         print("❌ No relevant examples found")
@@ -372,7 +418,7 @@ async def generate_examples():
                 f.write("\n\n")  # Add spacing between sections
             f.write("\n\nRELEVANT CODE EXAMPLES FOR UI COMPONENTS\n")
             f.write("=" * 50 + "\n\n")
-            formatted_ui_examples = format_example(ui_examples)  # Pass the entire list
+            formatted_ui_examples = format_example(ui_examples)
             f.write(formatted_ui_examples)
     
     print("✓ Examples saved to examples.txt")

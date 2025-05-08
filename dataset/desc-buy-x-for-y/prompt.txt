@@ -1,0 +1,22 @@
+Create a new custom page template titled "Buy 3 for 99" with the following layout and behavior:
+
+1. Banner Section
+Full-width banner image at the top of the page
+Include a heading: “Pick Any 3 Products for ₹99”
+Optional subtext for promotion details
+
+2. Product Grid Section
+Display a grid of selectable products (use any test products for now)
+Each product should have an image, name, and "Select" button
+When a product is selected, change the button to “Selected” and visually highlight it
+Only allow up to 3 products to be selected; show an alert or disable other buttons if the user tries to select more
+
+3. Selected Products Section (Fixed at Bottom)
+Sticky section at the bottom of the page
+Show 3 empty slots initially
+As the user selects products, fill the slots with the selected product images/names
+Include a “Checkout for ₹99” button
+The button remains disabled until exactly 3 products are selected
+Once 3 are selected, enable the button
+
+On click, redirect the user to the cart or initiate a custom checkout flow with the 3 products added at a total price of ₹99

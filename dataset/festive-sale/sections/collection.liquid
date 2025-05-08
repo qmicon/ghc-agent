@@ -1,0 +1,413 @@
+{%- assign grid_offset = '' -%}
+{%- assign products_count = collection.products_count -%}
+{%- case section.settings.grid_setting_large -%}
+  {%- when 1 -%}
+	{%- assign grid_width_large = 'large-up--one-whole' -%}
+  {%- when 2 -%}
+	{%- assign grid_width_large = 'large-up--one-half' -%}
+	{%- if products_count == 1 -%}
+  	{%- assign grid_offset = 'large-up--push-one-quarter' -%}
+	{%- endif -%}
+  {%- when 3 -%}
+	{%- assign grid_width_large = 'large-up--one-third' -%}
+	{%- if products_count == 1 -%}
+  	{%- assign grid_offset = 'large-up--push-one-third' -%}
+	{%- elsif products_count == 2 -%}
+  	{%- assign grid_offset = 'large-up--push-one-sixth' -%}
+	{%- endif -%}
+  {%- when 4 -%}
+	{%- assign grid_width_large = 'large-up--one-quarter' -%}
+	{%- if products_count == 1 -%}
+  	{%- assign grid_offset = 'large-up--push-three-eighths' -%}
+	{%- elsif products_count == 2 -%}
+  	{%- assign grid_offset = 'large-up--push-one-quarter' -%}
+	{%- elsif products_count == 3 -%}
+  	{%- assign grid_offset = 'large-up--push-one-eighth' -%}
+	{%- endif -%}
+  {%- when 5 -%}
+	{%- assign grid_width_large = 'large-up--one-fifth' -%}
+	{%- if products_count == 1 -%}
+  	{%- assign grid_offset = 'large-up--push-two-fifths' -%}
+	{%- elsif products_count == 2 -%}
+  	{%- assign grid_offset = 'large-up--push-three-tenths' -%}
+	{%- elsif products_count == 3 -%}
+  	{%- assign grid_offset = 'large-up--push-one-fifth' -%}
+	{%- elsif products_count == 4 -%}
+  	{%- assign grid_offset = 'large-up--push-one-tenth' -%}
+	{%- endif -%}
+  {%- when 6 -%}
+	{%- assign grid_width_large = 'large-up--one-sixth' -%}
+	{%- if products_count == 1 -%}
+  	{%- assign grid_offset = 'large-up--push-five-twelfths' -%}
+	{%- elsif products_count == 2 -%}
+  	{%- assign grid_offset = 'large-up--push-two-sixths' -%}
+	{%- elsif products_count == 3 -%}
+  	{%- assign grid_offset = 'large-up--push-three-twelfths' -%}
+	{%- elsif products_count == 4 -%}
+  	{%- assign grid_offset = 'large-up--push-one-sixth' -%}
+	{%- elsif products_count == 5 -%}
+  	{%- assign grid_offset = 'large-up--push-one-twelfth' -%}
+	{%- endif -%}
+{%- endcase -%}
+{%- case section.settings.grid_setting_medium -%}
+  {%- when 1 -%}
+	{%- assign grid_width_medium = 'medium--one-whole' -%}
+  {%- when 2 -%}
+	{%- assign grid_width_medium = 'medium--one-half' -%}
+  {%- when 3 -%}
+	{%- assign grid_width_medium = 'medium--one-third' -%}
+  {%- when 4 -%}
+	{%- assign grid_width_medium = 'medium--one-quarter' -%}
+{%- endcase -%}
+{%- case section.settings.grid_setting_small -%}
+  {%- when 1 -%}
+	{%- assign grid_width_small = 'small--one-whole' -%}
+  {%- when 2 -%}
+	{%- assign grid_width_small = 'small--one-half' -%}
+  {%- when 3 -%}
+	{%- assign grid_width_small = 'small--one-third' -%}
+{%- endcase -%}
+
+{%- assign product_count = 48 -%}
+{%- if grid_width_large == 'large-up--one-whole' -%}
+  {%- assign product_count = 20 -%}
+{%- elsif grid_width_large == 'large-up--one-half' -%}
+  {%- assign product_count = 50 -%}
+{%- elsif grid_width_large == 'large-up--one-third' -%}
+  {%- assign product_count = 48 -%}
+{%- elsif grid_width_large == 'large-up--one-quarter' -%}
+  {%- assign product_count = 48 -%}
+{%- elsif grid_width_large == 'large-up--one-fifth' -%}
+  {%- assign product_count = 50 -%}
+{%- endif -%}
+{%- paginate collection.products by product_count -%}
+
+<!-- CUSTOM CSS -->
+<style>
+  .product-card {
+	box-sizing: border-box;
+	float: left;
+	min-height: 1em;
+	padding-left: 2em;
+	vertical-align: top;
+	width: 25%;
+  }
+
+  .visuallyhidden {
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	white-space: nowrap;
+  }
+</style>
+<!-- CUSTOM CSS ENDS -->
+<div id="qab_placeholder" class="announcementbar-app"></div>
+
+
+<div data-section-id="{{ section.id }}" data-section-type="collection" data-sort-enabled="{{ section.settings.collection_sorting }}">
+
+  {% if collection.image and section.settings.show_image %}
+	{%- assign img_url = collection.image.src | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+	<div class="wide-image {{ section.settings.image_height }}" id="FeaturedImage-{{ section.id }}"
+    	{% if section.settings.parallax %}
+      	data-parallax-src="{{ collection.image | img_url: '18x18' }}"
+      	data-src="{{ img_url }}"
+      	data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048, 2450, 2700, 3000, 3350, 3750, 4100]"
+      	data-aspectratio="{{  collection.image.aspect_ratio }}"
+      	data-sizes="auto"
+    	{% endif %}>
+  	<div class="image-overlay image-overlay-{{ section.settings.overlay_opacity }}"></div>
+  	{% if section.settings.image_height == 'use_image' %}
+    	<div class="lazy-image" style="padding-top:{{ 1 | divided_by: collection.image.aspect_ratio | times: 100}}%; background-image: url('{{ collection.image | img_url: '1x1' }}');">
+      	<img class="lazyload fade-in" {% if section.settings.parallax %} style="opacity: 0;"{% endif %}
+        	alt="{{ collection.image.alt | default: collection.title }}"
+        	data-src="{{ img_url }}"
+        	data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048, 2450, 2700, 3000, 3350, 3750, 4100]"
+        	data-aspectratio="{{ collection.image.aspect_ratio }}"
+        	data-parent-fit="cover"
+        	data-sizes="auto"/>
+    	</div>
+  	{% endif %}
+  	{% if section.settings.parallax == false and section.settings.image_height != 'use_image' %}
+    	<div class="background-size-cover lazyload"  data-bgset="{% include 'bgset', image: collection.image %}"></div>
+  	{% endif %}
+  	<noscript>
+    	<img src="{{ collection.image | img_url: '1440x' }}" alt="{{ collection.image.alt | default: collection.title }}" class="responsive-wide-image"/>
+  	</noscript>
+	</div>
+  {% endif %}
+
+  <div class="collection">
+	<div class="wrapper">
+
+  	{%- if section.settings.show_title -%}
+<!--     	{% include 'dots', direction: 'down' %} -->
+<!--     	<div class="title-decoration"></div> -->
+       	<h1 class="title--decorated">{{ collection.title }} </h1>
+       	<h2 class="title--decorated text-link">Best Sellers </h2>
+  	{%- endif -%}
+
+  	{%- if section.settings.show_collection_nav -%}
+    	{% if section.settings.collection_custom_nav_list != blank %}
+      	{% assign custom_nav_list = section.settings.collection_custom_nav_list | handleize %}
+      	<ul class="inline-nav">
+        	{% for link in linklists[custom_nav_list].links %}
+          	<li {% if link.active %}class="inline-nav--active"{% endif %}>
+            	<a href="{{ link.url }}">{{ link.title }}</a>
+          	</li>
+        	{% endfor %}
+      	</ul>
+    	{% elsif collections.size > 1 %}
+<!--   COMMENTED FOR THE BEST SELLING FEATURE 	-->
+<!--       	<ul class="inline-nav">
+        	{% for collection_link in collections %}
+          	{% if collection_link.handle != 'frontpage' and collection_link.handle != 'all' %}
+            	<li {% if collection.handle == collection_link.handle %}class="inline-nav--active"{% endif %}>
+              	<a href="{{ routes.collections_url }}/{{ collection_link.handle }}">{{ collection_link.title }} Test</a>
+            	</li>
+          	{% endif %}
+        	{% endfor %}
+      	</ul> -->
+    	{% endif %}
+  	{% endif %}
+
+  	{%- if collection.description.size > 0 and section.settings.show_description  -%}
+    	<div class="rte collection__description">{{ collection.description }}</div>
+  	{%- endif -%}
+
+
+  	{% if section.settings.collection_sorting or section.settings.collection_tag_nav %}
+
+    	<div class="hidden-medium-down grid">
+      	<div class="grid__item  one-quarter collection__filter">
+        	{% if section.settings.collection_tag_nav %}
+          	<span class="h6--body color-body-text-bright collection__label">{{ 'collections.sidebar.tags' | t }}</span>
+          	{% if current_tags.size %}
+            	{%- assign collection_handle = collection.handle | default: 'all' -%}
+            	<a href="{{ routes.collections_url }}/{{ collection_handle }}/" class="btn btn--pill">
+              	{{ 'collections.sidebar.reset' | t }}
+              	{% include 'icon-reset' %}
+            	</a>
+          	{% endif %}
+        	{% endif %}
+      	</div>
+      	<div class="grid__item  {% if section.settings.collection_tag_nav %} three-quarters{% else %} one-whole{% endif %}">
+        	{% if section.settings.collection_sorting %}
+          	<div class="row text-right collection__sort">
+            	{% include 'collection-sorting', id: 'desktop'  %}
+          	</div>
+        	{% endif %}
+      	</div>
+    	</div>
+
+    	<div class="hidden-large-up grid">
+      	<div class="grid__item  one-half collection__filter">
+        	{% if section.settings.collection_tag_nav %}
+          	<a id="toggleFilters" class="collection__filters__toggle">
+            	{% include 'icon-plus-small' %}
+            	{{ 'collections.sidebar.tags' | t }}
+            	{% if current_tags.size %}({{ current_tags.size }}){% endif %}
+          	</a>
+        	{% endif %}
+      	</div>
+      	<div class="grid__item {% if section.settings.collection_tag_nav %} one-half{% else %} one-whole{% endif %}">
+        	{% if section.settings.collection_sorting %}
+          	<div class="row text-right collection__sort">
+            	{% include 'collection-sorting', id: 'mobile'  %}
+          	</div>
+        	{% endif %}
+      	</div>
+    	</div>
+    	<hr class="hr--no-margin hidden-medium-down">
+  	{% endif %}
+  	<div class="grid collection-contents">
+    	{% if section.settings.collection_tag_nav %}
+      	<div class="grid__item  large-up--one-quarter collection-filters" id="collectionFilters">
+        	{% include 'collections-sidebar' %}
+      	</div>
+    	{% endif %}
+    	{% if section.settings.collection_tag_nav %}
+      	<div class="grid__item large-up--three-quarters">
+    	{% else  %}
+      	<div class="grid__item one-whole">
+    	{% endif %}
+      	<div class="grid grid--uniform">
+        	{% for product in collection.products %}
+        	{% if product.tags contains 'bestseller' %}
+          	{% include 'product-grid-item' %}
+         	{% endif %}
+        	{% else %}
+          	{% if collection.handle == 'all' and current_tags == blank %}
+            	{% include 'onboarding-empty-collection' %}
+          	{% else %}
+          	<div class="grid__item">
+            	<p>{{ 'collections.general.no_matches' | t }}</p>
+          	</div>
+          	{% endif %}
+        	{% endfor %}
+      	</div>
+      	{% if paginate.pages > 1 %}
+      	<hr>
+      	<div class="text-center">
+        	{% include 'pagination' %}
+      	</div>
+      	{% endif %}
+    	</div>
+  	</div>
+  	{% endpaginate %}
+	</div>
+	</div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection page",
+  "settings": [
+	{
+  	"type": "header",
+  	"content": "Products per row"
+	},
+	{
+  	"type":	"range",
+  	"id":  	"grid_setting_large",
+  	"min": 	1,
+  	"max": 	6,
+  	"step":	1,
+  	"label":   "Desktop",
+  	"default": 4
+	},
+	{
+  	"type":	"range",
+  	"id":  	"grid_setting_medium",
+  	"min": 	1,
+  	"max": 	4,
+  	"step":	1,
+  	"label":   "Tablet",
+  	"default": 2
+	},
+	{
+  	"type":	"range",
+  	"id":  	"grid_setting_small",
+  	"min": 	1,
+  	"max": 	3,
+  	"step":	1,
+  	"label":   "Mobile",
+  	"default": 2
+	},
+	{
+  	"type": "header",
+  	"content": "Layout"
+	},
+	{
+  	"type": "checkbox",
+  	"id": "show_title",
+  	"label": "Show collection title",
+  	"default": true
+	},
+	{
+  	"type": "checkbox",
+  	"id": "show_description",
+  	"label": "Show collection description",
+  	"default": true
+	},
+	{
+  	"type": "header",
+  	"content": "Feature image"
+	},
+	{
+  	"type": "checkbox",
+  	"id": "show_image",
+  	"label": "Show feature image",
+  	"default": false
+	},
+	{
+  	"type": "select",
+  	"id": "image_height",
+  	"label": "Image height",
+  	"options": [
+    	{ "value": "use_image", "label": "Image height"},
+    	{ "value": "use_screen_two_thirds", "label": "Tall"},
+    	{ "value": "use_screen_one_half", "label": "Medium"},
+    	{ "value": "use_screen_one_third", "label": "Short"},
+    	{ "value": "use_screen_one_fifth", "label": "Tiny"}
+  	],
+  	"default": "use_screen_one_third"
+	},
+	{
+  	"type":	"range",
+  	"id":  	"overlay_opacity",
+  	"min": 	0,
+  	"max": 	100,
+  	"step":	5,
+  	"label":   "Image overlay opacity",
+  	"info":	"Increase contrast for legible text.",
+  	"default": 20
+	},
+	{
+  	"type": "checkbox",
+  	"id": "parallax",
+  	"default": false,
+  	"label": "Enable parallax scroll"
+	},
+	{
+  	"type": "header",
+  	"content": "Collection navigation"
+	},
+	{
+  	"type": "checkbox",
+  	"id": "show_collection_nav",
+  	"default": true,
+  	"label": "Show collection navigation"
+	},
+	{
+  	"type": "link_list",
+  	"id": "collection_custom_nav_list",
+  	"label": "Replace collection list with custom menu",
+  	"info": "If no menu is selected all collections will show"
+	},
+	{
+  	"type": "checkbox",
+  	"id": "collection_sorting",
+  	"default": false,
+  	"label": "Show collection sort options"
+	},
+	{
+  	"type": "header",
+  	"content": "Collection sidebar"
+	},
+	{
+  	"type": "checkbox",
+  	"id": "collection_tag_nav",
+  	"default": false,
+  	"label": "Filter collections by tag"
+	}
+	],
+	"blocks": [
+	{
+  	"type": "tag_group",
+  	"name": "Tag grouping",
+  	"settings": [
+    	{
+      	"type": "text",
+      	"id": "title",
+      	"label": "Group name",
+      	"info": "Heading above the grouping e.g., Filter by color"
+    	},
+    	{
+      	"type": "text",
+      	"id": "group_tags",
+      	"label": "Comma separated list of tags",
+      	"info": "Tags that will be shown as a group e.g., White, Black, Blue, Orange"
+    	}
+  	]
+	}
+  ]
+}
+
+{% endschema %}
