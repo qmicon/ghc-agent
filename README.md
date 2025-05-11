@@ -1,5 +1,3 @@
-
-
 # Offer Page Generator
 
 This tool helps generate Shopify offer pages by analyzing requirements and creating implementation plans.
@@ -60,7 +58,9 @@ ANTHROPIC_API_KEY=your_api_key_here
 ```bash
 python generate_examples_from_template.py
 ```
-This will create `examples.txt` with relevant code examples from the dataset.
+This will create `examples.txt` with relevant code examples:
+- Implementation examples from the `dataset/` directory.
+- UI component examples from the `example_components/` directory.
 
 3. Generate implementation plan:
 ```bash
@@ -78,9 +78,10 @@ This will create the actual implementation files based on the plan and create a 
 
 ```
 .
-├── dataset/                    # Example code dataset
+├── dataset/                    # Example code dataset for full offer implementations
 │   ├── desc-buy-x-for-y/      # Descriptive buy X for Y examples
 │   └── simple-buy-x-for-y/    # Simple buy X for Y examples
+├── example_components/         # Example UI components (sections, snippets)
 ├── venv/                      # Python virtual environment
 ├── .env                       # Environment variables
 ├── requirements.txt           # Python package requirements
