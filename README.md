@@ -63,6 +63,7 @@ This will create `examples.txt` with relevant code examples:
 - UI component examples from the `example_components/` directory.
 
 3. Generate implementation plan:
+   - **Important**: Before running, open `generate_offer_plan_claude.py` and update the `shopify_url` variable to your store's URL (e.g., `https://your-store-name.myshopify.com`). This is used to help the AI suggest relevant collection and product handles.
 ```bash
 python generate_offer_plan_claude.py
 ```
@@ -96,5 +97,6 @@ This will create the actual implementation files based on the plan and create a 
 ## Notes
 
 - Make sure to update `offer_requirements_prompt.txt` with your specific requirements before running the scripts
+- **Remember to update `shopify_url` in `generate_offer_plan_claude.py` to your store's URL.**
 - The generated implementation will be saved in the appropriate Shopify theme directory structure
 - Check the generated files for any necessary adjustments before deploying
