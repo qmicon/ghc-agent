@@ -1,0 +1,389 @@
+# Festive Holiday Sale Product Page Implementation
+
+## Title and Purpose
+**Seasonal Promotion Product Page**: A dynamic, festive-themed product page template that showcases special holiday promotions, limited-time offers, and seasonal pricing to drive urgency and increase conversion rates during holiday shopping periods.
+
+## General Settings
+
+1. **Product Data Retrieval**:
+   - Utilize Shopify's standard product object `{{ product }}` for core product information
+   - Implement metafield support for holiday-specific product attributes (e.g., `product.metafields.holiday.promotion_type`, `product.metafields.holiday.discount_end_date`)
+   - Create a section schema that allows merchants to select which holiday theme to apply (Christmas, Halloween, Valentine's Day, etc.)
+
+2. **SEO Requirements**:
+   - Generate dynamic meta titles that include the holiday promotion: `{{ product.title }} | {{ settings.holiday_name }} Special Offer`
+   - Include structured data for special offers using Schema.org SpecialAnnouncement and Offer types
+   - Add holiday-specific keywords to meta descriptions: `{{ settings.holiday_name }} sale, limited time offer, special pricing`
+
+3. **Compatibility Specifications**:
+   - Develop as Online Store 2.0 compatible section with JSON templates
+   - Support section-specific settings through section schema
+   - Ensure compatibility with Shopify's native product recommendation API
+
+4. **Schema.org Implementation**:
+   - Include JSON-LD format for Product schema with special offer pricing
+   - Add SpecialAnnouncement schema type for limited-time holiday promotions
+   - Include validUntil property tied to promotion end date
+
+## Major Sections
+
+### 1. 🎄 Festive Hero Banner Section
+   - Full-width seasonal banner with holiday-themed design elements
+   - Customizable holiday messaging overlay
+   - Product hero image with festive decorative elements
+   - Prominent display of limited-time offer messaging
+
+### 2. 📸 Holiday Product Gallery
+   - Product image gallery with seasonal decorative elements
+   - Option for holiday-themed product image overlays
+   - Festive image borders or frames based on selected holiday theme
+   - Support for product videos with seasonal intro/outro
+
+### 3. 🏷️ Holiday Promotion Product Information
+   - Product title with optional festive icon
+   - Special holiday pricing display with original price comparison
+   - Seasonal product description section
+   - Holiday-specific product benefits highlighted in festive formatting
+
+### 4. ⏱️ Limited-Time Offer Section
+   - Countdown timer to promotion end
+   - Urgency messaging tied to holiday theme
+   - Visual indicators of stock levels during promotion
+   - Early bird or special timing incentives
+
+### 5. 🎁 Holiday Bundle & Cross-Sell Section
+   - Festive-themed product bundles
+   - "Complete the gift" recommendations
+   - Holiday-specific complementary products
+   - Gift wrapping or special holiday services options
+
+### 6. 💬 Seasonal Social Proof Section
+   - Holiday-themed customer testimonials
+   - "Gift recipient" feedback section
+   - Previous holiday season customer photos
+   - Holiday-specific product usage scenarios
+
+## Component Details
+
+### 1. 🎄 Festive Hero Banner Section
+
+1. **Visual Layout**:
+   - Full-width banner (100% viewport width)
+   - Height: 50vh on desktop, 30vh on mobile
+   - Overlay text positioned in bottom right (desktop) or centered (mobile)
+   - Holiday-themed decorative elements in corners (snowflakes, hearts, pumpkins, etc.)
+
+2. **Content Elements**:
+   - Holiday promotion headline: `{{ section.settings.holiday_headline }}`
+   - Subheading with time-sensitive messaging: `{{ section.settings.holiday_subheading }}`
+   - Background image with option for holiday-themed overlay
+   - Promotional badge showing discount percentage or special offer
+
+3. **Dynamic Data Usage**:
+   - Holiday theme selection from section settings
+   - Promotion end date: `{{ section.settings.promotion_end_date }}`
+   - Discount amount: `{{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round }}%`
+
+4. **Design Specifications**:
+   - Holiday color scheme based on theme selection:
+     - Christmas: Red (#D22730) and Green (#165B33)
+     - Halloween: Orange (#FF6700) and Black (#000000)
+     - Valentine's: Pink (#FF7F7F) and Red (#D22730)
+     - Custom color options in section settings
+   - Festive typography with increased size (24px headline, 18px subheading)
+   - Subtle animated elements (falling snow, floating hearts, etc.) based on theme
+
+5. **Responsive Behavior**:
+   - Stack elements vertically on mobile
+   - Reduce decorative elements on smaller screens
+   - Maintain legibility of promotional messaging at all screen sizes
+
+### 2. 📸 Holiday Product Gallery
+
+1. **Visual Layout**:
+   - Main product image (60% width on desktop, 100% on mobile)
+   - Thumbnail gallery (4 images visible on desktop, horizontal scroll on mobile)
+   - Holiday-themed image frame or border
+   - Zoom functionality with festive zoom icon
+
+2. **Content Elements**:
+   - Primary product images from product.images
+   - Option for holiday-specific alternate images via metafields
+   - Product video support with festive play button
+   - "Limited Edition" or "Holiday Special" overlay badge when applicable
+
+3. **Dynamic Data Usage**:
+   - Standard product images: `{{ product.images }}`
+   - Holiday-specific images: `{{ product.metafields.holiday.seasonal_images }}`
+   - Featured video: `{{ product.metafields.videos.holiday_feature }}`
+
+4. **Design Specifications**:
+   - Subtle holiday-themed image frames based on selected theme
+   - Image hover effects with seasonal transitions
+   - Gallery navigation buttons styled to match holiday theme
+   - Optional seasonal watermarks or overlays
+
+5. **Responsive Behavior**:
+   - Convert to single-column layout on mobile
+   - Implement touch-friendly swipe gestures for mobile gallery
+   - Optimize image loading for performance with lazy loading
+
+### 3. 🏷️ Holiday Promotion Product Information
+
+1. **Visual Layout**:
+   - Two-column layout on desktop (40% product info, 60% purchase options)
+   - Single column stacked layout on mobile
+   - Highlighted promotion box with festive border
+   - Sticky add-to-cart on mobile scroll
+
+2. **Content Elements**:
+   - Product title with optional holiday icon
+   - Regular price with strikethrough
+   - Holiday sale price with prominent styling
+   - Savings amount or percentage highlighted
+   - Time-limited offer messaging
+   - Holiday-themed product description
+
+3. **Dynamic Data Usage**:
+   - Product title: `{{ product.title }}`
+   - Regular price: `{{ product.compare_at_price | money }}`
+   - Sale price: `{{ product.price | money }}`
+   - Savings: `{{ product.compare_at_price | minus: product.price | money }}`
+   - Promotion end date: `{{ section.settings.promotion_end_date | date: "%B %d" }}`
+
+4. **Design Specifications**:
+   - Holiday-themed price tag design
+   - Sale price in holiday accent color (varies by theme)
+   - Festive typography for promotional elements
+   - Savings amount in highlighted bubble or badge
+   - Custom holiday icons for product features list
+
+5. **Responsive Behavior**:
+   - Maintain prominence of sale pricing on all devices
+   - Ensure countdown timer visibility when scrolling on mobile
+   - Optimize spacing between elements on smaller screens
+
+### 4. ⏱️ Limited-Time Offer Section
+
+1. **Visual Layout**:
+   - Prominent banner with background matching holiday theme
+   - Centered countdown timer with decorative elements
+   - Supporting urgency messaging above and below timer
+   - Visual stock level indicator (optional)
+
+2. **Content Elements**:
+   - Countdown timer showing days, hours, minutes, seconds
+   - "Offer ends" messaging with specific date
+   - Stock level indicator: "Only X items left at this price"
+   - Early bird incentive messaging when applicable
+
+3. **Dynamic Data Usage**:
+   - Promotion end date: `{{ section.settings.promotion_end_date }}`
+   - Current stock level: `{{ product.selected_or_first_available_variant.inventory_quantity }}`
+   - Early bird deadline: `{{ section.settings.early_bird_deadline }}`
+   - Additional early bird discount: `{{ section.settings.early_bird_discount }}%`
+
+4. **Design Specifications**:
+   - Animated countdown timer with festive styling
+   - Pulsing effect on urgency messaging
+   - Color scheme matching selected holiday theme
+   - Custom timer digit styling with holiday-appropriate font
+   - Border or background that draws attention to limited-time nature
+
+5. **Functional Requirements**:
+   - JavaScript-powered countdown that updates in real-time
+   - Ability to set different end dates for different products
+   - Optional behavior when timer expires (hide, show "offer ended", etc.)
+   - Localized time display based on customer's timezone
+
+### 5. 🎁 Holiday Bundle & Cross-Sell Section
+
+1. **Visual Layout**:
+   - Horizontal scrolling product cards on desktop (4 visible)
+   - 2x2 grid layout option for desktop
+   - Vertical stack with horizontal scroll on mobile
+   - Gift bundle highlighted with festive packaging visual
+
+2. **Content Elements**:
+   - "Complete the gift" headline
+   - Bundle savings messaging
+   - 4-6 related or complementary products
+   - Gift wrapping option with holiday designs
+   - "Add entire bundle" button
+
+3. **Dynamic Data Usage**:
+   - Related products: `{{ recommendations.products }}`
+   - Bundle products: `{{ product.metafields.bundles.holiday_items }}`
+   - Bundle discount: `{{ section.settings.bundle_discount }}%`
+   - Gift wrap options: `{{ shop.metafields.gift_options.holiday_wrapping }}`
+
+4. **Design Specifications**:
+   - Product cards with holiday-themed borders
+   - Bundle savings badge in holiday accent color
+   - Gift icon indicators for complementary products
+   - Visual representation of complete gift bundle
+   - Festive "Add to bundle" button styling
+
+5. **Responsive Behavior**:
+   - Maintain horizontal scrolling on mobile with visible scroll indicators
+   - Reduce number of visible products on smaller screens
+   - Ensure bundle CTAs remain prominent at all screen sizes
+
+### 6. 💬 Seasonal Social Proof Section
+
+1. **Visual Layout**:
+   - Three-column testimonial layout on desktop
+   - Single column with pagination on mobile
+   - Holiday-themed quotation marks or testimonial frames
+   - Customer photos with seasonal decorative elements
+
+2. **Content Elements**:
+   - "Holiday Gift Success" heading
+   - 3-5 customer testimonials specific to holiday gifting
+   - Star ratings with festive styling
+   - Customer photos showing holiday product usage
+   - Gift recipient feedback when available
+
+3. **Dynamic Data Usage**:
+   - Holiday testimonials: `{{ product.metafields.reviews.holiday_testimonials }}`
+   - Customer photos: `{{ product.metafields.reviews.customer_photos }}`
+   - Star ratings: `{{ product.metafields.reviews.rating }}`
+   - Previous holiday season data: `{{ product.metafields.reviews.previous_holiday }}`
+
+4. **Design Specifications**:
+   - Testimonial cards with holiday-themed backgrounds
+   - Seasonal icons for different types of feedback
+   - Star ratings in holiday accent colors
+   - Customer photo frames matching holiday theme
+   - Subtle festive decorative elements between testimonials
+
+5. **Responsive Behavior**:
+   - Convert to single-column layout with pagination on mobile
+   - Implement touch-friendly navigation for testimonial carousel
+   - Optimize customer photos for mobile viewing
+
+## Interactive Elements
+
+1. **Add to Cart Functionality**:
+   - Holiday-themed "Add to Cart" button with festive icon
+   - Special animation on successful addition
+   - Seasonal mini-cart preview with holiday styling
+   - Gift options selection integrated into add to cart form
+   - Bundle selection checkboxes with festive styling
+
+2. **Countdown Timer Interaction**:
+   - Real-time updating without page refresh
+   - Visual effects as time milestones are reached (e.g., last 24 hours)
+   - Optional sound effects for final hours (user-activated)
+   - Ability to sync with merchant's promotion schedule
+   - Mobile-friendly timer that remains visible while scrolling
+
+3. **Holiday Product Configurator**:
+   - Gift wrapping selection with preview
+   - Holiday greeting card option with customizable message
+   - Gift bundle builder with festive visual feedback
+   - Special holiday shipping options selection
+   - Gift recipient information collection
+
+4. **Seasonal Animation Effects**:
+   - Subtle animated elements based on selected holiday theme
+   - Loading states with holiday-appropriate animations
+   - Hover effects on product images with seasonal transitions
+   - Add to cart confirmation with festive visual feedback
+   - Scroll-triggered animations for promotional elements
+
+## Visual Design Specifications
+
+1. **Holiday Color Schemes**:
+   - Christmas: Primary Red (#D22730), Green (#165B33), Gold accent (#FFD700)
+   - Halloween: Orange (#FF6700), Black (#000000), Purple accent (#6B5B95)
+   - Valentine's: Pink (#FF7F7F), Red (#D22730), White (#FFFFFF)
+   - Custom color options in section settings with holiday presets
+
+2. **Typography Hierarchy**:
+   - Holiday headlines: 28px, festive font option or standard with increased weight
+   - Promotional subheadings: 22px, accent color
+   - Product information: 16px, standard font
+   - Sale pricing: 24px, bold, holiday accent color
+   - Countdown timer: 32px digits, condensed style
+
+3. **UI Components**:
+   - Holiday-themed badges for different promotion types
+   - Seasonal icons for product features and benefits
+   - Festive button styles with appropriate hover states
+   - Custom form elements styled to match holiday theme
+   - Promotional ribbons and banners with themed designs
+
+4. **Spacing and Layout**:
+   - Increased whitespace around promotional elements (30px)
+   - Consistent section padding (60px desktop, 30px mobile)
+   - Clear visual hierarchy with promotional elements at top
+   - Strategic use of holiday decorative elements at section breaks
+   - Balanced layout with focus on product images and promotional pricing
+
+## Functional Requirements
+
+1. **Technical Implementation**:
+   - Create a holiday-specific product template: `product.holiday.liquid`
+   - Implement as a series of sections that can be added/removed/reordered
+   - Support for holiday theme switching through section settings
+   - Optimize image loading for performance with lazy loading
+   - Implement appropriate caching strategies for promotional content
+
+2. **Liquid Template Requirements**:
+   - Conditional display of holiday elements based on active promotions
+   - Dynamic pricing calculations for bundle offers and early bird discounts
+   - Fallback handling for missing holiday-specific content
+   - Localization support for holiday messaging
+   - Date formatting appropriate to merchant's locale
+
+3. **JavaScript Functionality**:
+   - Countdown timer implementation with timezone awareness
+   - Product image gallery with holiday-themed transitions
+   - Bundle selection with dynamic price updating
+   - Stock level monitoring and updates
+   - Animated elements that respect reduced motion preferences
+
+4. **Responsive Design Specifications**:
+   - Maintain promotional messaging prominence across all devices
+   - Optimize holiday imagery for different screen sizes
+   - Ensure countdown timer visibility at all breakpoints
+   - Touch-friendly interactive elements for mobile users
+   - Appropriate spacing adjustments for smaller screens
+
+5. **Performance Considerations**:
+   - Optimize holiday-themed images and animations
+   - Implement critical CSS for above-the-fold holiday elements
+   - Lazy load non-critical holiday decorative elements
+   - Minimize JavaScript impact from countdown and animation features
+   - Ensure fast initial load of promotional messaging
+
+## Data Requirements
+
+1. **Product Information Display**:
+   - Standard product title with optional holiday emoji prefix
+   - Sale price displayed prominently with original price comparison
+   - Holiday-specific product description with festive formatting
+   - Seasonal product benefits highlighted with themed icons
+   - Limited edition or holiday exclusive labeling when applicable
+
+2. **Trust Elements**:
+   - "Guaranteed delivery before [Holiday]" messaging when applicable
+   - Holiday shipping cutoff dates prominently displayed
+   - Previous holiday season statistics: "Sold out before Dec 15 last year"
+   - Gift recipient satisfaction ratings with festive styling
+   - Holiday-specific product guarantees or return policies
+
+3. **Conversion Elements**:
+   - Early bird discount messaging: "Save an extra 10% when you order before [date]"
+   - Bundle savings calculation: "Save 25% when purchased as a holiday gift set"
+   - Limited quantity messaging: "Only 50 holiday editions available"
+   - Gift recipient testimonials: "95% of gift recipients loved this product"
+   - Holiday shipping promotions: "Free express shipping on orders over $100"
+
+4. **Related Products**:
+   - "Complete the gift" recommendations algorithm
+   - Holiday gift set suggestions with bundle pricing
+   - Complementary seasonal products with gift-giving context
+   - Previous customers' holiday purchase combinations
+   - Gift wrapping and accessories as add-on products

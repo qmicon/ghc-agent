@@ -28,75 +28,86 @@ ANTHROPIC_API_KEY=your_api_key_here
 
 ## Usage
 
-1. Create your offer requirements:
-   - Create a file named `offer_requirements_prompt.txt`
-   - Add your offer page requirements in this file
-   - Example requirements:
-     ```
-     Create a new custom page template titled "Buy 3 for 99" with the following layout and behavior:
-     
-     1. Banner Section
-     Full-width banner image at the top of the page
-     Include a heading: "Pick Any 3 Products for ₹99"
-     Optional subtext for promotion details
-     
-     2. Product Grid Section
-     Display a grid of selectable products
-     Each product should have an image, name, and "Select" button
-     When a product is selected, change the button to "Selected" and visually highlight it
-     Only allow up to 3 products to be selected
-     
-     3. Selected Products Section (Fixed at Bottom)
-     Sticky section at the bottom of the page
-     Show 3 empty slots initially
-     As the user selects products, fill the slots with the selected product images/names
-     Include a "Checkout for ₹99" button
-     The button remains disabled until exactly 3 products are selected
-     ```
+1. Create your initial requirements:
+   - Create a file named `simple_offer_requirement.txt`
+   - Add your basic offer page requirements in this file
 
-2. Generate code examples:
+2. Enhance your requirements:
+```bash
+python enhance_prompt.py
+```
+This will generate `enhanced_prompt.txt` with detailed requirements. Review and copy the content to `offer_requirements_prompt.txt`.
+
+3. Generate code examples:
 ```bash
 python generate_examples_from_template.py
 ```
-This will create `examples.txt` with relevant code examples:
-- Implementation examples from the `dataset/` directory.
-- UI component examples from the `example_components/` directory.
+This script:
+- Reads from `offer_requirements_prompt.txt`
+- Finds relevant examples from `example_components/` and `dataset/`
+- Creates `examples.txt` with implementation examples and UI component examples
 
-3. Generate implementation plan:
-   - **Important**: Before running, open `generate_offer_plan_claude.py` and update the `shopify_url` variable to your store's URL (e.g., `https://your-store-name.myshopify.com`). This is used to help the AI suggest relevant collection and product handles.
-```bash
-python generate_offer_plan_claude.py
-```
-This will create `offer_plan_claude.txt` with a detailed implementation plan.
+4. Generate the offer page (choose one approach):
 
-4. Save implementations:
+   a. Multi-file approach (recommended for complex pages):
+   ```bash
+   python generate_offer_plan_claude.py
+   ```
+   This script:
+   - Reads from `offer_requirements_prompt.txt`
+   - Uses `examples.txt` if available
+   - Fetches your Shopify store data
+   - Generates a detailed implementation plan in `offer_plan_claude.txt`
+   - The plan includes code for multiple files (sections, snippets, templates)
+
+   b. Single-file approach (simpler pages):
+   ```bash
+   python generate_one_page_liquid_claude.py
+   ```
+   This script:
+   - Reads from `offer_requirements_prompt.txt`
+   - Uses `examples.txt` if available
+   - Fetches your Shopify store data
+   - Generates a detailed implementation plan in `offer_plan_claude.txt`
+   - The plan includes code for a single template file
+
+5. Save the implementation:
 ```bash
 python save_implementations.py
 ```
-This will create the actual implementation files based on the plan and create a claude workspace directory
+This script reads `offer_plan_claude.txt` and creates the files according to the plan in the claude workspace directory.
 
 ## Directory Structure
 
 ```
 .
-├── dataset/                    # Example code dataset for full offer implementations
-│   ├── desc-buy-x-for-y/      # Descriptive buy X for Y examples
-│   └── simple-buy-x-for-y/    # Simple buy X for Y examples
-├── example_components/         # Example UI components (sections, snippets)
+├── dataset/                    # Example code dataset
+├── example_components/         # Example UI components
 ├── venv/                      # Python virtual environment
 ├── .env                       # Environment variables
 ├── requirements.txt           # Python package requirements
-├── offer_requirements_prompt.txt  # Your offer requirements
+├── simple_offer_requirement.txt  # Initial requirements
+├── enhanced_prompt.txt        # Enhanced requirements
+├── offer_requirements_prompt.txt  # Final requirements
 ├── examples.txt              # Generated code examples
-├── offer_plan_claude.txt     # Generated implementation plan
-├── generate_examples_from_template.py      # Example generation script
-├── generate_offer_plan_claude.py  # Plan generation script
-└── save_implementations.py   # Implementation saving script
+├── offer_plan_claude.txt     # Implementation plan
+├── generate_examples_from_template.py  # Generate examples
+├── generate_offer_plan_claude.py       # Multi-file approach
+├── generate_one_page_liquid_claude.py  # Single-file approach
+├── enhance_prompt.py         # Requirements enhancement
+└── save_implementations.py   # Save files from plan
 ```
 
 ## Notes
 
-- Make sure to update `offer_requirements_prompt.txt` with your specific requirements before running the scripts
-- **Remember to update `shopify_url` in `generate_offer_plan_claude.py` to your store's URL.**
-- The generated implementation will be saved in the appropriate Shopify theme directory structure
-- Check the generated files for any necessary adjustments before deploying
+- **Important**: Update `shopify_url` in both `generate_offer_plan_claude.py` and `generate_one_page_liquid_claude.py` to your store's URL
+- For both generation scripts, you'll need `AZURE_OPENAI_API_KEY` in your `.env` file
+- Both approaches use the same examples from `examples.txt` if available
+- Both approaches follow the same process:
+  1. Generate a plan in `offer_plan_claude.txt`
+  2. Use `save_implementations.py` to create the files
+- The only difference is what files they generate in the plan:
+  - Multi-file approach: Creates separate files for sections, snippets, and templates
+  - Single-file approach: Creates a single template file
+- The multi-file approach is recommended for complex pages as it provides more flexibility
+- The single-file approach is simpler but may be less flexible for complex requirements
