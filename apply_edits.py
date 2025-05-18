@@ -112,15 +112,19 @@ def normalize_whitespace(text: str) -> str:
     # Remove empty lines and join with single newline
     return '\n'.join(line for line in lines if line)
 
-def apply_edit(workspace_dir: str, edits_dir: str, edit: dict) -> bool:
+def apply_edit(edits_dir: str, edit: dict) -> bool:
     """Apply a single edit to a file in the edits directory."""
-    # Get paths for both original and edited files
-    original_file = os.path.join(workspace_dir, edit['file'])
-    edited_file = os.path.join(edits_dir, edit['file'])
+    # Normalize paths to use forward slashes
+    edits_dir = edits_dir.replace('\\', '/')
+    file_path = edit['file'].replace('\\', '/')
+    
+    # Get path for the edited file
+    edited_file = os.path.join(edits_dir, file_path)
+    edited_file = os.path.normpath(edited_file)
     
     try:
-        # Read current file content
-        with open(original_file, "r", encoding="utf-8") as f:
+        # Read from the edited file (which may have been modified by previous edits)
+        with open(edited_file, "r", encoding="utf-8") as f:
             content = f.read()
         
         # Normalize whitespace in both search content and file content
@@ -129,44 +133,27 @@ def apply_edit(workspace_dir: str, edits_dir: str, edit: dict) -> bool:
         
         # Check if search content exists in file
         if normalized_search not in normalized_content:
-            print(f"❌ Search content not found in {edit['file']}")
+            print(f"❌ Search content not found in {file_path}")
             print(f"Edit: {edit['description']}")
-            print("Expected content (normalized):")
-            print(normalized_search)
-            print("\nFirst 100 chars of file content (normalized):")
-            print(normalized_content[:100])
             return False
         
-        # Find the actual search content in the original file
-        search_pos = normalized_content.find(normalized_search)
-        if search_pos == -1:
-            print(f"❌ Could not map normalized search back to original content in {edit['file']}")
-            return False
-            
-        # Count newlines up to search_pos in normalized content to find line number
-        line_num = normalized_content[:search_pos].count('\n') + 1
-        print(f"Found search content at line {line_num}")
-        
-        # Apply the edit using the original content
+        # Apply the edit using the content
         new_content = content.replace(edit['search'], edit['replace'], 1)  # Replace only first occurrence
         
-        # Ensure the target directory exists
-        os.makedirs(os.path.dirname(edited_file), exist_ok=True)
-        
-        # Write updated content to the edits directory
+        # Write updated content back to the edited file
         with open(edited_file, "w", encoding="utf-8") as f:
             f.write(new_content)
         
-        print(f"✓ Created edited file at {edited_file}")
+        print(f"✓ Updated file at {edited_file}")
         print(f"Description: {edit['description']}")
         return True
         
-    except FileNotFoundError:
-        print(f"❌ File not found: {edit['file']}")
+    except FileNotFoundError as e:
+        print(f"❌ File not found: {file_path}")
         print(f"Edit: {edit['description']}")
         return False
     except Exception as e:
-        print(f"❌ Error applying edit to {edit['file']}: {e}")
+        print(f"❌ Error applying edit to {file_path}: {e}")
         print(f"Edit: {edit['description']}")
         return False
 
@@ -174,8 +161,9 @@ def main():
     workspace_dir = "claude_workspace"
     
     # Create and prepare edits directory
-    print("Preparing edits directory...")
+    print("\nPreparing edits directory...")
     edits_dir = ensure_edits_directory(workspace_dir)
+    
     copy_workspace_to_edits(workspace_dir, edits_dir)
     print(f"Created fresh edits directory at {edits_dir}")
     
@@ -186,13 +174,11 @@ def main():
         print("❌ No edits found to apply")
         return
     
-    print(f"Found {len(edits)} edits to apply")
-    
     # Apply each edit
     success_count = 0
     for i, edit in enumerate(edits, 1):
         print(f"\nApplying edit {i}/{len(edits)}...")
-        if apply_edit(workspace_dir, edits_dir, edit):
+        if apply_edit(edits_dir, edit):
             success_count += 1
     
     # Print summary
