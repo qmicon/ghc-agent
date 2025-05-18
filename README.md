@@ -111,3 +111,70 @@ This script reads `offer_plan_claude.txt` and creates the files according to the
   - Single-file approach: Creates a single template file
 - The multi-file approach is recommended for complex pages as it provides more flexibility
 - The single-file approach is simpler but may be less flexible for complex requirements
+
+# Code Editing Workflow
+
+This section describes the workflow for making edits to the Shopify codebase using the editing tools.
+
+## Overview
+
+The editing workflow consists of two main scripts:
+1. `generate_edits.py` - Analyzes edit requirements and generates suggested edits
+2. `apply_edits.py` - Applies the suggested edits to create modified files
+
+## Setup
+
+1. Create an `edit_prompt.txt` file with your editing requirements
+2. Ensure your `ANTHROPIC_API_KEY` environment variable is set
+3. Make sure your codebase is in the `claude_workspace` directory
+
+## Usage
+
+### Step 1: Generate Suggested Edits
+
+1. Write your editing requirements in `edit_prompt.txt`
+2. Run the edit generation script:
+   ```bash
+   python generate_edits.py
+   ```
+3. Review the generated `suggested_edits.txt` file, which will contain:
+   - A list of suggested changes
+   - Each change includes:
+     - File path
+     - Original code (SEARCH)
+     - New code (REPLACE)
+     - Explanation of the changes
+
+### Step 2: Apply the Edits
+
+1. Review the suggested edits in `suggested_edits.txt`
+2. Run the apply edits script:
+   ```bash
+   python apply_edits.py
+   ```
+3. The script will:
+   - Create a new `claude_workspace_edits` directory
+   - Copy all files from `claude_workspace`
+   - Apply the suggested edits to files in the edits directory
+   - Leave the original workspace untouched
+4. Review the modified files in `claude_workspace_edits`
+
+## Directory Structure
+
+```
+.
+├── claude_workspace/           # Original codebase
+├── claude_workspace_edits/     # Modified files (created by apply_edits.py)
+├── edit_prompt.txt            # Your editing requirements
+├── suggested_edits.txt        # Generated edit suggestions
+├── generate_edits.py          # Script to generate edit suggestions
+└── apply_edits.py            # Script to apply the edits
+```
+
+## Notes
+
+- The editing workflow preserves your original codebase by creating a separate directory for modified files
+- Each edit in `suggested_edits.txt` follows the code editing diff format (see [diff format documentation](https://aider.chat/docs/more/edit-formats.html#diff))
+- The apply script handles whitespace differences and provides detailed feedback about each edit
+- If an edit fails, check the error message for details about what went wrong
+- You can safely delete the `claude_workspace_edits` directory to start over

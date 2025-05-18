@@ -1,0 +1,1 @@
+In the success stories, the pictures of people are empty, it should fallback to a blank icon

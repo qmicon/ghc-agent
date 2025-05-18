@@ -1,84 +1,3 @@
-# Festive Holiday Sale Product Page Implementation Plan
-
-## Implementation Steps
-
-### 1. Create the Base Template File
-- Create `templates/page.offer.liquid` as the main template file
-- This will serve as the container for all sections of the offer page
-
-### 2. Develop Core Components
-- Implement the festive hero banner section
-- Create the holiday product gallery
-- Build the product information section with promotional pricing
-- Develop the limited-time offer countdown section
-- Implement the holiday bundle & cross-sell section
-- Create the seasonal social proof section
-
-### 3. Add Interactive Elements
-- Implement the countdown timer functionality
-- Create the add-to-cart functionality with holiday styling
-- Build the product variant selector
-- Implement responsive behaviors for all components
-
-### 4. Finalize and Test
-- Ensure all components work together seamlessly
-- Test responsive behavior across different device sizes
-- Verify all dynamic content is properly rendered
-
-## Required Components
-
-### 1. Festive Hero Banner Section
-- Purpose: Create visual impact and communicate the holiday promotion
-- Functionality: Display promotional messaging, holiday theme, and product hero image
-
-### 2. Holiday Product Gallery
-- Purpose: Showcase the product with holiday-themed styling
-- Functionality: Display product images with festive frames, support for thumbnails and image zoom
-
-### 3. Holiday Promotion Product Information
-- Purpose: Display product details with promotional pricing
-- Functionality: Show product title, description, pricing with holiday discount, and variant selection
-
-### 4. Limited-Time Offer Section
-- Purpose: Create urgency with a countdown timer
-- Functionality: Display countdown to promotion end date, stock level indicators
-
-### 5. Holiday Bundle & Cross-Sell Section
-- Purpose: Increase average order value with complementary products
-- Functionality: Display related products with bundle pricing options
-
-### 6. Seasonal Social Proof Section
-- Purpose: Build trust with customer testimonials
-- Functionality: Display holiday-themed testimonials and ratings
-
-## File Structure
-
-### 1. templates/page.offer.liquid
-- Purpose: Main template file that includes all sections
-- Dependencies: None, but includes all the sections below
-
-## Implementation Notes
-
-The implementation will follow a modular approach, with each section contained within the main template file. This approach allows for:
-
-1. **Maintainability**: Each section has its own contained code
-2. **Performance**: All code is in a single file, reducing HTTP requests
-3. **Simplicity**: Easier for beginners to understand and modify
-
-The implementation will use Liquid for templating, JavaScript for interactive elements like the countdown timer, and CSS for styling. All code will be responsive and follow modern web development best practices.
-
-Error handling will be implemented for:
-- Missing product data
-- Invalid promotion end dates
-- Missing images or content
-
-Now, let's proceed with the actual implementation code.
-
----
-FILE: templates/page.offer.liquid
-TYPE: liquid
-CONTENT:
-```liquid
 {% comment %}
   Festive Holiday Sale Product Page
   This template creates a holiday-themed offer page with promotional elements.
@@ -633,8 +552,8 @@ CONTENT:
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      object-fit: cover;
       margin-right: 10px;
+      flex-shrink: 0;
     }
     
     .testimonial__author-name {
@@ -977,49 +896,3 @@ CONTENT:
   </script>
 </div>
 {% endif %}
-```
----
-
-## Implementation Details
-
-This implementation creates a complete holiday-themed offer page with the following features:
-
-1. **Festive Hero Banner**
-   - Full-width banner with holiday styling
-   - Promotional messaging and call-to-action button
-   - Responsive design that adapts to different screen sizes
-
-2. **Product Gallery**
-   - Main product image with thumbnail navigation
-   - Interactive image switching functionality
-   - Holiday-themed styling with festive borders
-
-3. **Product Information Section**
-   - Product title, description, and pricing
-   - Sale price display with savings calculation
-   - Variant selector for products with options
-   - Quantity selector with increment/decrement functionality
-
-4. **Limited-Time Offer Section**
-   - Countdown timer showing days, hours, minutes, and seconds
-   - Stock level indicator to create urgency
-   - Festive styling with holiday colors
-
-5. **Holiday Bundle & Cross-Sell Section**
-   - Related products from the "male" collection
-   - Bundle selection with checkboxes
-   - "Add Selected Items to Cart" functionality
-
-6. **Seasonal Social Proof Section**
-   - Customer testimonials with holiday gift context
-   - Star ratings and customer photos
-   - Festive styling to match the holiday theme
-
-The implementation includes:
-
-- **Responsive Design**: The page adapts to different screen sizes with appropriate styling changes
-- **Interactive Elements**: JavaScript functionality for the countdown timer, image gallery, quantity selector, and bundle selection
-- **Error Handling**: Form submission error handling and fallback content for missing data
-- **Holiday Styling**: Festive colors, borders, and design elements throughout the page
-
-This implementation provides a complete, ready-to-use holiday offer page that can be easily customized by adjusting the CSS variables and content.
