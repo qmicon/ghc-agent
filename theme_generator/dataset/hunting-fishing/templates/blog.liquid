@@ -1,0 +1,24 @@
+  {%- capture sidebarCheck -%}
+  {%- if settings.blog_page_sidebar == "left_sidebar" -%}
+  {%- assign mid_width = "has-sidebar" -%}   
+  left-sidebar 
+  {%- elsif settings.blog_page_sidebar == "right_sidebar" -%}
+  {%- assign mid_width = "has-sidebar" -%}   
+  right-sidebar
+  {% endif %}
+  {%- endcapture -%}
+  <div class="container">
+    <div class="row"> 
+      <div class="{%- if settings.blog_page_sidebar == "full_width" -%}full-width{% endif %}{%- if settings.blog_page_sidebar != "full_width" -%}{{ mid_width }} {{- sidebarCheck -}} {%- unless section.blocks.size > 0 -%}full-width{%- endunless -%}{%- endif -%}">
+        <div class="blog-template-content">
+          {% section 'blog-template' %}
+        </div>
+        {%- unless settings.blog_page_sidebar == "full_width" -%}  
+        <div class="text-center sidebar_btn"><a class="dt-sc-btn toggleIcon"> <i class="fa fa-caret-right" aria-hidden="true"></i> </a></div>
+        <div class="sidebar" id="sidebar-sticky">
+          {% section 'blog-sidebar' %}      
+        </div>
+        {%- endunless -%}
+      </div>
+    </div>
+  </div>

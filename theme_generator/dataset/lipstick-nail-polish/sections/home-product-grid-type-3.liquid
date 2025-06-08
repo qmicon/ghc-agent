@@ -1,0 +1,313 @@
+<div data-section-id="{{ section.id }}"  data-section-type="home-product-grid-type-3" class="home-product-grid-type-3">
+ {%- assign collection = collections[section.settings.collection] -%}   
+ <div class="wrapper">
+  <div class="grid--uniform">    
+    {% if section.settings.alignment == 'left' and  section.settings.image != blank %} 
+    <div class="grid__item wide--one-quarter post-large--two-quarters large--two-quarters medium-down--grid__item small--grid__item  wow fadeInLeft animated"> 
+      <div id="type-3__carousel_banner">
+        <div class="img-hover-effect">
+        <div class="ovrly23">
+          {% if section.settings.link != blank %}<a href="{{ section.settings.link }}">{% endif%}
+          {% if section.settings.image != blank %}
+          <img src="{{ section.settings.image | img_url: 'master' }}" alt="{{ section.settings.title }}" />
+          <div class="overlay" {% if settings.overlay_use %}  style="background:{{ section.settings.overlay_bgcolor | color_modify: 'alpha', 0.5 }};"{% endif %}></div>
+          {% else %}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif%}           
+          {% if section.settings.link != blank %}  </a>
+
+          {% endif%}
+          <div class="featured-content"> 
+            {% if section.settings.show_small_img %}
+          <img src="{{ section.settings.small_img | img_url: 'master' }}" alt="{{ section.settings.title }}" />
+          
+          {% endif%}           
+             {% if section.settings.sub_title != blank %}
+            <p style="color:{{ section.settings.sub_title_clr }};">{{ section.settings.sub_title }}</p>
+            {% endif %}
+            {% if section.settings.title != blank %}
+            <h2 style="color:{{ section.settings.title_clr }};">{{ section.settings.title }}</h2>
+            {% endif %}
+            {% if section.settings.text != blank %}
+            <h6 style="color:{{ section.settings.text_clr }};">{{ section.settings.text}}</h6>    
+            {% endif %}  
+            {% if section.settings.button != blank %}
+            <a class="btn" href="{{ section.settings.link }}" >{{ section.settings.button }}</a>    
+            {% endif %}         
+          </div>   
+        </div>    
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    
+    {% if section.settings.image != blank %}
+     {%- assign grid_mid_width = 'wide--three-quarters post-large--two-quarters large--two-quarters medium-down--grid__item small--grid__item' -%}     
+    {% else %}
+    {%- assign grid_mid_width = ' ' -%}
+    {% endif%}    
+    
+    
+   <div class="grid__item {{grid_mid_width }}"> 
+     <div class="home-product-grid-type-3-carousel ">  
+  	<div class="full_width_tab  {{section.id}} gridType_3 owl-carousel owl-theme wow fadeIn">                            
+       <ul class="type3__items">                       
+         {% assign modval = collection.products.size | divided_by:3  %}                   
+        {% for product in collection.products   %}   
+         {% assign test_val =  forloop.index | modulo:3 %}
+        {% include 'v_grid_item', grid_item_width:" " %}          
+         {% unless forloop.first  %}
+          {% unless forloop.last  %}
+         {% if test_val == 0 %}
+         </ul>
+      <ul class="type3__items">                       
+        {% endif %}
+         {% endunless %}
+        {% endunless %}
+         {% endfor %}        
+        </ul>             
+    </div>
+      <div class="nav_type3__items {{section.id}}">
+          </div> 
+       
+       <style>
+  
+  
+ 
+    </style>
+     </div>
+    </div>     
+    
+     {% if section.settings.alignment == 'right' and section.settings.image != blank %} 
+    <div class="grid__item wide--one-quarter post-large--two-quarters large--two-quarters medium-down--grid__item small--grid__item wow fadeInLeft animated"> 
+      <div id="type-3__carousel_banner">
+        <div class="img-hover-effect">
+        <div class="ovrly23">
+          {% if section.settings.link != blank %}<a href="{{ section.settings.link }}">{% endif%}
+          {% if section.settings.image != blank %}
+          <img src="{{ section.settings.image | img_url: 'master' }}" alt="{{ section.settings.title }}" />
+          <div class="overlay" {% if settings.overlay_use %}  style="background:{{ section.settings.overlay_bgcolor | color_modify: 'alpha', 0.5 }};"{% endif %}></div>
+          {% else %}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif%}           
+          {% if section.settings.link != blank %}  </a>
+
+          {% endif%}
+          <div class="featured-content"> 
+            {% if section.settings.show_small_img %}
+          <img src="{{ section.settings.small_img | img_url: 'master' }}" alt="{{ section.settings.title }}" />
+          
+          {% endif%}           
+             {% if section.settings.sub_title != blank %}
+            <p style="color:{{ section.settings.sub_title_clr }};">{{ section.settings.sub_title }}</p>
+            {% endif %}
+            {% if section.settings.title != blank %}
+            <h2 style="color:{{ section.settings.title_clr }};">{{ section.settings.title }}</h2>
+            {% endif %}
+            {% if section.settings.text != blank %}
+            <h6 style="color:{{ section.settings.text_clr }};">{{ section.settings.text}}</h6>    
+            {% endif %}  
+            {% if section.settings.button != blank %}
+            <a class="btn" href="{{ section.settings.link }}">{{ section.settings.button }}</a>    
+            {% endif %}         
+          </div>   
+        </div>    
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    
+  </div>
+  </div>
+  
+  </div>
+  <div class="dt-sc-hr-invisible-large"></div> 
+
+
+
+
+<style>
+
+
+  .home-product-grid-type-3 .nav_type3__items a.btn{background:{{section.settings.prt_btn_bg}};color:{{section.settings.prt_btn_txt_clr}};}
+
+  .home-product-grid-type-3 .nav_type3__items a.btn:hover{background:{{section.settings.prt_btn_hoverbg}};color:{{section.settings.prt_btn_txt_hoverclr}};}
+</style>
+
+
+
+
+{% schema %}
+{
+  "name": "Featured products",
+  "class": "index-section",  
+  "settings": [   
+{
+      "type": "color",
+      "id": "prt_bg_clr",
+      "label": "Product Bg Color",
+	  "default":"#000"
+      },
+{
+      "type": "color",
+      "id": "prt_btn_bg",
+      "label": "Product Btn Bg Color",
+	  "default":"#000"
+      },
+ {
+      "type": "color",
+      "id": "prt_btn_txt_clr",
+      "label": "Product Btn Texr Color",
+	  "default":"#000"
+      },
+{
+      "type": "color",
+      "id": "prt_btn_hoverbg",
+      "label": "Product Btn Hover Bg Color",
+	  "default":"#000"
+      },
+ {
+      "type": "color",
+      "id": "prt_btn_txt_hoverclr",
+      "label": "Product Btn Hover Texr Color",
+	  "default":"#000"
+      },
+	{
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+	  "info": "Size: 600x500"
+      },
+{
+      "type": "select",
+      "id": "alignment",
+      "label": "Image Alignment",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }        
+      ]
+    },
+      {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+      },
+	{
+      "type": "color",
+      "id": "title_clr",
+      "label": "Heading",
+	  "default":"#000"
+      },
+
+{
+        "type": "checkbox",
+        "id": "overlay_use",
+        "label": "Use Overlay"
+      },
+      {
+      "type": "color",
+      "id": "overlay_bgcolor",
+      "label": "Overlay",
+      "default":"#000"	
+      },
+      {
+      "type": "url",
+      "id": "link",
+      "label": "Link URL"
+      },
+	{
+      "id": "collection",
+      "type": "collection",
+      "label": "Collection"
+    },
+{
+      "type": "select",
+      "id": "items",
+      "label": "Carousel Items",
+      "default": "left",
+      "options": [
+		{
+          "value": "1",
+          "label": "1"
+        },        
+		{
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+		{
+          "value": "4",
+          "label": "4"
+        },
+		{
+          "value": "5",
+          "label": "5"
+        },
+		{
+          "value": "6",
+          "label": "6"
+        }
+      ],
+ 		"default": "3",
+        "info": "3"
+    }
+
+
+  ],
+  "presets": [
+    {
+      "name": "Featured products",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}
+
+
+
+ <script type="text/javascript">
+   $(document).ready(function(){   
+     var gridType_3 = $(".gridType_3.{{section.id}}");
+                         gridType_3.owlCarousel({
+                         loop:false,
+                         margin:10,
+                         nav:true,
+                         navContainer: ".nav_type3__items.{{section.id}}",
+                         navText: ['<a class="prev btn"><i class="zmdi zmdi-arrow-left"></i></a>',' <a class="next btn"><i class="zmdi zmdi-arrow-right"></i></a>  '],
+                         dots: false,
+                         responsive:{
+                         0:{
+                         items:1
+                         },
+                         600:{
+                         items:1
+                         },
+                         1000:{
+                         items:1
+                         },
+                           1200:{
+                         items:2
+                         },
+                           1600:{
+                        items:{{ section.settings.items }}
+                         }
+                         }
+                         });
+
+   });
+
+        </script>
+
+
+            
+           

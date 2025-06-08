@@ -1,0 +1,41 @@
+<div class="wrapper">
+  <div class="top_bar top-bar-type-3">
+    
+    {% if section.settings.display_header_social %}  
+    <div class="header_social top_bar_left">
+      {% if section.settings.social_title != blank %}
+      <h4>{{ section.settings.social_title }}</h4>   
+      {% endif %}
+      {% include 'social-links-type-1' %}
+    </div>
+    {% endif %}
+
+    <div class="top_bar_menu">      
+
+      <ul class="menu_bar_right grid__item wide--one-sixth post-large--one-sixth">
+        <li class="header_currency">
+          <ul class="tbl-list">
+            <li class="currency dropdown-parent uppercase currency-block">
+              {% if section.settings.display_currency %}    
+              {% include 'currencies-switcher' %}
+              {% endif %}
+            </li>
+          </ul>
+        </li>   
+        <li>
+          {% if section.settings.header_phone_value != blank or  section.settings.header_mail_value != blank %}
+          <ul class="top_bar_right">
+            {% if section.settings.header_phone_value != blank %}
+            <li><span>{{ section.settings.header_phone_label }} : {{ section.settings.header_phone_value }}</span></li>
+            {% endif %}
+            {% if section.settings.header_mail_value != blank %}
+            <li>{{ section.settings.header_mail_label }}  : <a href="mailto:{{ section.settings.header_mail_value }}"> {{ section.settings.header_mail_value }}</a></li>
+            {% endif %}
+          </ul>
+          {% endif %} 
+        </li>
+      </ul>
+    </div>
+   
+  </div>
+</div>

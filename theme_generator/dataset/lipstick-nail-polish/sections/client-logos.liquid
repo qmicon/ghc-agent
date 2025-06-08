@@ -1,0 +1,167 @@
+
+<div data-section-id="{{ section.id }}"  data-section-type="client section" class="client-section">
+  {% if section.blocks.size > 0 %}    
+  <div class="grid-uniform section-seven">
+    <div class="container">
+      <div class="grid__item">
+        {% if section.settings.title != blank %}
+        <div class="border-title">
+          {% if section.settings.description_1 != blank %} <h5 class="small-title" style="color:{{ section.settings.desc_color }}">{{ section.settings.description_1 }}</h5>{% endif %}        
+          <h2 style="color:{{section.settings.title_color}}">{{ section.settings.title }}</h2>
+          {% if section.settings.title_img != blank %}
+          <div class="tilte_img">
+            <img src="{{ section.settings.title_img | img_url: '69x23' }}" alt="" title=""  />
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+        <div id="client-carousel" class="owl-carousel owl-theme client-section">
+          {% for block in section.blocks %}
+          {% if block.settings.client_img != blank %}
+          <div class="item wow fadeInUp animated">
+            <a href="{{ block.settings.client_link }}"> <img src="{{ block.settings.client_img | img_url: "master"  }}" alt="{{ block.settings.client_heading }}" /></a>
+          </div>
+          {% else %}          
+          <div class="item"><a href="#">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</a></div>
+          {% endif %}           
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dt-sc-hr-invisible-large"></div>
+  {% endif %} 
+</div>
+
+{% schema %}
+{
+"name": "Client Logo",
+"class": "index-section",
+"settings": [
+{
+"type": "text",
+"id": "title",
+"label": "Heading"
+},
+{
+"type": "color",
+"id": "title_color",
+"label": "Title Color",
+"default":"#000"
+},
+
+{
+"type": "image_picker",
+"id": "title_img",
+"label": "Title Image",
+"info": "Size: 69x23"
+},
+{
+"type": "textarea",
+"id": "description_1",
+"label": "Description"
+
+},
+{
+"type": "color",
+"id": "desc_color",
+"label": "Color",
+"default":"#000"
+}
+
+],
+"blocks": [
+{
+"type": "Image",
+"name":"client img",
+"settings": [
+{
+"type": "image_picker",
+"id": "client_img",
+"label": "Image",
+"info": "Size: 353x200"
+},
+{
+"type": "text",
+"id": "client_heading",
+"label": "text"
+},
+{
+"type": "url",
+"id": "client_link",
+"label": "Link URL"
+}
+]
+}
+],
+
+"presets": [
+{
+"name": "Client Logo",
+"category": "Image",
+"blocks": [
+{
+"type": "Image"
+},
+{
+"type": "Image"
+},
+{
+"type": "Image"
+},
+{
+"type": "Image"
+},
+{
+"type": "Image"
+},
+{
+"type": "Image"
+},{
+"type": "Image"
+},
+{
+"type": "Image"
+},
+{
+"type": "Image"
+}
+
+]
+}
+]
+}
+{% endschema %}
+
+
+
+{% javascript %}
+
+ $(document).ready(function(){
+     var brand_logos = $("#client-carousel");
+      brand_logos.owlCarousel({
+       items:5,
+       loop:false,      
+       dots: true, 
+	   autoplay: true,
+ nav:false,
+	   autoplayTimeout: 3000,
+          responsive:{
+           0:{
+             items: 1
+           },
+           600:{
+             items:2
+           },
+           700:{
+             items:4
+           },
+           
+           1000:{
+             items: 5
+           }
+         }
+  			});
+        });
+{% endjavascript %}
+

@@ -1,0 +1,334 @@
+<div data-section-id="{{ section.id }}"  data-section-type="home-product-grid-type-14" class="home-product-grid-type-14">
+  {%- assign collection = collections[section.settings.collection] -%}
+  {%- assign limit = section.settings.grid | times: section.settings.rows -%}  
+  <div class="full_width_tab load-wrapper">           
+    {% if section.settings.title != blank  %}
+    <div class="section-header section-header--small">
+      <div class="border-title">
+        {% endif %}            
+        {% if section.settings.title != blank %}
+        <h2 class="section-header__title" style="color:{{section.settings.title_clr }};">    
+          {{ section.settings.title }}
+        </h2>
+        {% endif %}          
+        {% if section.settings.title != blank  %}
+  <div class="dt-sc-hr-invisible-small"></div>
+    </div>    
+    <div class="dt-sc-hr-invisible-small"></div>
+    {% endif %}      
+    {% case section.settings.grid %}
+    {% when '2' %}
+    {%- assign grid_item_width = 'wide--one-half post-large--one-half large--one-half medium--one-half small-grid__item' -%}
+    {% when '3' %}
+    {%- assign grid_item_width = 'wide--one-third post-large--one-third large--one-half medium--one-half small-grid__item' -%}
+    {% when '4' %}
+    {%- assign grid_item_width = 'wide--one-quarter post-large--one-quarter large--one-half medium--one-half small-grid__item' -%}
+    {% when '5' %}
+    {%- assign grid_item_width = 'wide--one-fifth post-large--one-fifth large--one-half medium--one-half small-grid__item' -%}            
+    {% endcase %}
+
+    <div class="grid-uniform product-tab-type-3">
+      {% if section.settings.alignment == 'left' %}
+      <div class="grid__item wide--one-quarter post-large--one-third large--one-half medium--grid__item product-tab-type-3-left">
+         <div class="ovrly10">     
+            {% if section.settings.image_1 != blank %}
+            <img src="{{ section.settings.image_1 | img_url: 'master' }}" alt="{{ section.settings.title_1 }}" />
+            <div style="background:{{ section.settings.overlay_bgcolor | color_modify: 'alpha', 0.7 }};"  class="ovrly"></div>
+            {% else %}
+            <div style="background:{{ section.settings.overlay_bgcolor | color_modify: 'alpha', 0.7 }};"  class="ovrly">
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            {% endif%}           
+
+            <div class="featured-content">       
+              {% if section.settings.image_txt != blank %}
+              <h4 style="color:{{ section.settings.image_txt_clr }};">{{ section.settings.image_txt}}</h4>    
+              {% endif %}  
+              {% if section.settings.image_title != blank %}
+              <h2 style="color:{{ section.settings.image_title_clr }};">{{ section.settings.image_title }}</h2>
+              {% endif %}  
+              {% if section.settings.image_link != blank %}
+              <a class="btn" href="{{ section.settings.image_link }}">{{ section.settings.image_link_txt }}</a>
+              {% endif%}
+            </div> 
+            <div class="collection_count">
+              {% if section.settings.count != blank %}
+              <span class="text_count" style="color:{{ section.settings.count_clr }};">{{ section.settings.count }}</span>    
+              {% endif %}  
+              {% if section.settings.text_1_count != blank %}
+              <span class="text_count text" style="color:{{ section.settings.text_1_count_clr }};">{{ section.settings.text_1_count }}</span>    
+              {% endif %}
+            </div>
+
+          </div>
+      </div>
+      {% endif %}
+
+      <div class="grid__item wide--three-quarters post-large--two-thirds large--one-half medium--grid__item">              
+        <ul class="type4__items">
+          {% for product in collection.products limit:limit  %}
+          {% include 'vertical-grid-item-style-2', grid_item_width:grid_item_width %}          
+          {% endfor %}
+        </ul>      
+      </div>
+      {% if section.settings.alignment == 'right' %}
+      <div class="grid__item wide--one-quarter post-large--one-third large--one-half medium--grid__item product-tab-type-3-right">
+        <div class="ovrly10">     
+            {% if section.settings.image_1 != blank %}
+            <img src="{{ section.settings.image_1 | img_url: 'master' }}" alt="{{ section.settings.title_1 }}" />
+            <div style="background:{{ section.settings.overlay_bgcolor | color_modify: 'alpha', 0.7 }};"  class="ovrly"></div>
+            {% else %}
+            <div style="background:{{ section.settings.overlay_bgcolor | color_modify: 'alpha', 0.7 }};"  class="ovrly">
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            {% endif%}           
+
+            <div class="featured-content">       
+              {% if section.settings.image_txt != blank %}
+              <h4 style="color:{{ section.settings.image_txt_clr }};">{{ section.settings.image_txt}}</h4>    
+              {% endif %}  
+              {% if section.settings.image_title != blank %}
+              <h2 style="color:{{ section.settings.image_title_clr }};">{{ section.settings.image_title }}</h2>
+              {% endif %}  
+              {% if section.settings.image_link != blank %}
+              <a class="btn" href="{{ section.settings.image_link }}">{{ section.settings.image_link_txt }}</a>
+              {% endif%}
+            </div> 
+            <div class="collection_count">
+              {% if section.settings.count != blank %}
+              <span class="text_count" style="color:{{ section.settings.count_clr }};">{{ section.settings.count }}</span>    
+              {% endif %}  
+              {% if section.settings.text_1_count != blank %}
+              <span class="text_count text" style="color:{{ section.settings.text_1_count_clr }};">{{ section.settings.text_1_count }}</span>    
+              {% endif %}
+            </div>
+
+          </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="dt-sc-hr-invisible-large"></div> 
+</div>  
+</div>
+ 
+  
+{% schema %}
+{
+  "name": "Home Product Grid Type 14",
+  "class": "index-section",
+  "max_blocks": 2,
+  "settings": [  
+{
+"type": "image_picker",
+"id": "image_1",
+"label": "Image",
+"info": "Size: 450x1050"
+},
+{
+"type": "text",
+"id": "image_title",
+"label": "Heading"
+},
+{
+"type": "color",
+"id": "image_title_clr",
+"label": "Image title",
+"default": "#fff"
+},
+{
+"type": "textarea",
+"id": "image_txt",
+"label": "Image text"
+},
+{
+"type": "color",
+"id": "image_txt_clr",
+"label": "Image text",
+"default": "#fff"
+},
+{
+"type": "text",
+"id": "image_link_txt",
+"label": "Button text"
+},
+{
+"type": "color",
+"id": "button_bg_clr",
+"label": "Button Border",
+"default": "#fff"
+},
+{
+"type": "color",
+"id": "button_txt_clr",
+"label": "Button text",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "button_hover_bg_clr",
+"label": "Button hover background",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "button_hover_txt_clr",
+"label": "Button hover text",
+"default": "#fff"
+},
+{
+"type": "text",
+"id": "image_link",
+"label": "Link"
+},
+{
+"type": "text",
+"id": "count",
+"label": "Number"
+},
+{
+"type": "color",
+"id": "count_clr",
+"label": "Number",
+"default": "#fff"
+},
+{
+"type": "text",
+"id": "text_1_count",
+"label": "Numbered Text"
+},
+{
+"type": "color",
+"id": "text_1_count_clr",
+"label": "Numbered Text",
+"default": "#fff"
+},
+
+{
+"type": "color",
+"id": "tag_clr",
+"label": "Tag Color",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "tag_hover_clr",
+"label": "Tag Hover Color",
+"default": "#fff"
+},
+	{
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "New arrivals"
+    },	   
+	{
+      "type": "color",
+      "id": "title_clr",
+      "label": "Heading Color",
+	  "default": "#000"
+	},		
+    {
+      "id": "collection",
+      "type": "collection",
+      "label": "Collection"
+    },
+  {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "show_vendor",
+	  "default": true
+	},		
+   {
+      "type": "select",
+      "id": "alignment",
+      "label": "Featured product alignment",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }        
+      ]
+    },
+
+    {
+      "type": "select",
+      "id": "grid",
+      "label": "Products per row",
+      "default": "3",
+      "options": [
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        }
+        
+      ]
+    },
+{
+        "type": "select",
+        "id": "rows",
+        "label": "Rows per page (grid only)",
+        "default": "2",
+        "options": [
+			{
+            "value": "1",
+            "label": "1"
+          },
+          {
+            "value": "2",
+            "label": "2"
+          },
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          }
+                  
+        ]
+      }
+   
+  
+  ],
+
+"blocks": [
+{
+"type": "Image",
+"name": "Featured Product",
+"settings": [	
+{
+"type": "image_picker",
+"id":"image_featured",
+"label":"Image",
+"info": "Size: 900x1200"
+}
+]
+}
+],
+  "presets": [
+    {
+     "name": "Home Product Grid Type 14",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+

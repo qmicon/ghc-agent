@@ -1,0 +1,122 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">  
+    <meta name="theme-color" content="{{ settings.color_primary }}">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.shopify.com" crossorigin>
+    <link rel="preconnect" href="https://monorail-edge.shopifysvc.com">
+    {%- if canonical_url != blank  -%}
+    <link rel="canonical" href="{{ canonical_url }}">
+    {%- endif -%}
+
+    {% if settings.favicon_enable %}
+    <link rel="shortcut icon" href="{{ settings.favicon | img_url: '16x16' }}" type="image/png" />
+    {% endif %}
+
+    {%- capture seo_title -%}
+    {%- if request.page_type == 'search' and search.performed == true -%}
+    {{ 'general.search.heading' | t: count: search.results_count }}: {{ 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count }}
+    {%- else -%}
+    {{ page_title }}
+    {%- endif -%}
+    {%- if current_tags -%}
+    {%- assign meta_tags = current_tags | join: ', ' -%} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+    {%- endif -%}
+    {%- if current_page != 1 -%}
+    &ndash; {{ 'general.meta.page' | t: page: current_page }}
+    {%- endif -%}
+    {%- assign escaped_page_title = page_title | escape -%}
+    {%- unless escaped_page_title contains shop.name -%}
+    &ndash; {{ shop.name }}
+    {%- endunless -%}
+    {%- endcapture -%}
+    <title>{{ seo_title | strip }}</title>
+
+    {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    <!-- Social meta ================================================== -->
+    {% include 'social-meta-tags' %}
+    {{ 'dt-framework.css' | asset_url | stylesheet_tag }} 
+    {{ 'gift-card.css' | asset_url | stylesheet_tag }}
+    {{ 'dt-theme.css' | asset_url | stylesheet_tag }} 
+    {{ 'dt-custom.css' | asset_url | stylesheet_tag }}     
+    {{ 'tharun.css' | asset_url | stylesheet_tag }}     
+    {{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}   
+    {{ 'font-all.min.css' | asset_url | stylesheet_tag }} 
+
+
+
+
+
+    {{ 'jquery-3.5.1.min.js' | asset_url | script_tag }}   
+    <script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}" defer="defer"></script>
+    {{ 'api.js' | shopify_asset_url | script_tag }} 
+    {{ 'ajax-cart.js' | asset_url | script_tag }}
+    {{ 'dt-plugins.js' | asset_url | script_tag }} 
+
+
+    {%- if request.page_type contains 'customers/' -%}
+    <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>
+    {%- endif -%}
+
+
+
+    <script>
+      var theme = {
+        strings: {
+          qrImageAlt: {{ 'gift_cards.issued.qr_image_alt' | t | json }}
+        }
+        };
+
+        window.addEventListener('DOMContentLoaded', function() {
+        var qrCode = document.getElementById('QrCode');
+
+        new QRCode(qrCode, {
+        text: qrCode.dataset.identifier,
+        width: 120,
+        height: 120,
+        imageAltText: theme.strings.qrImageAlt
+      });
+
+      document
+      .getElementById('GiftCardDigits')
+      .addEventListener('focus', function(event) {
+        event.target.select();
+      });
+      });
+
+    </script>
+    {{ content_for_header }}
+  </head>
+
+  <body class="template-giftcard">
+    {{ content_for_layout }}  
+    
+    {% if settings.ajax_cart_method == 'drawer' %}   
+    {{ 'handlebars.min.js' | asset_url | script_tag }}
+    {% endif %}
+
+
+    {{ 'dt-theme.js' | asset_url | script_tag }}     
+    <script src="{{ 'lazysizes.js' | asset_url }}" async="async"></script>
+    {% if template contains 'article' or template contains 'product' %}
+    {% if settings.social_sharing_blog or settings.social_sharing_products %}
+    {{ 'social-buttons.js' | asset_url | script_tag }}
+    {% endif %}
+    {% endif %}
+    {% section 'modal-newsletter' %}     
+    {% section 'gdpr-cookies' %}     
+    {% section 'customer-purchased' %}
+    {% render 'dT_loading-overlay' %}
+    <script src="{{ 'dT_bundle_base.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'dT_bundle.js' | asset_url }}" defer="defer"></script>  
+    <script src="{{ 'dT_main.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'dT_main_app.js' | asset_url }}" defer="defer"></script>    
+    {% include 'ajax-cart-template' %}          
+  </body>  
+</html>

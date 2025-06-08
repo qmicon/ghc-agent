@@ -1,0 +1,59 @@
+{% if section.settings.show_nesletter %}
+<div data-section-id="{{ section.id }}"  data-section-type="home-sidebar-newsletter" class="home-sidebar-newsletter">  
+<div class="newsletter-section">
+    {% if section.settings.title != blank %}
+    <h2 class="newslet_title">
+      {{ section.settings.title }}
+    </h2>
+    {% endif %}
+    {% if section.settings.text != blank %}
+    {{ section.settings.text }}
+    {% endif %}
+    {% if settings.newsletter_form_action != blank %}
+  <form action="{{ settings.newsletter_form_action }}" method="post"  name="mc-embedded-subscribe-form" target="_blank" class="input-group mc-embedded-subscribe-form">
+    <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" name="EMAIL" class="mail" aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}">
+    <button type="submit" class="btn subscribe" name="subscribe" value=""><i class="fa fa-paper-plane"></i></button>
+  </form>
+{% else %}
+    {% form 'customer' %}
+      {% if form.posted_successfully? %}
+        <p class="note form-success">{{ 'general.newsletter_form.mailing_list_success_message' | t }}</p>
+		{% else %}
+        <div class="input-group">
+          <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" name="contact[email]" class="mail" aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}" >
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <button type="submit" class="btn subscribe" name="subscribe" value=""><i class="fa fa-paper-plane"></i></button>
+        </div>
+      {% endif %}
+       {{ form.errors | default_errors }}
+    {% endform %}
+{% endif %}
+</div>
+</div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Home Sidebar Newsletter",
+  "class": "index-section",  
+  "settings": [
+	{
+        "type": "checkbox",
+        "id": "show_nesletter",
+        "label": "Enable"
+      },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Newsletter"
+    },
+ 	{
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+     "default": "<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</p>"
+    }
+  ] 
+}
+{% endschema %}

@@ -1,0 +1,6 @@
+selenium>=4.15.2
+webdriver-manager>=4.0.1
+langchain-anthropic>=0.1.1
+langchain-core>=0.1.17
+python-dotenv>=1.0.0
+Pillow>=10.2.0 

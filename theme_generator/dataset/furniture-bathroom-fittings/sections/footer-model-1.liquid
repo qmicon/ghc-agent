@@ -1,0 +1,564 @@
+<div data-section-id="{{ section.id }}"  data-section-type="Footer-model-1" class="footer-model-1">
+  <footer class="site-footer" style="background:{{ section.settings.footer_bg }};">
+      
+
+      <div class="grid-uniform">         
+        <div class="container">
+           <div class="grid__item wide--one-quarter post-large--one-quarter large--one-quarter medium--grid__item">
+              <div class="footer-logo">
+              {% if section.settings.footer_logo != blank %}                       
+              <a href="/">
+                <img class="normal-footer-logo" src="{{ section.settings.footer_logo | img_url: "master" }}" alt="{{ shop.name }}" />
+              </a>
+              {% endif %}          
+            </div>
+              {% if section.settings.welcome_text != blank  %}      
+          <p style="color:{{ section.settings.footer_text }};">{{ section.settings.welcome_text }}</p> 
+          {% endif %}
+              {% if section.settings.footer_social_enable %}  
+             {% if section.settings.social_title != blank %}
+             <h5>{{ section.settings.social_title }}</h5>
+             {% endif %}
+            <div class="footer_social_links">
+              {% include 'social-links-type-6' %}
+            </div>
+            {% endif %}
+          </div>
+          <div class="grid__item wide--three-quarters post-large--three-quarters large--three-quarters medium--grid__item">
+          
+          {% assign num_footer_columns = 0 %}     
+             
+
+          {%- assign footer_linklist1 = section.settings.footer_menu_1 %}
+          {% if linklists[footer_linklist1].links.size > 0 %}
+          {% assign num_footer_columns = num_footer_columns | plus: 1 %}
+          {% endif %}
+
+          {%- assign footer_linklist2 = section.settings.footer_menu_2 %}
+          {% if linklists[footer_linklist2].links.size > 0 %}
+          {% assign num_footer_columns = num_footer_columns | plus: 1 %}
+          {% endif %}
+
+          {% if section.settings.instagram_use %}
+          {% assign num_footer_columns = num_footer_columns | plus: 1 %}
+          {% endif %}
+            
+           {% if section.settings.show_contact %}
+          {% assign num_footer_columns = num_footer_columns | plus: 1 %}
+          {% endif %}
+
+          {% case num_footer_columns %}
+          {% when 0 %}
+            {% when 1 %}
+            {% assign footer_num_column_width = 'text-left' %}
+            {% when 2 %}
+            {% assign footer_num_column_width = 'wide--one-half post-large--one-half large--one-half medium--one-half' %}
+            {% when 3 %}
+            {% assign footer_num_column_width = 'wide--one-third post-large--one-third large--one-third medium--one-half' %} 
+            {% when 4 %}
+            {% assign footer_num_column_width = 'wide--one-quarter post-large--one-quarter large--one-quarter medium--one-half' %} 
+            {% endcase %} 
+
+
+
+
+
+            {%- assign footer_linklist1 = section.settings.footer_menu_1 %}
+            {% if linklists[footer_linklist1].links.size > 0 %}
+            <div class="grid__item {{ footer_num_column_width }}">   
+              {% if section.settings.footer_menu_1_title != blank %}
+              <h4 style="color:{{ section.settings.footer_text }};">{{ section.settings.footer_menu_1_title }}</h4>
+              {% endif %}
+              <ul class="site-footer__links">
+                {% for link in linklists[section.settings.footer_menu_1].links %}
+                <li><a style="color:{{ section.settings.footer_link }};"  href="{{ link.url }}">{{ link.title }}</a></li>
+                {% endfor %}
+              </ul>          
+            </div>
+            {% endif %}    
+
+
+            {%- assign footer_linklist2 = section.settings.footer_menu_2 %}
+            {% if linklists[footer_linklist2].links.size > 0 %}
+            <div class="grid__item {{ footer_num_column_width }}">          
+              {% if section.settings.footer_menu_2_title != blank %}
+              <h4 style="color:{{ section.settings.footer_text }};"> {{ section.settings.footer_menu_2_title }}</h4>
+              {% endif %}
+              <ul class="site-footer__links">
+                {% for link in linklists[section.settings.footer_menu_2].links %}
+                <li><a style="color:{{ section.settings.footer_link }};"  href="{{ link.url }}">{{ link.title }}</a></li>
+                {% endfor %}
+              </ul>         
+            </div>
+            {% endif %}
+
+            {% if section.settings.instagram_use %}
+            <div class="grid__item {{ footer_num_column_width }}">
+              {% if section.settings.title != blank %}
+              <h4 style="color:{{ section.settings.title_1_clr }};"><i class="fa fa-instagram"></i>{{ section.settings.title }}</h4>
+              {% endif %}
+              <div class="grid__item clearfix instagram">               
+                <input type="hidden" id="token-{{ section.id }}" value="{{ section.settings.accessToken }}">
+                <div class="lush-instagram clearfix" data-id="{{ section.id }}">
+                  <div class="grid__item">
+                    <div id="instafeed-{{ section.id }}" class="-{{ section.id }}" data-sort-by="{{ section.settings.sort }}" data-grid="{{ section.settings.grid }}" data-rows="{{ section.settings.rows }}" class="instagram--with-padding" data-slick='{"slidesToShow": "{{ section.settings.sidetoshow }}", "autoplay": {{ section.settings.use_autoplay }}, "arrows": {{ section.settings.use_arrows }},"responsive":[{"breakpoint": 1024,"settings":{"slidesToShow": 3}},{"breakpoint": 480,"settings":{"slidesToShow": 1}}]}'>
+                    </div>
+                  </div>
+                </div>
+              </div>      
+            </div>
+            {% endif %} 
+
+
+
+            {% if section.settings.show_contact %}
+            <div class="grid__item {{ footer_num_column_width }}">
+              {% if section.settings.footer_contact_title != blank %}        
+              <h4 style="color:{{ section.settings.footer_text }};">{{ section.settings.footer_contact_title}}</h4> 
+              {% endif %}        
+              {% if section.settings.footer_address != blank or section.settings.footer_contact_no != blank %}        
+              <div class="address">
+                {% if section.settings.footer_address != blank %}
+                <p style="color:{{ section.settings.footer_link }};">   {{ section.settings.footer_address }}</p>
+                {% endif %}          
+                {% if section.settings.footer_contact_no != blank %}
+                <p style="color:{{ section.settings.footer_link }};"> <i class="fa fa-phone"></i>{{ section.settings.footer_contact_no }}</p>
+                {% endif %}
+              </div>
+              {% endif %}
+              {% if  section.settings.footer_contact_link != blank and section.settings.footer_contact_id != blank %}
+              <a style="color:{{ section.settings.footer_link }};" href="mailto:{{ section.settings.footer_contact_link }}"><i class="zmdi zmdi-caret-right-circle"></i>{{ section.settings.footer_contact_id }}</a>
+              {% endif %}        
+
+              {% if section.settings.footer_show_methods_of_payment %}      
+              <div class="payment_section">                 
+                <div class="footer-icons">        
+                  <ul class="inline-list payment-icons">
+                    {% if section.settings.payment_icon_1 != blank %}<li><a href="/cart"><img src="{{ section.settings.payment_icon_1 | img_url: "55x" }}" alt="payment_icon_1" /></a></li>{% endif %}
+                    {% if section.settings.payment_icon_2 != blank %}<li><a href="/cart"><img src="{{ section.settings.payment_icon_2 | img_url: "55x" }}" alt="payment_icon_2" /></a></li>{% endif %}
+                    {% if section.settings.payment_icon_3 != blank %}<li><a href="/cart"><img src="{{ section.settings.payment_icon_3 | img_url: "55x" }}" alt="payment_icon_3" /></a></li>{% endif %}
+                    {% if section.settings.payment_icon_4 != blank %}<li><a href="/cart"><img src="{{ section.settings.payment_icon_4 | img_url: "55x" }}" alt="payment_icon_4" /></a></li>{% endif %}
+                    {% if section.settings.payment_icon_5 != blank %}<li><a href="/cart"><img src="{{ section.settings.payment_icon_5 | img_url: "55x" }}" alt="payment_icon_5" /></a></li>{% endif %}
+                    {% if section.settings.payment_icon_6 != blank %}<li><a href="/cart"><img src="{{ section.settings.payment_icon_6 | img_url: "55x" }}" alt="payment_icon_6" /></a></li>{% endif %}            
+                    {% if section.settings.payment_icon_7 != blank %}<li><a href="/cart"><img src="{{ section.settings.payment_icon_7 | img_url: "55x" }}" alt="payment_icon_7" /></a></li>{% endif %}            
+                    {% if section.settings.payment_icon_8 != blank %}<li><a href="/cart"><img src="{{ section.settings.payment_icon_8 | img_url: "55x" }}" alt="payment_icon_8" /></a></li>{% endif %}            
+                    {% if section.settings.payment_icon_9 != blank %}<li><a href="/cart"><img src="{{ section.settings.payment_icon_9 | img_url: "55x" }}" alt="payment_icon_9" /></a></li>{% endif %}            
+                    {% if section.settings.payment_icon_10 != blank %}<li><a href="/cart"><img src="{{ section.settings.payment_icon_10 |img_url: "55x"}}" alt="payment_icon_10" /></a></li>{% endif %}            
+                  </ul>                    
+                </div>           
+              </div>
+              {% endif %}       
+
+
+            </div>
+            {% endif %} 
+          </div>
+        </div>
+    </div>
+  </footer>
+
+  <div class="grid__item">
+    <div class="copyright" style="background:{{ section.settings.copyright_bg }}">
+      <div class="container"> 
+
+        <div class="footer-bottom">
+
+          {%- assign footer_linklist4 = section.settings.footer_menu_4 %}
+          {% if section.settings.use_footer_bottom and linklists[footer_linklist4].links.size > 0 %}
+          <div class="footer-bottom__menu" style="background:{{ section.settings.footer_bottom_bg }};">          
+            <ul>
+              {% for link in linklists[section.settings.footer_menu_4].links %}
+              <li>
+                <a style="color:{{ section.settings.footer_bottom_text }};border-right:1px solid {{ section.settings.footer_menu_border }};" href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+              {% endfor %}
+            </ul>        
+          </div>
+          {% endif %}
+
+          {% if section.settings.copyright != blank %}
+          <p class="copyright_left" style="color:{{ section.settings.copyright_text }}">{{ section.settings.copyright }} &copy; {{ 'now' | date: "%Y" }}, {{ shop.name }}
+            {% if section.settings.use_powered_by %}
+            {{ powered_by_link }}
+            {% endif %}
+          </p>
+          {% endif %}
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .footer-model-1 .footer_newsletter button:hover { background:{{ section.settings.color_footer_news_btn_bg }} !important;color:{{ section.settings.color_footer_news_btn_text }} !important; }
+  .footer-model-1 .site-footer__links li a:hover { color:{{ section.settings.color_footer_link_hover }} !important; }
+  .footer-model-1 .footer-bottom .footer-bottom__menu ul li a:hover { color:{{ section.settings.footer_bottom_text_hover }} !important; }
+  .footer-model-1 .copyright a { color:{{ section.settings.copyright_color }}; }
+  .footer-model-1 .copyright a:hover { color:{{ section.settings.copyright_link_color }}; }
+  .footer-model-1 .site-footer .social-icons li a:hover { color:{{ section.settings.social_icon_hover_clr }} !important; }
+  .footer-model-1 .footer_newsletter input::-webkit-input-placeholder {  color:{{ section.settings.input_text }};}
+  .footer-model-1 .footer_newsletter input:-moz-placeholder { color:{{ section.settings.input_text }};}
+  .footer-model-1 .footer_newsletter input::-moz-placeholder {  color:{{ section.settings.input_text }};}
+  .footer-model-1 .footer_newsletter input:-ms-input-placeholder {  color:{{ section.settings.input_text }};}
+  .footer-model-1 .footer_newsletter input { color:{{ section.settings.input_text }}; }
+  .footer-model-1 h5 {color:{{ section.settings.footer_text }}; }
+
+
+</style>
+{% if section.settings.instagram_use %}
+{{ 'slick.scss' | asset_url | stylesheet_tag }}
+{{ 'instagram.js' | asset_url | script_tag }}
+
+{% endif %}
+{% schema %}
+{
+"name": "Footer",
+"settings": [
+
+
+{
+"type": "color",
+"id": "footer_bg",
+"label": "Footer BG",
+"default":"#000"
+},
+{
+"type": "color",
+"id": "footer_text",
+"label": "Footer Title",
+"default":"#000"
+},
+{
+"type": "checkbox",
+"id": "footer_logo_enable",
+"label": "Show footer logo"
+},
+{
+"type": "image_picker",
+"id": "footer_logo",
+"label": "Logo image",
+"info": "Size: 160x56"
+}, 
+{
+  "type": "textarea",
+  "id": "welcome_text",
+  "label": "Welcome text"
+  },
+{
+"type": "checkbox",
+"id": "footer_social_enable",
+"label": "Show social media icons"       
+},
+{
+  "type": "text",
+  "id": "social_title",
+  "label": "Social heaidng"
+  },
+{
+"type": "color",
+"id": "social_icon_clr",
+"label": "Social Icon Color",
+"default":"#fff"
+},
+{
+"type": "color",
+"id": "social_icon_hover_clr",
+"label": "Social Icon Hover Color",
+"default":"#fff"
+},
+{
+"type": "color",
+"id": "footer_link",
+"label": "Footer Text",
+"default":"#000"
+},
+{
+"type": "color",
+"id": "color_footer_link_hover",
+"label": "Footer Link Hover",
+"default": "#636363"
+},
+{
+"type": "text",
+"id": "footer_menu_1_title",
+"label": "Heading",
+"default": "Footer menu 1"
+},
+{
+"type": "link_list",
+"id": "footer_menu_1",
+"label": "Footer link"
+},
+{
+"type": "text",
+"id": "footer_menu_2_title",
+"label": "Heading",
+"default": "Footer menu 2"
+},
+{
+"type": "link_list",
+"id": "footer_menu_2",
+"label": "Footer link"
+},
+
+{
+"type": "checkbox",
+
+"id": "use_footer_bottom",
+"label": "Use footer Menu?",
+"default": true
+},
+
+{
+"type": "color",
+"id": "footer_bottom_text",
+"label": "Footer Menu Link",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "footer_bottom_text_hover",
+"label": "Footer Menu Hover",
+"default": "#000"
+},
+
+{
+"type": "color",
+"id": "footer_menu_border",
+"label": "Footer Menu Border",
+"default": "#000"
+},
+{
+"type": "link_list",
+"id": "footer_menu_4",
+"label": "Footer link 4"
+},
+
+{
+"type": "color",
+"id": "copyright_bg",
+"label": "Copyright Bg",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "copyright_text",
+"label": "Copyright Text",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "copyright_color",
+"label": "Copyright Link Color",
+"default": "#4f6f80"
+},
+{
+"type": "color",
+"id": "copyright_link_color",
+"label": "Copyright Link Hover Color",
+"default": "#fff"
+},
+{
+"type": "textarea",
+"id": "copyright",
+"label": "Copy Right Text",
+"default": "Copyright"
+},
+{
+"type": "checkbox",
+"id": "use_powered_by",
+"label": "Use Powered By"
+},
+{
+"type": "checkbox",
+"id": "footer_show_methods_of_payment",
+"label": "Show payment method",
+"default": true
+},
+
+{
+"type": "image_picker",
+"id": "payment_icon_1",
+"label": "Image",
+"info": "Size: 55x35"
+},      
+{
+"type": "image_picker",
+"id": "payment_icon_2",
+"label": "Image",
+"info": "Size: 55x35"
+},      
+{
+"type": "image_picker",
+"id": "payment_icon_3",
+"label": "Image",
+"info": "Size: 55x35"
+},      
+{
+"type": "image_picker",
+"id": "payment_icon_4",
+"label": "Image",
+"info": "Size: 55x35"
+},      
+{
+"type": "image_picker",
+"id": "payment_icon_5",
+"label": "Image",
+"info": "Size: 55x35"
+},      
+{
+"type": "image_picker",
+"id": "payment_icon_6",
+"label": "Image",
+"info": "Size: 55x35"
+}, 
+{
+"type": "image_picker",
+"id": "payment_icon_7",
+"label": "Image",
+"info": "Size: 55x35"
+}, 
+{
+"type": "image_picker",
+"id": "payment_icon_8",
+"label": "Image",
+"info": "Size: 55x35"
+}, 
+{
+"type": "image_picker",
+"id": "payment_icon_9",
+"label": "Image",
+"info": "Size: 55x35"
+}, 
+{
+"type": "image_picker",
+"id": "payment_icon_10",
+"label": "Image",
+"info": "Size: 55x35"
+},
+{
+        "type": "checkbox",
+        "id": "instagram_use",
+        "label": "Use Insagram?"
+        
+      },
+      {
+        "type": "text",
+        "id": "accessToken",
+        "label": "Access Token:",
+        "default": "3311466850.1677ed0.84b4d7bf4b6f49b4887a8fe93707d9b5",
+        "info": "Use when Get Image from: 'Access Token'. [Where do I find Access Token?](http:\/\/instagram.pixelunion.net)"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Instagram Feed"
+      },
+
+{
+        "type": "color",
+        "id": "title_1_clr",
+        "label": "Heading Color",
+        "default": "#000"
+        },        
+
+      {
+        "type": "select",
+        "id": "sort",
+        "label": "Sort by",
+        "default": "none",
+        "options": [
+          {
+            "value": "none",
+            "label": "none (default)."
+          },
+          {
+            "value": "most-recent",
+            "label": "Newest to oldest."
+          },
+          {
+            "value": "least-recent",
+            "label": "Oldest to newest."
+          },
+          {
+            "value": "most-liked",
+            "label": "Highest # of likes to lowest."
+          },
+          {
+            "value": "least-liked",
+            "label": "Lowest # likes to highest."
+          },
+          {
+            "value": "most-commented",
+            "label": "Highest # of comments to lowest."
+          },
+          {
+            "value": "least-commented",
+            "label": "Lowest # of comments to highest."
+          },
+          {
+            "value": "random",
+            "label": "Random order."
+          }
+        ]
+      },
+   {
+       "type": "header",
+       "content": "=== settings Slider"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_autoplay",
+        "label": "Use autoplay?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "use_arrows",
+        "label": "Use Arrows?",
+        "default": true
+      },      
+      {
+        "type": "text",
+        "id": "sidetoshow",
+        "label": "slides To Show: (integer)",
+        "default": "6"
+      },      
+{
+"type": "checkbox",
+"id": "show_contact",
+"label": "Show contact"
+},        
+{
+"type": "text",
+"id": "footer_contact_title",
+"label": "Heading",
+"default": "Contact us"
+},
+{
+"type": "textarea",
+"id": "footer_address",
+"label": "Address"      
+},
+{
+"type": "text",
+"id": "footer_contact_no",
+"label": "Phone"      
+},
+{
+"type": "text",
+"id": "footer_contact_id",
+"label": "E-Mail"      
+},
+{
+"type": "text",
+"id": "footer_contact_link",
+"label": "Link"
+}
+
+]
+}
+{% endschema %}

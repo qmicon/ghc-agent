@@ -1,0 +1,116 @@
+{% include 'search-bar' %}
+<div class="quick-view"></div>  
+<header class="site-header">
+  <div class="header-sticky">
+    <div id="header-landing" class="sticky-animate">
+
+      <div class="grid--full site-header__menubar"> 
+        <div class="header_top">
+          {% if template == 'index' %}
+          <h1 class="site-header__logo" itemscope itemtype="http://schema.org/Organization">
+            {% else %}
+            <div class="h1 site-header__logo" itemscope itemtype="http://schema.org/Organization">
+              {% endif %}
+              {% if settings.logo_use_image %}
+              <a href="/">
+                <img class="normal-logo" src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+                
+              </a>
+              {% else %}
+              <a href="/">{{ shop.name }}</a>
+              {% endif %}
+              {% if template == 'index' %}
+              </h1>
+            {% else %}
+            </div>
+          {% endif %}   
+
+
+          <div class="header_custom">
+            {% if settings.display_header_notes %}
+            <div class="header_notes">
+              <p>{{ settings.header_notes }}</p>
+            </div>
+            {% endif %}
+
+          </div>
+          <div class="header_currency">
+            <ul class="tbl-list">
+              <li class="currency dropdown-parent uppercase currency-block">
+                {% if settings.display_currency %}    
+                {% include 'currencies-switcher' %}
+                {% endif %}
+              </li>
+            </ul>
+          </div>
+
+
+
+          {% if settings.header_search_enable %}
+          <div class="header-search">
+            <div class="header_toggle"><span class="icon-magnifier"></span></div>
+            <div class="slidersearch header_slide_element">
+              <form action="/search" method="get" class="search-bar__table-cell search-bar__form" role="search">							
+                <input type="text" id="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.placeholder' | t }}" aria-label="{{ 'general.search.placeholder' | t }}" class="search-bar__input sb-search-input">
+                <button class="sb-search-submit" type="submit" value=""><i class="icon-magnifier"></i></button>
+              </form>
+            </div>
+          </div>
+          {% endif %} 
+
+          <div class="customer_account header_user">  
+            <div class="header_toggle">
+              <span><i class="icon-user"></i></span>    
+            </div>
+            <div class="header_slide_element">
+              <ul>
+                {% if shop.customer_accounts_enabled %}
+                {% if customer %}
+                <li>
+                  <a href="/account"><i class="fa fa-user"></i>{{ 'layout.customer.account' | t }}</a>
+                </li>
+                <li class="logout-link">
+                  <i class="fa fa-user-times" aria-hidden="true"></i>{{ 'layout.customer.log_out' | t | customer_logout_link }}
+                </li>
+                {% else %}
+                <li>
+                  <a href="/account/login"><i class="fa fa-sign-in"></i>{{ 'layout.customer.log_in' | t }}</a>
+                </li>
+                <li>
+                  <a href="/account/register"><i class="icon-user"></i>{{ 'layout.customer.create_account' | t }}</a>
+                </li>          
+                {% endif %}  
+                {% endif %} 
+                {% if settings.header_wishlist_enable %}   
+                <li>
+                  {% include 'wish-list' %} 
+                </li>
+                {% endif %} 
+              </ul>
+            </div>
+          </div>
+
+          <div class="header-bar__module cart header_cart">
+            {% if settings.display_minicart %}
+            {% include 'mini-cart' %} 
+            {% endif %} 
+          </div> 
+        </div>
+      </div>
+
+      <div class="grid__item menubar-section medium-down--hide">
+        <div class="menu-tool">
+          {% include 'site-nav' %}
+        </div>
+      </div>          
+    </div>
+  </div>
+</header>
+<div class="wrapper mobile-nav-section wide--hide post-large--hide large--hide">
+  <button type="button" class="mobile-nav-trigger" id="MobileNavTrigger">
+    <span class="icon-menu" aria-hidden="true"></span>
+    
+  </button>
+  
+</div>
+{% include 'mobile-nav' %}

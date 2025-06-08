@@ -1,0 +1,82 @@
+{% if collection == null or collection.handle == 'frontpage' or collection.handle == 'all' %}
+  {% assign found_a_collection = false %}
+  {% for c in product.collections %}
+    {% if found_a_collection == false and c.handle != 'frontpage' and c.handle != 'all' and c.all_products_count > 1 %}
+      {% assign found_a_collection = true %}
+      {% assign collection = c %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if collection and collection.products_count > 1 %}
+<div class="related-products-container">
+  {% if settings.related_prds_title != blank or settings.related_prds_heading  %}
+  <div class="dt-sc-hr-invisible-large"></div>
+      <div class="section-header section-header--small">
+        <div class="border-title">
+          {% endif %}  
+          {% if settings.related_prds_heading != blank %} <h4>{{ settings.related_prds_heading }}</h4>{% endif %}  
+          {% if settings.related_prds_title != blank %}
+          <h2 class="section-header__title">    
+            {{ settings.related_prds_title }}
+          </h2>
+          {% endif %}  
+        </div>
+      </div>
+     <div class="dt-sc-hr-invisible-small"></div>    
+  <ul class="grid-uniform grid-link__container related-products">
+    {% assign current_product = product %}
+    {% assign current_product_found = false %}
+    {% for product in collection.products %}
+      {% if product.handle == current_product.handle %}
+        {% assign current_product_found = true %}
+      {% else %}
+        {% unless current_product_found == false and forloop.last %}
+          {% assign grid_item_width = 'wide--one-quarter post-large--one-quarter large--one-quarter medium--one-quarter small--one-half' %}
+          {% include 'product-grid-item' %}
+        {% endunless %}
+      {% endif %}
+    {% endfor %}
+  </ul>
+<div class="nav_featured">
+            <a class="prev active"></a>
+            <a class="next"></a>  
+          </div>
+</div>
+{% endif %}
+
+
+<script type="text/javascript">
+  $(document).ready(function(){
+   var related_count = $('.related-products li.item-row').length;
+      if(related_count > 4) { $('.nav_featured').css('display','block');}
+      else {$('.nav_featured').css('display','none');}
+      var related = $(".related-products");
+      related.owlCarousel({
+        items: 4,
+        itemsCustom: false,
+        itemsDesktop: [1199, 4],
+        itemsDesktopSmall: [980, 3],
+        itemsTablet: [630, 2],
+        itemsTabletSmall: false,
+        itemsMobile: [479, 1],
+        singleItem: false,
+        itemsScaleUp: false,
+        responsive: true,
+        responsiveRefreshRate: 200,
+        responsiveBaseWidth: window,
+        autoPlay: false,
+        stopOnHover: false,
+        navigation: false,
+        pagination:false
+      });
+      // Custom Navigation Events
+      $(".nav_featured .next").click(function(){
+        related.trigger('owl.next');
+      })
+      $(".nav_featured .prev").click(function(){
+        related.trigger('owl.prev');
+      }) 
+  });
+      
+</script>

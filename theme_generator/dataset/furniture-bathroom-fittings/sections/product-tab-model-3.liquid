@@ -1,0 +1,174 @@
+<div data-section-id="{{ section.id }}"  data-section-type="product-tab-type-3" class="product-tab-type-3" style="float:left;width:100%;">     
+  <div class="wrapper">
+    <div class="full_width_tab">    
+      <div class="grid-uniform"> 
+        <div class="grid__item">      
+          <div class="dt-sc-tabs-container-section"> 
+            {% if section.settings.title_1 != blank   %}
+            <div class="border-title">            
+              <h2 style="color:{{ section.settings.title_1_clr }};">{{ section.settings.title_1 }}</h2>
+            </div>
+            {% endif %}
+
+            {% if section.blocks.size > 0 %} 
+            <div class="dt-sc-tabs-container"> 
+              <ul class="dt-sc-tabs ">         
+                {% for block in section.blocks %} 
+                {% if block.settings.title != blank %}
+                <li><a href="#" class="tabs-{{ block.id }}">{{ block.settings.title }} </a></li>           
+                {% endif %}
+                {% endfor %}
+              </ul>
+                {% for block in section.blocks %}
+                {%- assign collection = collections[block.settings.collection] -%}   
+               <div class="dt-sc-tabs-content">
+                  <ul class="{{ block.settings.title | handle }}-{{ block.id }}">
+                    {% for product in collection.products %}
+                    {% include 'home-product-grid-item' , grid_item_width:"" %}  
+                    {% else %}
+                    {% for i in (1..6) %}
+                    <li class="grid__item item-row {{ grid_item_width }} on-sale" id="product-{{ i }}">
+                      <div class="products">
+                        <div class="product-container">
+                          <a href="#" class="grid-link"> 
+                            {% if forloop.index == 3 %}
+                            <div class="featured-tag">
+                              <span class="badge badge--sale">                              
+                                <span class="gift-tag badge__text{% if sale_text.size > 7 %} badge__text--small{% endif %}">{{ 'products.product.sale' | t }}</span>
+                              </span>
+                            </div>{% endif %}
+
+                            <div class="reveal"> 
+                              {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                              {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }} 
+                            </div>
+                          </a>
+
+                        </div>
+                        <div class="product-detail"> 
+                          <a href="#" class="grid-link__title">Sample title {{ i }}</a>
+
+                          <div class="grid-link__meta">
+                            <div class="product_price"> <span class="money" data-currency-usd="$320.00">$0.00</span> </div>
+                            <del class="grid-link__sale_price"><span class="money" data-currency-usd="$756.00">$0.00</span></del> </div>                         
+                        </div>
+                      </div>
+                    </li>
+                    {% endfor %} 
+                    {% endfor %}
+                  </ul>
+                  <div class="{{ block.settings.title | handle }}-{{ block.id }}-nav carousel-arrow">
+                    <a class="next"><i class="icon-arrow-left-circle"></i></a> 
+                    <a class="prev active"><i class="icon-arrow-right-circle"></i></a>
+                  </div>
+                </div>
+                <script type="text/javascript">
+                  jQuery(document).ready(function() {  
+
+                    var product_tab_type_3_count = $('.{{ block.settings.title | handle }}-{{ block.id }} li.item-row').length;
+                    if(product_tab_type_3_count > 4) { $(".{{ block.settings.title | handle }}-{{ block.id }}-nav").addClass('.show');}
+                    else {
+                    $(".{{ block.settings.title | handle }}-{{ block.id }}-nav").addClass('hide');}
+                    var product_tab_type_3_carousel = $(".{{ block.settings.title | handle }}-{{ block.id }}");
+                     jQuery(product_tab_type_3_carousel).owlCarousel({
+                      items: 5,
+                      itemsCustom: false,
+                      itemsDesktop: [1199, 3],
+                      itemsDesktopSmall: [980, 2],
+                      itemsTablet: [630, 2],
+                      itemsTabletSmall: false,
+                      itemsMobile: [479, 1],
+                      singleItem: false,
+                      itemsScaleUp: false,
+                      responsive: true,
+                      responsiveRefreshRate: 200,
+                      responsiveBaseWidth: window,
+                      autoPlay: false,
+                      stopOnHover: false,
+                      navigation: false,
+                      pagination:false
+                    });
+                     // Custom Navigation Events
+                   jQuery(".{{ block.settings.title | handle }}-{{ block.id }}-nav .next").click(function(){
+                   jQuery(product_tab_type_3_carousel).trigger('owl.next');
+                   });
+                    jQuery(".{{ block.settings.title | handle }}-{{ block.id }}-nav .prev").click(function(){
+                           jQuery(product_tab_type_3_carousel).trigger('owl.prev');
+                  }); 
+                  });      
+
+                </script>
+                {% endfor %}                
+              </div><!--End tabs container-->
+            {% endif %}
+          </div>    
+        </div>
+      </div>
+      {% for block in section.blocks %}
+      <style>
+        .product-tab-type-3 .full_width_tab ul li a { color:{{ section.settings.tag_clr }}; }
+        .product-tab-type-3 .full_width_tab ul li a.tabs-{{ block.id }}:hover,.product-tab-type-3 .full_width_tab ul li a.current { color:{{ section.settings.tag_hover_clr }}; }
+        .product-tab-type-3  .image_link_txt { border:2px solid {{ section.settings.button_bg_clr }};color:{{ section.settings.button_txt_clr }}; } 
+        .product-tab-type-3  .image_link_txt:hover { border:2px solid {{ section.settings.button_hover_bg_clr }}!important;background:{{ section.settings.button_hover_bg_clr }};color:{{ section.settings.button_hover_txt_clr }}; } 
+        
+        
+      </style>
+      {% endfor %}
+    </div> 
+  </div>
+</div>
+<div class="dt-sc-hr-invisible-large"></div>   
+
+{% schema %}
+{
+"name": "Product tab model 1",
+"class": "index-section",
+"max_blocks": 4,
+"settings": [
+
+{
+"type": "text",
+"id": "title_1",
+"label": "Heading"
+},
+{
+"type": "color",
+"id": "title_1_clr",
+"label": "Heading",
+"default": "#000"
+}
+
+],
+"blocks": [	
+{
+"type": "text_block",
+"name": "Column",
+"settings": [
+{
+"type": "text",
+"id": "title",
+"label": "Collection Name",
+"default": "Tab Name"
+},	
+
+{
+"id": "collection",
+"type": "collection",
+"label": "Collection"
+}	
+]
+}
+],
+"presets": [
+{
+"name": "Product tab model 1",
+"category": "Collection",
+"blocks": [
+{
+"type": "text_block"
+}        
+]
+}
+]
+}
+{% endschema %}

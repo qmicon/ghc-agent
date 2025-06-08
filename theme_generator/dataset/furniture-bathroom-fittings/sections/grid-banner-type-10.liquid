@@ -1,0 +1,348 @@
+<div data-section-id="{{ section.id }}" data-section-type="grid-banner-type-10" class="grid-banner-type-10">   
+  <div class="wrapper">
+    <div class="grid-uniform featuredItems">  
+      <div class="grid__item wide--one-third post-large--one-third large--one-third medium--one-third small--grid__item">
+        <div class="grid-banner-type-10-block">
+          <div class="ovrly31 overlay_1">
+            {% if section.settings.link_1 != blank %}<a class="banner_half_img" href="{{ section.settings.link_1 }}">{% endif%}
+            {% if section.settings.image_1 != blank %}
+            <img src="{{ section.settings.image_1 | img_url: 'master' }}" alt="{{ section.settings.title_1 }}" />
+            <div class="ovrly"></div>
+            {% else %}
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif%}           
+            {% if section.settings.link_1 != blank %}  </a>
+
+            {% endif%}
+            <div class="featured-content-block">
+              <div class="featured-content">   
+                {% if section.settings.title_top_1 != blank %}
+                <h6 style="color:{{ section.settings.title_top_1_clr }};">{{ section.settings.title_top_1 }}</h6>
+                {% endif %}
+                {% if section.settings.title_1 != blank %}
+                <h3 style="color:{{ section.settings.title_1_clr }};">{{ section.settings.title_1 }}</h3>
+                {% endif %}
+                {% if section.settings.text_1 != blank %}
+                <p style="color:{{ section.settings.text_1_clr }};">{{ section.settings.text_1}}</p>    
+                {% endif %}  
+                {% if section.settings.button_1 != blank %}
+                <a class="btn one" href="{{ section.settings.link_1 }}" style="color:{{ section.settings.button_1_txt}};border:2px solid {{ section.settings.button_1_bg}};">{{ section.settings.button_1}}</a>    
+                {% endif %}         
+              </div>   
+            </div>
+          </div>
+        </div>
+      </div>   
+      <div class="grid__item wide--one-third post-large--one-third large--one-third medium--one-third small--grid__item ">
+        <div class="grid-banner-type-10-block">
+          <div class="ovrly31 overlay_1">
+            {% if section.settings.link_2 != blank %}<a class="banner_half_img" href="{{ section.settings.link_2 }}">{% endif%}
+            {% if section.settings.image_2 != blank %}
+            <img src="{{ section.settings.image_2 | img_url: 'master' }}" alt="{{ section.settings.title_2 }}" />
+            <div class="ovrly"></div>
+            {% else %}
+
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif%}           
+            {% if section.settings.link_2 != blank %}  </a>
+
+            {% endif%}
+            <div class="featured-content-block">
+              <div class="featured-content">     
+                {% if section.settings.title_top_2 != blank %}
+                <h6 style="color:{{ section.settings.title_top_2_clr }};">{{ section.settings.title_top_2 }}</h6>
+                {% endif %}
+                {% if section.settings.title_2 != blank %}
+                <h3 style="color:{{ section.settings.title_2_clr }};">{{ section.settings.title_2 }}</h3>
+                {% endif %}
+                {% if section.settings.text_2 != blank %}
+                <p style="color:{{ section.settings.text_2_clr }};">{{ section.settings.text_2}}</p>    
+                {% endif %}  
+                {% if section.settings.button_2 != blank %}
+                <a class="btn two" href="{{ section.settings.link_2 }}" style="color:{{ section.settings.button_2_txt}};border:2px solid {{ section.settings.button_2_bg}};">{{ section.settings.button_2}}</a>    
+                {% endif %}         
+              </div> 
+            </div>
+          </div>
+        </div>
+      </div>      
+      <div class="grid__item wide--one-third post-large--one-third large--one-third medium--one-third small--grid__item"> 
+        <div class="grid-banner-type-10-block">
+          <div class="ovrly31 overlay_1">
+            {% if section.settings.link_3 != blank %}<a class="banner_half_img" href="{{ section.settings.link_3 }}">{% endif%}
+            {% if section.settings.image_3 != blank %}
+            <img src="{{ section.settings.image_3 | img_url: 'master' }}" alt="{{ section.settings.title_3 }}" />
+            <div class="ovrly"></div>
+            {% else %}
+
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif%}           
+            {% if section.settings.link_3 != blank %}  </a>
+
+            {% endif%}
+            <div class="featured-content-block">
+              <div class="featured-content">        
+                {% if section.settings.title_3 != blank %}
+                <h6 style="color:{{ section.settings.title_3_clr }};">{{ section.settings.title_3 }}</h6>
+                {% endif %}
+                {% if section.settings.text_3 != blank %}
+                <h3 style="color:{{ section.settings.text_3_clr }};">{{ section.settings.text_3}}</h3>    
+                {% endif %}  
+                {% if section.settings.button_3 != blank %}
+                <a class="btn three" href="{{ section.settings.link_3 }}" style="color:{{ section.settings.button_3_txt}};border: 2px solid {{ section.settings.button_3_bg}};">{{ section.settings.button_3}}</a>    
+                {% endif %}         
+              </div>  
+            </div>
+          </div>
+        </div>
+      </div>      
+    </div>  
+  </div>
+</div>
+<style>    
+  .grid-banner-type-10 .featured-content .btn.three:hover { color:{{ section.settings.hover_button_3_txt}} !important;background-color:{{ section.settings.hover_button_3_bg}} !important;border:2px solid {{ section.settings.hover_button_3_bg}} !important; }
+  .grid-banner-type-10 .featured-content .btn.two:hover { color:{{ section.settings.hover_button_2_txt}} !important;background-color:{{ section.settings.hover_button_2_bg}} !important;border:2px solid {{ section.settings.hover_button_2_bg}} !important; }
+  .grid-banner-type-10 .featured-content .btn.one:hover { color:{{ section.settings.hover_button_1_txt}} !important;background-color:{{ section.settings.hover_button_1_bg}} !important;border:2px solid {{ section.settings.hover_button_1_bg}} !important; }
+
+  .grid-banner-type-10 .featured-content-block{background:{{section.settings.detail_1_clr | color_modify: 'alpha', 0.5 }};}
+</style>
+<div class="dt-sc-hr-invisible-large"></div>
+
+{% schema %}
+{
+"name": "Grid Banner Type 1",
+"class": "index-section",
+"settings": [
+{
+"type": "image_picker",
+"id": "image_1",
+"label": "Image",
+"info": "Size: 800x750"
+},
+{
+"type": "color",
+"id": "detail_1_clr",
+"label": "Deyail Bg color",
+"default": "#000"
+},
+{
+"type": "text",
+"id": "title_1",
+"label": "Heading"
+},
+{
+"type": "color",
+"id": "title_1_clr",
+"label": "Heading color",
+"default": "#000"
+},
+{
+"type": "text",
+"id": "title_top_1",
+"label": "Small text"
+},
+{
+"type": "color",
+"id": "title_top_1_clr",
+"label": "Small text color",
+"default": "#000"
+},
+{
+"type": "textarea",
+"id": "text_1",
+"label": "Description"
+},
+{
+"type": "color",
+"id": "text_1_clr",
+"label": "Description color",
+"default": "#000"
+},
+{
+"type": "text",
+"id": "button_1",
+"label": "Button text"
+},
+{
+"type": "color",
+"id": "button_1_bg",
+"label": "Button bg color",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "button_1_txt",
+"label": "Button text color",
+"default": "#fff"
+},
+
+{
+"type": "color",
+"id": "hover_button_1_bg",
+"label": "Button hover bg",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "hover_button_1_txt",
+"label": "Button hover text",
+"default": "#fff"
+},
+
+{
+"type": "url",
+"id": "link_1",
+"label": "Link URL"
+},
+{
+"type": "image_picker",
+"id": "image_2",
+"label": "Image",
+"info": "Size: 800x750"
+},
+
+{
+"type": "text",
+"id": "title_2",
+"label": "Heading"
+},
+{
+"type": "color",
+"id": "title_2_clr",
+"label": "Heading color",
+"default": "#000"
+},
+{
+"type": "text",
+"id": "title_top_2",
+"label": "Small text"
+},
+{
+"type": "color",
+"id": "title_top_2_clr",
+"label": "Small text color",
+"default": "#000"
+},
+{
+"type": "textarea",
+"id": "text_2",
+"label": "Description"
+},
+{
+"type": "color",
+"id": "text_2_clr",
+"label": "Description color",
+"default": "#000"
+},
+{
+"type": "text",
+"id": "button_2",
+"label": "Button text"
+},
+{
+"type": "color",
+"id": "button_2_bg",
+"label": "Button bg color",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "button_2_txt",
+"label": "Button text color",
+"default": "#fff"
+},
+{
+"type": "color",
+"id": "hover_button_2_bg",
+"label": "Button hover bg",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "hover_button_2_txt",
+"label": "Button hover text",
+"default": "#fff"
+},
+
+{
+"type": "url",
+"id": "link_2",
+"label": "Link URL"
+},
+{
+"type": "image_picker",
+"id": "image_3",
+"label": "Image",
+"info": "Size: 800x750"
+},
+
+{
+"type": "text",
+"id": "title_3",
+"label": "Heading"
+},
+{
+"type": "color",
+"id": "title_3_clr",
+"label": "Heading color",
+"default": "#000"
+},
+{
+"type": "textarea",
+"id": "text_3",
+"label": "Description"
+},
+{
+"type": "color",
+"id": "text_3_clr",
+"label": "Description color",
+"default": "#000"
+},
+{
+"type": "text",
+"id": "button_3",
+"label": "Button text"
+},
+{
+"type": "color",
+"id": "button_3_bg",
+"label": "Button bg color",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "button_3_txt",
+"label": "Button text color",
+"default": "#fff"
+},
+{
+"type": "color",
+"id": "hover_button_3_bg",
+"label": "Button hover bg",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "hover_button_3_txt",
+"label": "Button hover text",
+"default": "#fff"
+},
+
+{
+"type": "url",
+"id": "link_3",
+"label": "Link URL"
+}
+],
+"presets": [
+{
+"name": "Grid Banner Type 1",
+"category": "Image",
+"blocks": []
+}
+]
+}
+{% endschema %}
+
+
+

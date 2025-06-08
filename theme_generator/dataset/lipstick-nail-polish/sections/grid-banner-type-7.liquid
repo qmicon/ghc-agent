@@ -1,0 +1,183 @@
+<div data-section-id="{{ section.id }}" data-section-type="grid-banner-type-7" class="grid-banner-type-7">  
+
+  <div class="grid-uniform">        
+    {% if section.blocks.size > 0 %}      
+    {% for block in section.blocks %}    
+    {% case section.blocks.size %}
+    {% when 1 %}
+    {%- assign block_width = 'one-whole text-center' -%}
+    {% when 2 %}
+    {%- assign block_width = 'wide--one-half post-large--one-half large--one-half medium--one-half small-grid__item' -%}
+    {% when 3 %}
+    {%- assign block_width = 'wide--one-third post-large--one-third large--one-third medium--one-half small-grid__item' -%}
+    {% when 4 %}
+    {%- assign block_width = 'wide--one-quarter post-large--one-quarter large--one-quarter medium--one-half small-grid__item' -%}
+    {% endcase %}
+
+    <div class="grid__item {{ block_width }} wow fadeIn animated"> 
+      <div class="img-hover-effect">      
+        <div class="ovrly09">  
+          {% if block.settings.image != blank %}
+          <img src="{{ block.settings.image | img_url: 'master' }}" alt="{{ block.settings.title }}" />        
+          {% if section.settings.overlay %} <div class="overlay" style="background:{{ block.settings.overlay_bgcolor | color_modify: 'alpha', 0.7 }};"></div> {% endif %}
+          {% else %}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif%} 
+
+          <div class="block-content" style="background-color:{{ block.settings.content_bg_clr | color_modify: 'alpha', 0.8 }}; ">  
+            <div class="block-content-inner">
+              {% if block.settings.title != blank %}                        
+              <h6 class="small-title" style="color:{{block.settings.title_color }}">{{ block.settings.title }}</h6>        
+              {% endif %}   
+              {% if block.settings.sub_title != blank %}                         
+              <h4 style="color:{{block.settings.sub_title_color }}">{{ block.settings.sub_title }}</h4>        
+              {% endif %} 
+              {% if block.settings.desc != blank %}                         
+              <p style="color:{{block.settings.desc_color }};">{{ block.settings.desc }}</p>        
+              {% endif %} 
+              {% if block.settings.link != blank %}<a class="btn" style="color:{{block.settings.button_color }}" href="{{ block.settings.link }}" onmouseover='this.style.color="{{block.settings.hover_button_color }}"' onmouseout='this.style.color="{{block.settings.button_color }}"' class="">{{ block.settings.button }} </a>{% endif%}
+            </div>
+          </div> 
+        </div>
+      </div>
+    </div>
+
+
+    {% endfor %}
+    {% endif %}
+  </div>
+
+</div>
+<div class="dt-sc-hr-invisible-large"></div> 
+
+
+<style>
+
+  .grid-banner-type-7 .block-content h4::after {background:{{section.settings.center_border_clr}};}
+
+
+</style>
+
+
+
+{% schema %}
+{
+"name": "Featured collection",
+"class": "index-section",
+"settings": [
+
+
+
+{
+"type": "color",
+"id": "center_border_clr",
+"label": "Heading Border COlor",
+"default":"#000"	
+},
+{
+"type": "color",
+"id": "img_overlay_clr",
+"label": "Overlay Bg Color",
+"default":"#000"	
+}
+
+
+
+
+],
+"blocks": [
+{
+"type": "Image",
+"name": "support block",
+"settings": [ 
+{
+"type": "image_picker",
+"id": "image",
+"label": "Image",
+"info": "Size: 650x570"
+},
+{
+"type": "color",
+"id": "content_bg_clr",
+"label": "Content Bg COlor",
+"default": "#000"	
+},
+{
+"type": "text",
+"id": "title",
+"label": "Heading",
+"default": "Title"	
+},
+{
+"type": "color",
+"id": "title_color",
+"label": "Title Color",
+"default":"#000"	
+},
+{
+"type": "text",
+"id": "sub_title",
+"label": "Sub title",
+"default": "Sub Title"	
+},
+{
+"type": "color",
+"id": "sub_title_color",
+"label": "Sub title",
+"default":"#000"	
+},
+{
+"type": "textarea",
+"id": "desc",
+"label": "Description",
+"default": "Description"	
+},
+{
+"type": "color",
+"id": "desc_color",
+"label": "Description",
+"default":"#000"	
+},
+{
+"type": "text",
+"id": "button",
+"label": "Link Text",
+"default": "View all collection"	
+},    
+
+{
+"type": "color",
+"id": "button_color",
+"label": "Link Color",
+"default":"#fff"	
+},
+{
+"type": "color",
+"id": "hover_button_color",
+"label": "Link Hover Color",
+"default":"#fff"	
+},
+{
+"type": "text",
+"id": "link",
+"label": "Link"          
+}
+]
+}
+],
+"presets": [
+{
+"name": "Featured collection",
+"category": "Image",
+"blocks": [
+{
+"type": "Image"
+},
+{
+"type": "Image"
+}        
+]
+}
+]
+}
+{% endschema %}

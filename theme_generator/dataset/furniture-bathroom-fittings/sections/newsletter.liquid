@@ -1,0 +1,96 @@
+<div data-section-id="{{ section.id }}"  data-section-type="newsletter-block">  
+<div class="newsletter-section parallax">
+  <div class="overlay"></div>
+  <div class="wrapper">
+    {% if section.settings.title != blank %}
+    <div class="border-title"><h2 class="newslet_title" style="color:{{ section.settings.title_color }};">
+      {{ section.settings.title }}
+      </h2></div>
+    {% endif %}
+    {% if section.settings.text != blank %}
+    <div class="short-desc">
+      <p style="color:{{ section.settings.text_color }};"> {{ section.settings.text }}</p>
+    </div>
+    {% endif %}
+    {% if settings.newsletter_form_action != blank %}
+  <form action="{{ settings.newsletter_form_action }}" method="post"  name="mc-embedded-subscribe-form" target="_blank" class="input-group mc-embedded-subscribe-form">
+     <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" name="EMAIL" class="mail" aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}">
+      <button type="submit" class="btn subscribe" name="subscribe" value="" style="color:{{ section.settings.button_txt_color }};background-color:{{ section.settings.button_bg_color }};"> {{ section.settings.button }}</button>    
+  </form>
+{% else %}
+    {% form 'customer' %}
+      {% if form.posted_successfully? %}
+        <p class="note form-success">{{ 'general.newsletter_form.mailing_list_success_message' | t }}</p>
+		{% else %}
+        <div class="input-group">
+          <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" name="contact[email]" class="mail" aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}" >
+          <input type="hidden" name="contact[tags]" value="newsletter">
+            <button type="submit" class="btn subscribe" name="subscribe" value="" style="color:{{ section.settings.button_txt_color }};background-color:{{ section.settings.button_bg_color }};">{{ section.settings.button }}</button>          
+        </div>
+      {% endif %}
+       {{ form.errors | default_errors }}
+    {% endform %}  
+{% endif %}
+  </div>
+</div>
+</div>
+<div class="dt-sc-hr-invisible-large"></div>
+
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "class": "index-section",  
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Newsletter"
+    },
+{
+  	"type": "color",
+      "id": "title_color",
+      "label": "Heading",
+      "default": "#000"
+    },
+ 	{
+      "type": "textarea",
+      "id": "text",
+      "label": "Description",
+     "default": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
+    },
+	{
+	"type": "color",
+      "id": "text_color",
+      "label": "Description",
+      "default": "#000"
+    },
+	{
+      "type": "text",
+      "id": "button",
+      "label": "Button",
+      "default": "Subscribe"
+    },
+{
+	"type": "color",
+      "id": "button_txt_color",
+      "label": "Button Text Color",
+      "default": "#000"
+    },
+{
+	"type": "color",
+      "id": "button_bg_color",
+      "label": "Button Bg Color",
+      "default": "#fff"
+    }
+  ],  
+  "presets": [
+    {
+      "name": "Newsletter",
+      "category": "Form",
+      "blocks": [ ]
+    }
+  ]
+}
+{% endschema %}

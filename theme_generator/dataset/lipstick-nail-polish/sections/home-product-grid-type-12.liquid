@@ -1,0 +1,201 @@
+
+<div data-section-id="{{ section.id }}"  data-section-type="home-product-grid-type-12">
+  <div class="container">
+    {%- assign collection = collections[section.settings.collection] -%}   
+    <div class="product-grid-type-12"> 
+
+      <div class="grid-uniform home-prt-item">
+
+        <div class="grid__item ">
+          <div class="border-title wow fadeInDown animated">
+            {% if section.settings.description != blank %} <h5 style="color:{{ section.settings.desc_color }}"  class="small-title">{{ section.settings.description }}</h5>{% endif %}  
+            {% if section.settings.title != blank %}
+            <h2 class="section-header__title " style="color:{{ section.settings.title_color }}">     {{ section.settings.title }}</h2>
+
+            {% if section.settings.title_img != blank %}
+            <div class="tilte_img">
+              <img src="{{ section.settings.title_img | img_url: '69x23' }}" alt="" title=""  />
+            </div>
+            {% endif %}
+            {% endif %} 
+          </div>
+        </div>
+      </div>
+
+      {% assign grid_item_width = ' ' %} 
+      <ul class="grid-uniform product-grid-type__12 {{ section.id }} owl-carousel owl-theme">
+        {% for product in collection.products %}
+        {% include 'product-grid-item', grid_item_width:grid_item_width %}          
+        {% endfor %}
+      </ul>
+      <div class="nav_product-grid-type__12"> </div>    
+    </div>
+    <style>
+      .product-grid-type-12 .owl-prev.disabled a,.product-grid-type-12 .owl-next.disabled a { color:{{ section.settings.arrow_text_hover_clr }};}
+      .nav_product-grid-type__12 a {  color:{{ section.settings.arrow_text_clr }};}
+      .nav_product-grid-type__12 a:hover {  color:{{ section.settings.arrow_text_hover_clr }}; }
+      .border-title h2 {   color: {{ section.settings.title_clr }};  }   
+      .product-grid-type-12 .nav_product-grid-type__12 a.prev{border-right: 13px solid {{ section.settings.arrow_text_clr }};}
+      .product-grid-type-12 .nav_product-grid-type__12 a.next{ border-left: 13px solid {{ section.settings.arrow_text_clr }};}
+
+      .product-grid-type-12 .nav_product-grid-type__12 a.prev:hover{border-right: 13px solid {{ section.settings.arrow_text_hover_clr }};}
+      .product-grid-type-12 .nav_product-grid-type__12 a.next:hover{ border-left: 13px solid {{ section.settings.arrow_text_hover_clr }};}
+      .product-grid-type-12 .owl-prev::before{background:{{ section.settings.arrow_text_clr }};}
+    </style>
+  </div>
+
+  <div class="dt-sc-hr-invisible-large"></div> 
+</div>
+
+
+
+<script type="text/javascript">
+  $(document).ready(function(){   
+    var grid_type_12 = $(".product-grid-type__12.{{ section.id }}");
+                         grid_type_12.owlCarousel({
+                         loop:false,
+                         margin:0,       
+                         nav:true,
+                         navContainer: ".nav_product-grid-type__12",
+                         navText: ['<a class="prev"></a>','<a class="next"></a>'],
+                         dots: false,
+                         smartSpeed : 1000,
+                         navSpeed : 1000,
+                         responsive:{
+                         0:{
+                         items:1
+                         },
+                         568:{
+                         items:2
+                         },
+                         768:{
+                         items:3
+                         },
+                         1000:{
+                         items:{{ section.settings.items }}
+                         }
+                         }
+                         });
+
+  });
+
+</script>
+
+
+
+{% schema %}
+{
+"name": "New Arrivals",
+"class": "index-section",
+"settings": [  
+{
+"type": "text",
+"id": "title",
+"label": "Heading",
+"default": "New arrivals"
+}, 
+{
+"type": "color",
+"id": "title_color",
+"label": "Heading color",
+"default": "#000"
+}, 
+{
+"type": "image_picker",
+"id": "title_img",
+"label": "Title Image",
+"info": "Size: 69x23"
+},
+
+
+{
+"type": "textarea",
+"id": "description",
+"label": "Small Heading"
+},
+{
+"type": "color",
+"id": "desc_color",
+"label": "Description color",
+"default": "#000"
+}, 
+{
+"type": "text",
+"id": "link_txt",
+"label": "Link text"        
+},
+
+{
+"type": "url",
+"id": "link",
+"label": "Link"        
+},
+
+
+{
+"type": "color",
+"id": "arrow_text_clr",
+"label": "Arrow Text",
+"default":"#000"
+
+},
+{
+"type": "color",
+"id": "arrow_text_hover_clr",
+"label": "Arrow Hover Text",
+"default":"#000"
+
+},
+{
+"id": "collection",
+"type": "collection",
+"label": "Collection"
+},
+{
+"type": "select",
+"id": "items",
+"label": "Carousel Items",
+"default": "left",
+"options": [
+{
+"value": "1",
+"label": "1"
+},        
+{
+"value": "2",
+"label": "2"
+},
+{
+"value": "3",
+"label": "3"
+},
+{
+"value": "4",
+"label": "4"
+},
+{
+"value": "5",
+"label": "5"
+},
+{
+"value": "6",
+"label": "6"
+}
+],
+"default": "4",
+"info": "4"
+}
+
+],
+"presets": [
+{
+"name": "New Arrivals",
+"category": "Collection"
+}
+]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+

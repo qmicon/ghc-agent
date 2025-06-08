@@ -1,0 +1,196 @@
+<div data-section-id="{{ section.id }}"  data-section-type="product-tab-type-3" class="product-tab-type-3" style="float:left;width:100%;">     
+  <div class="wrapper">
+    <div class="full_width_tab">    
+      <div class="grid-uniform">                 
+        <div class="grid__item">      
+          <div class="dt-sc-tabs-container-section"> 
+            {% if section.settings.title_1 != blank   %}
+            <div class="border-title">            
+              <h2 style="color:{{ section.settings.title_1_clr }};">{{ section.settings.title_1 }}</h2>
+            </div>
+            {% endif %}
+            {% if section.blocks.size > 0 %} 
+
+            <div class="dt-sc-tabs-container">               
+             <ul class="dt-sc-tabs ">         
+                {% for block in section.blocks %} 
+                {% if block.settings.title != blank %}
+                <li><a href="#" class="tabs-{{ block.id }}">{{ block.settings.title }} </a></li>           
+                {% endif %}
+                {% endfor %}
+              </ul>
+                {% for block in section.blocks %}
+                {%- assign collection = collections[block.settings.collection] -%}   
+                <div class="dt-sc-tabs-content">
+                  <ul class="{{ block.settings.title | handle }}-{{ block.id }}">
+                    {% for product in collection.products %}
+                    {% include 'home-product-grid-item' , grid_item_width:"" %}  
+                    {% else %}
+                    {% for i in (1..3) %}
+                    <li class="grid__item item-row {{ grid_item_width }} on-sale" id="product-{{ i }}">
+                      <div class="products">
+                        <div class="product-container">
+                          <a href="#" class="grid-link"> 
+                            {% if forloop.index == 3 %}
+                            <div class="featured-tag">
+                              <span class="badge badge--sale">
+                                <i class="fa fa-star"></i>
+                                <span class="gift-tag badge__text{% if sale_text.size > 7 %} badge__text--small{% endif %}">{{ 'products.product.sale' | t }}</span>
+                              </span>
+                            </div>{% endif %}
+
+                            <div class="reveal"> 
+                              {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                              {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }} 
+                            </div>
+                          </a>
+                          <div class="ImageWrapper">
+                            <div class="product-button">
+                              <div class="button-row-1">
+                                <a href="#" class="quick-view-text"> 
+                                  <i class="zmdi zmdi-eye"></i>
+                                </a>
+                                <a href="{{ product.url }}">                      
+                                  <i class="zmdi zmdi-link"></i>
+                                </a>  
+                              </div>
+                              <div class="button-row-2">
+                                <form action="#" method="post" class="variants clearfix" id="cart-form-6529189125">
+                                  <input type="hidden" name="id" value="21661289093">
+                                  <a href="#" class="add-cart-btn"><i class="zmdi zmdi-shopping-cart"></i> </a>
+                                </form>
+                                <a href="/account/login" class="wishlist"><i class="zmdi zmdi-favorite-outline"></i></a> 
+
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="product-detail"> 
+                          <a href="#" class="grid-link__title">Sample title {{ i }}</a>
+
+                          <div class="grid-link__meta">
+                            <div class="product_price"> <span class="money" data-currency-usd="$320.00">$0.00</span> </div>
+                            <del class="grid-link__sale_price"><span class="money" data-currency-usd="$756.00">$0.00</span></del> </div>
+                          <span class="spr-badge" id="spr_badge_6529189125" data-rating="0.0"> 
+                            <span class="spr-starrating spr-badge-starrating"><i class="spr-icon spr-icon-star-empty" style="color: #f05315;"></i><i class="spr-icon spr-icon-star-empty" style="color: #f05315;"></i><i class="spr-icon spr-icon-star-empty" style="color: #f05315;"></i><i class="spr-icon spr-icon-star-empty" style="color: #f05315;"></i><i class="spr-icon spr-icon-star-empty" style="color: #f05315;"></i></span> <span class="spr-badge-caption"> </span> </span>
+
+                        </div>
+                      </div>
+                    </li>
+                    {% endfor %} 
+                    {% endfor %}
+                  </ul>
+                  <div class="{{ block.settings.title | handle }}-{{ block.id }}-nav carousel-arrow">
+                    <a class="next"><i class="icon-arrow-left-circle"></i></a> 
+                    <a class="prev active"><i class="icon-arrow-right-circle"></i></a>
+                  </div>
+                </div>
+              
+              
+                <script type="text/javascript">
+                  jQuery(document).ready(function() {  
+
+                    var product_tab_type_4_count = $('.{{ block.settings.title | handle }}-{{ block.id }} li.item-row').length;
+                    if(product_tab_type_4_count > 4) { $(".{{ block.settings.title | handle }}-{{ block.id }}-nav").addClass('show');}
+                    else {
+                    $(".{{ block.settings.title | handle }}-{{ block.id }}-nav").addClass('hide');}
+                    var product_tab_type_4_carousel = $(".{{ block.settings.title | handle }}-{{ block.id }}");
+                     jQuery(product_tab_type_4_carousel).owlCarousel({
+                      items: 5,
+                      itemsCustom: false,
+                      itemsDesktop: [1199, 3],
+                      itemsDesktopSmall: [980, 2],
+                      itemsTablet: [630, 2],
+                      itemsTabletSmall: false,
+                      itemsMobile: [479, 1],
+                      singleItem: false,
+                      itemsScaleUp: false,
+                      responsive: true,
+                      responsiveRefreshRate: 200,
+                      responsiveBaseWidth: window,
+                      autoPlay: false,
+                      stopOnHover: false,
+                      navigation: false,
+                      pagination:false
+                    });
+                     // Custom Navigation Events
+                   jQuery(".{{ block.settings.title | handle }}-{{ block.id }}-nav .next").click(function(){
+                   jQuery(product_tab_type_4_carousel).trigger('owl.next');
+                   });
+                    jQuery(".{{ block.settings.title | handle }}-{{ block.id }}-nav .prev").click(function(){
+                           jQuery(product_tab_type_4_carousel).trigger('owl.prev');
+                  }); 
+                  });      
+
+                </script>
+              
+                {% endfor %}
+              </div><!--End tabs container-->
+          </div>                          
+          {% endif %}
+        </div>       
+      </div>
+      {% for block in section.blocks %}
+      <style>
+        .product-tab-type-4 .full_width_tab ul li a { color:{{ section.settings.tag_clr }}; }
+        .product-tab-type-4 .full_width_tab ul li a.tabs-{{ block.id }}:hover,.product-tab-type-1 .full_width_tab ul li.current a.tabs-{{ block.id }} { color:{{ section.settings.tag_hover_clr }}; }
+        .product-tab-type-4 .featured-content .btn { border:2px solid {{ section.settings.button_bg_clr }};color:{{ section.settings.button_txt_clr }}; } 
+        .product-tab-type-4 .featured-content .btn:hover { border:2px solid {{ section.settings.button_hover_bg_clr }}; background:{{ section.settings.button_hover_bg_clr }};color:{{ section.settings.button_hover_txt_clr }}; } 
+      </style>
+      {% endfor %}
+    </div> 
+  </div>
+  <div class="dt-sc-hr-invisible-large"></div>
+</div>
+{% schema %}
+{
+"name": "Product tab model 2",
+"class": "index-section",
+"max_blocks": 4,
+"settings": [
+
+{
+"type": "text",
+"id": "title_1",
+"label": "Heading"
+},
+{
+"type": "color",
+"id": "title_1_clr",
+"label": "Heading",
+"default": "#000"
+}
+],
+"blocks": [	
+{
+"type": "text_block",
+"name": "Column",
+"settings": [
+{
+"type": "text",
+"id": "title",
+"label": "Collection Name",
+"default": "Tab Name"
+},	
+
+{
+"id": "collection",
+"type": "collection",
+"label": "Collection"
+}	
+]
+}
+],
+"presets": [
+{
+"name": "Product tab model 2",
+"category": "Collection",
+"blocks": [
+{
+"type": "text_block"
+}        
+]
+}
+]
+}
+{% endschema %}

@@ -1,0 +1,59 @@
+{% if section.blocks.size > 0 %}  
+{% for block in section.blocks %}  
+<div class="categories-section desktop-only" id="section-{{ block.settings.heading | handle }}">
+  <ul>
+    {% if block.settings.heading  != blank %}
+    <li class="alphabet-brand">
+      <span>{{ block.settings.heading }}</span>
+    </li>  
+    {% endif %}
+    <div class="brand-items">
+      {%- assign category_name = block.settings.category_name %}
+      {% for link in linklists[category_name].links %}
+      <li class="brand-item {% if forloop.first %}active{% endif %}">
+        <a href="{{ link.url}}">
+          <span>{{ link.title }}</span>
+        </a>
+      </li> 
+      {% endfor %}   
+    </div>
+  </ul>
+  <a href="#top" class="back-to-top desktop-only">Back to the top</a>
+</div>
+{% endfor %}     
+{% endif %}
+
+
+
+
+{% schema %}
+{
+"name": "List Collections",
+"max_blocks": 27,
+"settings": [],
+
+
+"blocks": [
+{
+"type": "text",
+"name": "category",
+"settings": [	
+{
+"type": "text",
+"id":"heading",
+"label":"Heading"
+},  
+{
+"type": "link_list",
+"id":"category_name",
+"label":"Choose link list"        
+}		
+]
+} 	
+]
+
+} 	
+
+{% endschema %}
+
+

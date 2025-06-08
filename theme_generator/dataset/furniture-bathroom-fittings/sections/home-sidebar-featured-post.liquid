@@ -1,0 +1,177 @@
+{% if section.settings.show_featured_post %}
+<div data-section-id="{{ section.id }}"  data-section-type="home-sidebar-featured-post" class="home-sidebar-featured-post">
+   <div class="blog-post">
+     <div class="grid">  
+       
+        {% if section.settings.title != blank %}
+           <h4 class="section-header__title">{{ section.settings.title }}</h4>
+        {% endif %}  
+        {% if section.settings.text != blank %}
+        <div class="short-desc">{{ section.settings.text }}</div> 
+        {% endif %}  
+      
+        <div class="home-sidebar-featured-post__inner blog-section">
+        {% if blogs[section.settings.pick_featured_blog].articles.size > 0 %}  
+          <ul>
+        {% for article in blogs[section.settings.pick_featured_blog].articles limit: section.settings.limit_featured_blog %}   
+       <li class="article-item grid__item">
+           <div class="article">
+           <div class="home-blog-image">
+         {% if article.image %}
+         <img src="{{ article.image.src | img_url: 'large' }}" alt="{{ article.title }}" />            
+         {% endif %}
+         </div>
+           <div class="blog-description">
+             {% if section.settings.show_blog_tag %}
+            {% if article.tags.size > 0 %}
+            {% for tag in article.tags %}
+            <a class="blog-tags" href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %} <span class="meta-sep">&#8226;</span> {% endunless %}
+            {% endfor %}
+            {% endif %}
+            {% endif %}
+             {% if section.settings.show_featured_date %}   
+             <p class="blog-date">
+             <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}"><span class="date">{{ article.published_at | date: '%b' }} {{ article.published_at | date: '%d' }} , {{ article.published_at | date: '%Y' }}</span></time>    		 
+       
+             </p>
+               {% endif %}  
+     
+          <div class="home-blog-content blog-detail">
+
+            <h4><a href="{{ article.url }}">{{ article.title }}</a></h4>
+             {% if settings.blog_author_enable %}            
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <span> {{ article.author }}</span>
+            {% endif %}
+           
+            
+            
+            {% if section.settings.blog_description %} 
+         <p>{{ article.content | strip_html | truncate: 100 }}</p> 
+            {% endif %}
+		<a class="blog-btn btn" href="{{ article.url }}">{{ 'blogs.article.read_more' | t }} <span class="fa fa-angle-right" aria-hidden="true"></span></a>
+         </div>
+
+       </div>
+          </div>   
+                  </li>
+       {% endfor %}
+          </ul>
+          <div class="nav_blog">
+            <a class="prev active"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
+            <a class="next"><i class="fa fa-angle-right" aria-hidden="true"></i></a>  
+          </div>
+       {% else %}
+          <ul>
+         {% for i in (1..1) %}
+          
+        <li class="article-item grid__item">
+          <div class="article">
+            <div class="home-blog-image"> 
+           {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            <div class="blog-description">    
+              <p class="blog-date">
+                <time datetime="2016-11-01"><span class="date">Jan 01 , 2017</span></time>
+              </p>
+              <div class="home-blog-content blog-detail">
+                <h4><a href="#">Sample post {{ i }}</a></h4>
+                <i class="fa fa-user" aria-hidden="true"></i> <span> Author Name</span>
+                <p>Sample description {{ i }}</p>
+                <a class="blog-btn btn" href="#">Read more <span class="fa fa-angle-right" aria-hidden="true"></span></a> </div>
+            </div>
+          </div>
+        </li>
+          
+		{% endfor %}
+            </ul>        
+	   {% endif %}
+     </div>
+  
+     </div>
+  </div>
+  
+
+</div>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Home Sidebar Post",
+    "settings": [
+	 {
+        "type": "checkbox",
+        "id": "show_featured_post",
+        "label": "Enable"
+      },
+     {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",	
+		"default": "Featred posts"
+      },
+     {
+        "type": "richtext",
+        "id": "text",
+        "label": "Description"
+      },
+	 {
+        "type": "blog",
+        "id": "pick_featured_blog",
+        "label": "Select blog"        
+      },
+      {
+        "type": "text",
+        "id": "limit_featured_blog",
+        "label": "Limit post"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_blog_tag",
+        "label": "Show tag"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_featured_date",
+        "label": "Show date"
+      },
+		{
+        "type": "checkbox",
+        "id": "blog_description",
+        "label": "Show description"
+      }
+]
+  }
+{% endschema %}
+
+{% javascript %}
+	var home_sidebar_featured_post_count = $('.home-sidebar-featured-post.blog-section ul li.grid__item').length;    
+    if(home_sidebar_featured_post_count > 2 ) { $('.nav_blog').css('display','block');}
+    else {$('.nav_blog').css('display','none');}
+    var home_sidebar_featured_post = $(".home-sidebar-featured-post__inner.blog-section ul");
+    home_sidebar_featured_post.owlCarousel({
+      items: 1,
+      itemsCustom: false,
+      itemsDesktop: [1199, 1],
+      itemsDesktopSmall: [980, 1],
+      itemsTablet: [630, 1],
+      itemsTabletSmall: false,
+      itemsMobile: [479, 1],
+      singleItem: false,
+      itemsScaleUp: false,
+      responsive: true,
+      responsiveRefreshRate: 200,
+      responsiveBaseWidth: window,
+      autoPlay: false,
+      stopOnHover: false,
+      navigation: false,
+      pagination:false
+    });
+    // Custom Navigation Events
+    $(".nav_blog .next").click(function(){
+      home_sidebar_featured_post.trigger('owl.next');
+    })
+    $(".nav_blog .prev").click(function(){
+      home_sidebar_featured_post.trigger('owl.prev');
+    }) 
+  {% endjavascript %}

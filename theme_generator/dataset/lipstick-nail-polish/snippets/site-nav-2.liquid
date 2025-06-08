@@ -1,0 +1,225 @@
+<div>
+  <div class=" menu-wrapper" id="menu-wrapper"> 
+    {% if section.settings.display_megamenu %}
+    {% assign items_list = section.settings.megamenu_items | split:"," | strip | handleize %}
+    {% endif %}
+    <ul class="site-nav">      
+      {% for link in linklists.main-menu.links %}                
+      {% assign i = forloop.index | downcase %}
+      {% assign cat = link.title | handleize %}
+
+      {% assign child_list_handle = link.title | handleize %}
+
+      <li class="medium-down--hide {% if linklists[child_list_handle] != empty %} dropdown {% endif %} {% if section.settings.display_megamenu and items_list contains cat %}mega-menu{% endif %} menu-item-depth-0">
+        <a class="{% if link.active %}current{% endif %}" href="{{ link.url }}">
+          {{ link.title | escape}}
+          {% if linklists[child_list_handle] != empty  %}<i class="zmdi zmdi-caret-down"></i>{% endif %}
+        </a> 	    
+        {% if section.settings.display_megamenu and items_list contains cat %}
+        <div class="site-nav-dropdown">                               
+          {% assign i = forloop.index %}
+          {% capture style_dropdown_mega_menu %}style_dropdown_mega_menu_{{ i }}{% endcapture %}
+          <div class="container {% if section.settings[style_dropdown_mega_menu] == "style_1" %}style_1{% elsif  section.settings[style_dropdown_mega_menu] == "style_2" %}style_2{% elsif  section.settings[style_dropdown_mega_menu] == "style_3" %}style_3{% elsif  section.settings[style_dropdown_mega_menu] == "style_4" %}style_4{% else %}style_5{% endif %}">
+            <div class="col-1 parent-mega-menu">
+              {% for l in linklists[child_list_handle].links %}
+              <div class="inner">
+                <!-- Menu level 2 -->                         
+                <a href="{{ l.url }}" class="{% if l.active %}current{% endif %}">       
+                  {{ l.title | escape }}                   
+                  {% if section.settings[style_dropdown_mega_menu] == "style_3" %}
+                  {% assign compare = l.title | handleize %}
+                  {% for collection in collections %}
+                  {% if collection.handle ==  compare %}        
+                  {% if collection.image %}
+                  <img src="{{ collection.image.src | collection_img_url: 'master' }}" alt="{{ collection.title }}" />     
+                  {% endif %}
+                  {% endif %}
+                  {% endfor %}
+                  {% endif %}
+                </a>
+                {% if  linklists[l.handle] != empty %}
+                <ul class="dropdown">
+                  {% for child_l in linklists[l.handle].links %}
+                  <!-- Menu level 3 -->
+                  <li>                             
+                    <a href="{{ child_l.url }}"  class="{% if child_l.active %}current{% endif %} ">           
+                      {{ child_l.title | escape }}               
+                    </a>
+                  </li>
+                  {% endfor %}
+                </ul>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+
+            {% if  section.settings[style_dropdown_mega_menu] != "style_5"  and   section.settings[style_dropdown_mega_menu] != "style_3" %}  
+            <div class="col-2">
+              {% if section.settings[style_dropdown_mega_menu] == "style_1" or section.settings[style_dropdown_mega_menu] == "style_2" %}
+              <div class="col-left">
+                {% if section.settings[style_dropdown_mega_menu] == "style_1" %}
+                {% include 'mega-menu-featured-product' %}
+                {% elsif section.settings[style_dropdown_mega_menu] == "style_2" %}
+                {% capture dropdown_menu_image %}dropdown_{{ i }}_menu_image_1{% endcapture %}
+                {% capture dropdown_menu_link_image %}dropdown_{{ i }}_menu_link_image_1{% endcapture %} 
+                <a href="{{ section.settings[dropdown_menu_link_image] }}">
+                  <img src="{{ section.settings[dropdown_menu_image] | img_url: "master" }}" alt=""/>
+                </a>
+
+                {% capture dropdown_menu_image_2 %}dropdown_{{ i }}_menu_image_2{% endcapture %}
+                {% capture dropdown_menu_link_image_2 %}dropdown_{{ i }}_menu_link_image_2{% endcapture %}
+                <a href="{{ section.settings[dropdown_menu_link_image_2] }}">
+                  <img src="{{ section.settings[dropdown_menu_image_2] | img_url: "master" }}" alt=""/>
+                </a>
+                {% endif %}
+              </div>
+              {% endif %}
+
+              <div class="col-right">
+                {% capture dropdown_menu_image_3 %}dropdown_{{ i }}_menu_image_3{% endcapture %}
+                {% capture dropdown_menu_link_image_3 %}dropdown_{{ i }}_menu_link_image_3{% endcapture %}
+                <a href="{{ section.settings[dropdown_menu_link_image_3] }}">
+                  <img src="{{ section.settings[dropdown_menu_image_3] | img_url: "master" }}" alt=""/>
+                </a>
+              </div>
+            </div>
+            {% endif %}
+            {% if section.settings[style_dropdown_mega_menu] == "style_5" %}
+            <div class="col-wide">
+              <div class="bottom_left">
+                {% capture bottom_menu_image_lblock %}bottom_{{ i }}_menu_image_{{ i }}{% endcapture %}
+                {% capture bottom_menu_link_lblock %}bottom_{{ i }}_menu_image_{{ i }}_link{% endcapture %}                          
+                <a href="{{ section.settings[bottom_menu_link_lblock] }}">
+                  <img src="{{ section.settings[bottom_menu_image_lblock] | img_url: "master" }}" alt=""/>
+                </a>                          
+              </div>
+              <div class="bottom_right">
+                {% capture bottom_menu_image_rblock %}bottom_right_{{ i }}_menu_image_{{ i }}{% endcapture %}
+                {% capture bottom_menu_link_rblock %}bottom_right_{{ i }}_menu_image_{{ i }}_link{% endcapture %}                       
+                <a href="{{ section.settings[bottom_menu_link_rblock] }}">
+                  <img src="{{ section.settings[bottom_menu_image_rblock] | img_url: "master" }}" alt=""/>
+                </a>                       
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          <script type="text/javascript">
+            $('.dropdown.mega-menu').hover(function(){  
+              $('.main-content').addClass('call-overlay');
+            },function(){   
+              $('.main-content').removeClass('call-overlay');
+            });
+          </script>
+        </div>      
+        {% else %}
+        {% comment %} normal menu {% endcomment %}
+        <ul class="site-nav-dropdown">
+          {% for childlink in linklists[child_list_handle].links %}
+          <li {% if linklists[childlink.handle] != empty %}class="dropdown"{% endif %}>                    
+            <a href="{{ childlink.url }}" class="{% if childlink.active %}current{% endif %}">               
+              <span>               
+                {{ childlink.title | escape }}                
+              </span>
+              {% if linklists[childlink.handle] != empty %}<i class="fa fa-caret-right"></i>{% endif %}
+            </a>
+            <ul class="site-nav-dropdown">
+              {% for childlink2 in linklists[childlink.handle].links %}
+              <li {% if linklists[childlink2.handle] != empty %}class="dropdown"{% endif %}>                        
+                <a href="{{ childlink2.url }}" class="{% if childlink2.active %}current{% endif %}">                     
+                  <span>                      
+                    {{ childlink2.title | escape }}                     
+                  </span>
+                  {% if linklists[childlink2.handle] != empty  %}<i class="fa fa-caret-right"></i>{% endif %}
+                </a>
+                <ul class="site-nav-dropdown">
+                  {% for childlink3 in linklists[childlink2.handle].links %}
+                  <li>                            
+                    <a href="{{ childlink3.url }}" class="{% if link.active %}current{% endif %}">                         
+                      <span>                           
+                        {{ childlink3.title | escape }}                           
+                      </span>                          
+                    </a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </li>
+              {% endfor %}
+            </ul>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </li>
+      {% endfor %}
+      <li class="menu-item-depth-0">
+        <ul class="menu-icon">
+          {% if section.settings.display_minicart %}  
+          <li class="header-bar__module cart header_cart">                    
+            {% include 'mini-cart' %}                     
+          </li>
+          {% endif %} 
+          {% if section.settings.display_search %}  
+
+          <li class="header-search">
+            <a href="/search" class="site-header__link site-header__search js-drawer-open-top">
+              <span class="fa fa-search" aria-hidden="true"></span>
+            </a>
+          </li>      
+          {% endif %}  
+          {% if section.settings.display_currency %}    
+          <li class="header_currency">
+            <ul class="tbl-list">
+              <li class="currency dropdown-parent uppercase currency-block">
+                {% include 'currencies-switcher' %}                                
+              </li>
+            </ul>
+          </li>
+          {% endif %}
+
+          <li class="slidedown_section">
+            <a  id="Togglemodal" class="icon-cart-arrow"><i class="fa fa-cog"></i></a>
+            <div id="slidedown-modal">
+              <div class="header-panel-top">
+                <ul>
+                  <li>
+                    <div class="customer_account">                          
+                      <ul>
+                        {% if shop.customer_accounts_enabled %}
+                        {% if customer %}
+                        <li>
+                          <a href="/account" title="{{ 'layout.customer.account' | t }}">{{ 'layout.customer.account' | t }}</a>
+                        </li>
+                        <li class="logout-link">
+                          {{ 'layout.customer.log_out' | t | customer_logout_link }}
+                        </li>
+                        {% else %}
+                        <li>
+                          <a href="/account/login" title="{{ 'layout.customer.log_in' | t }}">{{ 'layout.customer.log_in' | t }}</a>
+                        </li>
+                        <li>
+                          <a href="/account/register" title="{{ 'layout.customer.create_account' | t }}">{{ 'layout.customer.create_account' | t }}</a>
+                        </li>          
+                        {% endif %}  
+                        {% endif %} 
+                        {% if section.settings.display_wishlist %}   
+                        <li>
+                          {% include 'wish-list' %} 
+                        </li>
+                        {% endif %} 
+                      </ul>
+                    </div>    
+                  </li>
+
+
+                </ul>
+              </div>
+            </div>
+          </li>
+
+
+        </ul>
+      </li>
+    </ul>
+
+  </div>  
+</div>

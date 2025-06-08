@@ -1,0 +1,87 @@
+<!-- /snippets/collection-sidebar.liquid -->
+{% if settings.collection_sidebar_use == "full_width" %}
+<script type="text/javascript">
+  $(window).ready(function($) {
+if(window.innerWidth >= 768 ){
+    var tagsbutton = document.getElementById( 'showTagsFilter' ),				
+        tagscontent = document.getElementById( 'tags-filter-content' );    
+    if(tagsbutton != null ){
+      tagsbutton.onclick = function() {
+        classie.toggle( this, 'closed' );
+        classie.toggle( tagscontent, 'tags-closed' );
+        if(classie.has( this, 'closed' ))
+          $('#showTagsFilter').html("Filter <i class='fa fa-angle-down'></i>");
+        else $('#showTagsFilter').html("Filter <i class='fa fa-angle-up'></i>");
+      };
+    }
+  }
+  });
+</script>
+  {% endif %}
+ {% if settings.collection_sidebar_use == "full_width" %}
+<div id="tags-filter-content">
+  {% endif %}
+<div class="collection_sidebar animated slideInDown">
+  {% section 'sidebar-category' %}
+  {% if current_tags == blank %}
+  {% assign has_refined = false %} 
+  {% else %}
+  {% assign has_refined = true %} 
+  {% endif %}
+    <div class="refined-widgets">
+      <a href="javascript:void(0)" class="clear-all" {% if has_refined == false %}style="display:none"{% endif %}>
+        Clear All
+      </a>
+    </div>
+
+    <div class="sidebar-block">
+     {% section 'sidebar-colors' %}
+     {% section 'sidebar-tag-filters' %}
+  </div>
+  {% unless settings.collection_sidebar_use == "full_width" %}
+  {% section 'sidebar-bestsellers' %}  
+  {% section 'sidebar-promoimage' %}
+  {% endunless %}
+</div>
+  {% if settings.collection_sidebar_use == "full_width" %}
+</div>
+{% endif %}
+
+ {% if settings.collection_sidebar_use == "full_width" %}
+<style type="text/css">
+  #tags-filter-content {
+    margin-bottom: 40px;
+    margin-top: 0;
+    -ms-transition: ease all 0.5s;
+    -webkit-transition: ease all 0.5s;
+    transition: ease all 0.5s;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    border-left: none;
+    border-right: none;
+    -ms-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    float:left;width:100%;
+}
+  #tags-filter-content.tags-closed {opacity:0;}
+  
+  #tags-filter-content {opacity:1;}
+  
+  #tags-filter-content.tags-closed .sidebar-block {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+  
+    .filter.tags{
+    
+    webkit-transition: ease all 0.5s;
+     transition: ease all 0.5s; 
+    }
+    
+    
+</style>
+  {% endif %}

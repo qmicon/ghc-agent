@@ -1,0 +1,167 @@
+
+<section class="main-slideshow">
+  <div class="flexslider">
+    <ul class="slides">          
+      {% for i in (1..10) %}
+      {% capture display_slideshow %}display_slideshow_{{ i }}{% endcapture %}
+      {% capture video %}video_{{ i }}{% endcapture %}
+      {% capture slide %}slideshow_{{ i }}.jpg{% endcapture %}
+      {% capture link %}image_{{ i }}_link{% endcapture %}
+      {% capture alt %}image_{{ i }}_alt{% endcapture %}
+      {% capture slideheading %}slide-heading_{{ i }}{% endcapture %}
+      {% capture slideheadingsize %}slide_heading_size_{{ i }}{% endcapture %}
+      {% capture slideheadingcolor %}slide_heading_color_{{ i }}{% endcapture %}
+      {% capture slidetextsize %}slide_text_size_{{ i }}{% endcapture %}
+      {% capture slidetextcolor %}slide_text_color_{{ i }}{% endcapture %}
+      {% capture slidetext %}slide-text_{{ i }}{% endcapture %}
+      {% capture buttontext %}button-text_{{ i }}{% endcapture %}
+      {% capture buttonclr %}button-color_text_{{ i }}{% endcapture %}
+      {% capture buttonbg %}button-bg_text_{{ i }}{% endcapture %}
+      {% capture buttonhoverbg %}button-hover-bg_text_{{ i }}{% endcapture %}
+      {% capture buttonhovertext %}button-hover-text_{{ i }}{% endcapture %}
+      {% capture text_align_slide %}text_align_slide_{{ i }}{% endcapture %}
+      {% if settings[display_slideshow] != 'none' %}
+      
+      
+       <style>
+        
+         .flexslider .btn.btn-{{ i }} { color:{{ settings[buttonclr] }};background:{{ settings[buttonbg] }}; }
+         .flexslider .btn.btn-{{ i }}:hover { background:{{ settings[buttonhoverbg] }};color:{{ settings[buttonhovertext] }}; }
+      </style>
+      <li class="slide{% if settings[display_slideshow] == 'video' %} video{% endif %}">
+        {% if settings[display_slideshow] == 'video' %}
+        {{ settings[video] }}
+        {% else %}
+        <img src="{{ slide | asset_url }}" data-url="{{ settings[link] }}" class="slide-img" alt="{{ settings[alt] }}" />
+        <div class="slide-des {{settings[text_align_slide]}}  {% if settings[text_align_slide] == 'center' %} slide-center {% endif %}" 
+             {% if settings[text_align_slide] == 'center' %}
+             style="width:100%;margin:auto; text-align:{{ settings[text_align_slide] }}"
+             {% elsif settings[text_align_slide] == 'right' %}
+             style="left: auto;right:10%; text-align:center"
+              {% elsif settings[text_align_slide] == 'leftbottom' %}
+              style="left: auto;left:5%; text-align:{{ settings[text_align_slide] }}"
+              {% elsif settings[text_align_slide] == 'left' %}
+             style="left: auto;left:10%; bottom:0;text-align:center"
+              {% elsif settings[text_align_slide] == 'rightbottom' %}
+             style="left: auto;right:70px; bottom:70px;text-align:right"
+             {% else %}
+              style="left: 10%; text-align:{{ settings[text_align_slide] }}"
+             {% endif %}
+             >
+          {% if settings[slideheading] != blank %}
+          <h2 class="slide-heading" style="
+                                           {% if settings[slideheadingsize] != blank %} 
+                                           font-size: {{settings[slideheadingsize]}}px;                                           
+                                           {% endif %}
+                                           {% if settings[slideheadingcolor] != blank %} 
+                                           color: {{settings[slideheadingcolor]}};                                          
+                                           {% endif %}"
+              >
+            {{ settings[slideheading]}}
+          </h2>
+          
+         
+          {% endif %}
+          
+          {% if settings[slidetext] != blank %}
+          <p class="slide-text {{settings[text_align_slide]}}" style="{% if settings[text_align_slide] == 'center' %} margin:auto; {% endif %} {% if settings[text_align_slide] == 'right' %} float:right; {% endif %}
+                                       {% if settings[slidetextsize] != blank %} 
+                                       font-size: {{settings[slidetextsize]}}px;                                      
+                                       {% endif %}
+                                       {% if settings[slidetextcolor] != blank %} 
+                                       color: {{settings[slidetextcolor]}};                                      
+                                       {% endif %}"
+             >
+            {{ settings[slidetext]}}
+          </p>
+          {% endif %}
+          {% if settings[buttontext] != blank %}
+          <a href="{{ settings[link] }}" title="" class="slide-button btn btn-{{ i }}">
+            <span>{{ settings[buttontext]}}</span>          
+          </a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </li>
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </div><!-- /.flexslider -->
+</section> <!-- /#slideshow.row -->
+<script>
+$(function() {
+	var slider, // Global slider value to force playing and pausing by direct access of the slider control
+		canSlide = true; // Global switch to monitor video state
+ 
+	// Load the YouTube API. For some reason it's required to load it like this
+	var tag = document.createElement('script');
+    tag.src = "//www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+ 
+    // Setup a callback for the YouTube api to attach video event handlers
+	window.onYouTubeIframeAPIReady = function(){
+		// Iterate through all videos
+		$('.flexslider iframe').each(function(){
+			// Create a new player pointer; "this" is a DOMElement of the player's iframe
+			var player = new YT.Player(this, {
+				playerVars: {
+					autoplay: 0
+				}
+			});
+ 
+			// Watch for changes on the player
+			player.addEventListener("onStateChange", function(state){
+				switch(state.data)
+				{
+					// If the user is playing a video, stop the slider
+					case YT.PlayerState.PLAYING:
+						slider.flexslider("stop");
+						canSlide = false;
+						break;
+					// The video is no longer player, give the go-ahead to start the slider back up
+					case YT.PlayerState.ENDED:
+					case YT.PlayerState.PAUSED:
+						slider.flexslider("play");
+						canSlide = true;
+						break;
+				}
+			});
+
+			$(this).data('player', player);
+		});
+	}
+ 
+	// Setup the slider control
+	slider = $(".flexslider")
+		.flexslider({
+	    	animation: "{{ settings.slideshow_transition }}",
+			easing: "swing",
+			slideshowSpeed: {{ settings.slideshow_speed }},
+			animationSpeed: 900,
+			pauseOnHover: true,
+			pauseOnAction: true,
+			touch: true,
+			video: true,
+			controlNav: true,
+			directionNav: true,
+			keyboardNav: true,
+			{% if settings.slideshow_transition == "slide" %}
+			animationLoop: false,
+			{% endif %}
+			slideshow: true,
+			useCSS: false,
+	    	// Before you go to change slides, make sure you can!
+	    	before: function(){			    		
+	    		if(!canSlide)
+	    			slider.flexslider("stop");
+	    	}
+		});
+
+  
+    jQuery('.flexslider li img').click(function(){
+      var url = jQuery(this).attr('data-url');
+      if (url.length > 0) {window.location.href = url;}
+    });
+});
+</script>

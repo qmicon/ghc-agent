@@ -1,0 +1,71 @@
+
+{% if settings.show_recent_articles %}
+<div class="widget recent_article">
+  <h4>{{ 'blogs.sidebar.recent_articles' | t }}<span class="right"></span></h4>
+  <ul>
+    {% for article in blogs[blog.handle].articles limit: settings.blog_article_limit %}
+    <li>
+      {% if settings.show_recent_articles_img %}
+      {% if article.image %}
+      <div class="artical-image">
+        {% assign image_alt = article.title | escape %}
+        {{ article | img_url: 'master' | img_tag: image_alt, 'article__image' | link_to: article.url }}
+        {% endif %}
+      </div>
+      {% endif %}
+      <div class="article-detail">
+        <h5>
+          <a href="{{ article.url }}">{{ article.title }}</a></h5>
+        <p class="blog-date">
+          <span data-datetime="{{ article.published_at | date: '%Y-%m-%d' }}"><span class="date">{{ article.published_at | date: '%b' }} {{ article.published_at | date: '%d' }} , {{ article.published_at | date: '%Y' }}</span></span>             
+        </p>
+      </div>
+    </li>
+
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if settings.show_blog_tags %}
+<div class="widget widget_categories">
+  {% if blog.all_tags.size > 0 %}
+  <h4>{{ 'blogs.sidebar.categories' | t }}<span class="right"></span></h4>
+  <ul>
+    {% for tag in blog.all_tags %}
+    {% if current_tags contains tag %}
+    <li>{{ tag }}</li>
+    {% else %}
+    <li>{{ tag | link_to_tag: tag }}</li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endif %}
+
+{% if settings.show_blog_instagram %}
+{% section 'blog-sidebar-instagram' %}
+
+{% endif %}
+
+
+
+
+{% if settings.show_featured_products %}
+{% section 'home-sidebar-deals' %}
+
+{% endif %}
+
+
+
+{% if settings.show_footer_tweets %}
+<aside class="widget widget-blog tweetbox">
+  <h4 class="widgettitle yellow_sketch"> {{ settings.tweet_heading}} </h4>
+  {% if settings.tweet_embcode  != blank %}
+  <div id="tweets_container">
+    {{ settings.tweet_embcode }}
+  </div>
+  {% endif %}
+</aside>
+{% endif %}

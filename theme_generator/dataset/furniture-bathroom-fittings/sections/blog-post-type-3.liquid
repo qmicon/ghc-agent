@@ -1,0 +1,282 @@
+<div data-section-id="{{ section.id }}"  data-section-type="blog-post-type-3" class="blog-post-type-3">
+  <div class="grid">
+  <div class="blog-post">
+       {% if section.settings.main_title != blank or section.settings.title  %}
+      <div class="section-header section-header--small">
+        <div class="border-title">
+          {% endif %}  
+          {% if section.settings.title != blank %} <h2>{{ section.settings.title }}</h2>{% endif %}  
+          {% if section.settings.main_title != blank %}
+          <div class="short-desc"> <p style="color:{{ section.settings.main_title_clr }};">    
+            {{ section.settings.main_title }}
+            </p></div>
+          {% endif %}  
+          {% if section.settings.main_title != blank or section.settings.title  %}
+        </div>
+      </div>
+    <div class="dt-sc-hr-invisible-small"></div>
+      {% endif %} 
+      <div class="home-blog-type-3 blog-section">        
+         {% for article in blogs[section.settings.pick_featured_blog].articles limit: section.settings.limit   %}   
+        {% if article.image %}            
+              {% assign  img_src =  article.image.src | img_url: 'master'  %}            
+              {% endif %}
+        
+        
+         {% case section.settings.limit  %}
+        {% when '1' %}
+         {%- assign grid_width = 'one-whole text-center' -%}
+        {% when '2' %}
+         {%- assign grid_width = 'wide--one-half post-large--one-half large--one-half medium--one-half small-grid__item' -%}
+        {% when '3' %}
+         {%- assign grid_width = 'wide--one-third post-large--one-third large--one-third medium--grid__item small-grid__item' -%}
+        {% endcase %}
+        <div class="article-item article-item-{{ forloop.index }} grid__item {{ grid_width }}" style="position:relative;background:url('{{ img_src }}');min-height:550px;background-size:cover;background-position:center;">
+          <div class="article-item-block">
+          <div class="blog-overlay"></div>
+          <div class="article">            
+            <div class="blog-description grid__item">
+              <div class="blogs-sub-title">
+                {% if section.settings.show_featured_date %}   
+                <p class="blog-date" style="color:{{ section.settings.blog_date_clr }};">
+                  <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}"><span class="date"><i style="color:{{ section.settings.date_color }}">{{ article.published_at | date: '%d' }} </i> &#47; {{ article.published_at | date: '%b' }} </span></time>    		 
+                </p>
+                {% endif %}  
+
+                {% if article.comments_enabled? %}
+                {% assign number_of_comments = article.comments_count %}
+
+                <p class="comments-count">{{  number_of_comments }} {{ 'blogs.comments.comments' | t }}</p>
+
+                {% endif %}
+                <p class="author" style="color:{{ section.settings.blog_author_text }}">
+                  {% if section.settings.blog_author_enable %}            
+                  <i class="zmdi zmdi-account"></i>
+                  <span> {{ article.author }}</span>
+                  {% endif %}
+                </p>
+                
+              </div>
+              <div class="home-blog-content blog-detail">
+
+                <h4><a href="{{ article.url }}" style="">{{ article.title }}</a></h4>
+                {% if section.settings.blog_description %}
+                <p style="color:{{ section.settings.blog_desc_clr }};">{{ article.content | strip_html | truncate: 200 }}</p>
+                {% endif %}
+      
+                {% if section.settings.btn != blank %}
+                 <div class="blog-btn">
+                  <a href="{{ article.url }}">{{ section.settings.btn }} <i class="zmdi zmdi-arrow-right"></i></a>
+                </div>
+                {% endif %}
+              </div>
+
+            </div>
+          </div>  
+          
+</div>
+        </div>
+        
+        {% else %}
+        {% for i in (1..2) %}
+          
+        <div class="article-item grid__item">
+          <div class="article">
+            <div class="home-blog-image grid__item wide--one-half post-large--one-half large--one-half"> 
+           {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            <div class="blog-description grid__item wide--one-half post-large--one-half large--one-half">  
+              <div class="blogs-sub-title">
+              <p class="blog-date">
+                <time datetime="2016-11-01"><span class="date">Jan 01 , 2017</span></time>
+              </p>
+              <div class="home-blog-content blog-detail">
+                <h4><a href="#">Sample post {{ i }}</a></h4>
+                
+                
+                <p class="author">
+                            
+                  <i class="zmdi zmdi-account"></i>
+                  <span> Author Name</span>
+                  
+                </p>
+                <div class="blog-btn">
+                <a class="btn" href="#">Read more <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                </div>
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+          
+		{% endfor %}
+        {% endfor %}
+
+
+
+      </div>
+      
+      
+      
+    </div>
+    <style>
+      .blog-post-type-3 .border-title h2 {  color:{{ section.settings.title_clr }}; }
+      .blog-post-type-3 .article-item .blog-detail h4 a { color:{{ section.settings.article_title_clr }}; }
+     
+      .blog-post-type-3 .article-item .blog-overlay { background:{{ section.settings.blog_overlay }}; }
+      .blog-post-type-3 .article-item:hover .blog-overlay { background:{{ section.settings.blog_hover_overlay }}; }
+      .blog-post-type-3 .article-item .blog-btn a { color:{{ section.settings.btn_txt }}; } 
+     
+      .blog-post-type-3 .home-blog-content.blog-detail p{background: {{ section.settings.blog_descbg_clr | hex_to_rgba: 0.4 }};}
+      .blog-post-type-3 .article-item:hover p ,.blog-post-type-3 .article-item:hover .blog-date ,.blog-post-type-3 .article-item:hover .date i,
+      .blog-post-type-3 .article-item:hover .home-blog-content.blog-detail h4 a,.blog-post-type-3 .article-item:hover .blog-btn a{color:{{section.settings.blog_hover_txtcolor}}!important;}
+    </style>
+  </div>
+  <div class="dt-sc-hr-invisible-large"></div>
+</div>
+{% schema %}
+{
+"name": "Blog Post Type 3",
+"settings": [
+{
+"type": "color",
+"id": "blog_overlay",
+"label": "Overlay",
+"default":"#000"
+},
+{
+"type": "color",
+"id": "blog_hover_overlay",
+"label": "Hover Overlay",
+"default":"#000"
+},
+{
+"type": "color",
+"id": "blog_hover_txtcolor",
+"label": "Hover Overlay Text Color",
+"default":"#000"
+},
+
+
+{
+"type": "text",
+"id": "title",
+"label": "Heading"
+},
+{
+"type": "color",
+"id": "title_clr",
+"label": "Heading",
+"default": "#000"
+},
+
+
+{
+"type": "text",
+"id": "main_title",
+"label": "Sub Heading"
+},
+{
+"type": "color",
+"id": "main_title_clr",
+"label": "Heading",
+"default": "#000"
+},
+{
+"type": "blog",
+"id": "pick_featured_blog",
+"label": "Select blog"
+},
+{
+      "type": "select",
+      "id": "limit",
+      "label": "Blog Post Limit",
+      "default": "3",
+      "options": [
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        }        
+      ]
+    },
+ {
+"type": "color",
+"id": "article_title_clr",
+"label": "Article title color",
+"default": "#000"
+},     
+
+{
+"type": "checkbox",
+"id": "show_featured_date",
+"label": "Show date"
+},
+{
+"type": "color",
+"id": "date_color",
+"label": "Date Color",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "blog_date_clr",
+"label": "Month Color",
+"default": "#000"
+},
+
+{
+"type": "checkbox",
+"id": "blog_author_enable",
+"label": "Show author"
+},
+{
+"type": "color",
+"id": "blog_author_text",
+"label": "Author Color",
+"default": "#000"
+},
+{
+"type": "checkbox",
+"id": "blog_description",
+"label": "Show description"
+},
+{
+"type": "color",
+"id": "blog_desc_clr",
+"label": "Description Color",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "blog_descbg_clr",
+"label": "Description Bg Color",
+"default": "#000"
+},
+
+{
+"type": "text",
+"id": "btn",
+"label": "Button",
+"default": "Read more"
+},
+{
+"type": "color",
+"id": "btn_txt",
+"label": "Button Text",
+"default": "#000"
+}
+
+],
+"presets": [
+{
+"name": "Blog Post Type 3",
+"category": "blog"
+}
+]
+}
+{% endschema %} 
+

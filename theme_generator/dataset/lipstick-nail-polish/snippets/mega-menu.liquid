@@ -1,0 +1,93 @@
+{% assign i = forloop.index %}
+{% capture style_dropdown_mega_menu %}style_dropdown_mega_menu_{{ i }}{% endcapture %}
+<div class="container {% if settings[style_dropdown_mega_menu] == "style_1" %}style_1{% elsif settings[style_dropdown_mega_menu] == "style_2" %}style_2{% elsif settings[style_dropdown_mega_menu] == "style_3" %}style_3{% elsif settings[style_dropdown_mega_menu] == "style_4" %}style_4{% else %}style_5{% endif %}">
+  <div class="col-1 parent-mega-menu">
+    {% for l in linklists[link.handle].links %}
+    <div class="inner">
+      <!-- Menu level 2 -->
+      <a href="{{ l.url }}" {% if l.active %}class="current"{% endif %}>       
+        {{ l.title | split: '|' | first }}        
+        {% if settings[style_dropdown_mega_menu] == "style_3" %}
+        {% for collection in collections %}
+        {% assign collection_title = collection.title %}
+          {% if collection.handle ==  l.handle %}
+            {{ collection.image.src | collection_img_url: 'medium' | img_tag: collection_title }}
+          {% endif %}
+        {% endfor %}
+        {% endif %}
+      </a>
+      {% if  linklists[l.handle] != empty %}
+      <ul class="dropdown">
+      {% for child_l in linklists[l.handle].links %}
+      <!-- Menu level 3 -->
+        <li>
+          <a href="{{ child_l.url }}" {% if child_l.active %}class="current"{% endif %}>           
+            {{ child_l.title }}            
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  
+  {% if settings[style_dropdown_mega_menu] != "style_5"  and  settings[style_dropdown_mega_menu] != "style_3" %}  
+  <div class="col-2">
+    {% if settings[style_dropdown_mega_menu] == "style_1" or settings[style_dropdown_mega_menu] == "style_2" %}
+    <div class="col-left">
+      {% if settings[style_dropdown_mega_menu] == "style_1" %}
+      	{% include 'mega-menu-featured-product' %}
+      {% elsif settings[style_dropdown_mega_menu] == "style_2" %}
+        {% capture dropdown_menu_image %}dropdown_{{ i }}_menu_image_1.jpg{% endcapture %}
+        {% capture dropdown_menu_link_image %}dropdown_{{ i }}_menu_link_image_1{% endcapture %} 
+        <a href="{{ settings[dropdown_menu_link_image] }}">
+          <img src="{{ dropdown_menu_image | asset_url }}" alt=""/>
+        </a>
+      
+        {% capture dropdown_menu_image_2 %}dropdown_{{ i }}_menu_image_2.jpg{% endcapture %}
+        {% capture dropdown_menu_link_image_2 %}dropdown_{{ i }}_menu_link_image_2{% endcapture %}
+        <a href="{{ settings[dropdown_menu_link_image_2] }}">
+          <img src="{{ dropdown_menu_image_2 | asset_url }}" alt=""/>
+        </a>
+      {% endif %}
+    </div>
+    {% endif %}
+  
+    <div class="col-right">
+      {% capture dropdown_menu_image_3 %}dropdown_{{ i }}_menu_image_3.jpg{% endcapture %}
+      {% capture dropdown_menu_link_image_3 %}dropdown_{{ i }}_menu_link_image_3{% endcapture %}
+      <a href="{{ settings[dropdown_menu_link_image_3] }}">
+        <img src="{{ dropdown_menu_image_3 | asset_url }}" alt=""/>
+      </a>
+    </div>
+  </div>
+  {% endif %}
+   {% if settings[style_dropdown_mega_menu] == "style_5" %}
+   <div class="col-wide">
+     <div class="bottom_left">
+        {% capture bottom_menu_image_lblock %}bottom_{{ i }}_menu_image_{{ i }}.jpg{% endcapture %}
+        {% capture bottom_menu_link_lblock %}bottom_{{ i }}_menu_image_{{ i }}_link{% endcapture %}
+       <a href="{{ settings[bottom_menu_link_lblock] }}">
+        <img src="{{ bottom_menu_image_lblock | asset_url }}" alt=""/>
+      </a>
+     </div>
+       <div class="bottom_right">
+         {% capture bottom_menu_image_rblock %}bottom_right_{{ i }}_menu_image_{{ i }}.jpg{% endcapture %}
+        {% capture bottom_menu_link_rblock %}bottom_right_{{ i }}_menu_image_{{ i }}_link{% endcapture %}
+       <a href="{{ settings[bottom_menu_link_rblock] }}">
+        <img src="{{ bottom_menu_image_rblock | asset_url }}" alt=""/>
+      </a>
+     </div>
+  </div>
+  {% endif %}
+</div>
+
+
+<script type="text/javascript">
+  $('.dropdown.mega-menu').hover(function(){  
+    $('.main-content').addClass('call-overlay');
+},function(){   
+    $('.main-content').removeClass('call-overlay');
+});
+</script>

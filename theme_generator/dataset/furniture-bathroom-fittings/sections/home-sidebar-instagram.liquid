@@ -1,0 +1,107 @@
+ {% if section.settings.show_instagram %}  
+<div class="widget instagram-images">
+    <div class="widget-title">   
+      {% if section.settings.instagram_title != blank %}
+      
+       <h4>{{ section.settings.instagram_title }}</h4>
+      
+      {% endif %}
+    </div>    
+    <div id="instafeed"></div>  
+    {% if section.settings.display_instagram_button and section.settings.instagram_button_text != blank %}     
+      <a href="{{ section.settings.instagram_button_link }}" title="{{ section.settings.instagram_button_text | split: '|' | first }}" class="btn">
+        {{ section.settings.instagram_button_text }}
+      </a>       
+    {% endif %}
+  </div>
+ {{ 'instagram.js' | asset_url | script_tag }}
+ <script>
+  jQuery(document).ready(function(){
+    var feed = new Instafeed({
+      get: "user",    
+      {% if section.settings.instagram_tag != blank %} tagName: "{{ section.settings.instagram_tag }}", {% endif %}
+      {% if section.settings.locationId != blank %} locationId: "{{ section.settings.instagram_locationId }}", {% endif %}
+      {% if section.settings.user-id != blank %} userId: {{ section.settings.user-id }}, {% endif %}
+      {% if section.settings.accessToken != blank %}accessToken: '{{ section.settings.accessToken }}', {% endif %}
+      resolution: "thumbnail",
+      clientId: "{{ section.settings.client-id }}",
+      limit: "{{ section.settings.limit }}"
+    });
+    feed.run();
+  });
+</script>
+
+{% endif %}
+
+{% schema %}
+{
+"name": "Home Sidebar Instagram",
+  "class": "index-section",  
+  "settings": [
+    
+
+      {
+      "type": "checkbox",
+      "id": "show_instagram",
+      "label": "Show instagram?",
+      "default": true
+      },
+      {
+      "type": "text",
+      "id": "instagram_title",
+      "label": "Title"
+
+      },
+      {
+        "type": "checkbox",
+        "id": "display_instagram_button",
+        "label": "Display Button Instagram?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "instagram_button_text",
+        "label": "Button Instagram Text",
+        "default": "View Gallery"
+      },
+      {
+        "type": "text",
+        "id": "instagram_button_link",
+        "label": "Button Instagram Link"
+      },
+      {
+        "type": "text",
+        "id": "client-id",
+        "label": "Client Id",
+        "default": "8c170224a0ae4352913ab2d8a9317d70",
+        "info": "[Where do I find Client ID?](http:\/\/darkwhispering.com\/how-to\/get-a-instagram-client_id-key)"
+      },
+      {
+        "type": "text",
+        "id": "instagram_tag",
+        "label": "Tag Name",
+        "info": "Use when Get Image from: 'Tagged'."
+      },
+      {
+        "type": "text",
+        "id": "user-id",
+        "label": "User Id",
+        "default": "3317628269",
+        "info": "Use when Get Image from: 'User'. [Where do I find User ID and Access Token?](http:\/\/www.pinceladasdaweb.com.br\/instagram\/access-token\/)"
+      },
+      {
+        "type": "text",
+        "id": "accessToken",
+        "label": "Access Token",
+        "default": "3317628269.1677ed0.36abb12d7c1b49aea51cfd8d83e8df36",
+        "info": "Required to use when Get Image from: 'User'."
+      },
+      {
+        "type": "text",
+        "id": "limit",
+        "label": "Limit the number of images to show",
+        "default": "10"
+      }
+]
+}
+{% endschema %}

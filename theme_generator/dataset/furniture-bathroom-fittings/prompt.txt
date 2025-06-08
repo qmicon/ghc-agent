@@ -1,0 +1,83 @@
+Theme Design: Furniture & Bathroom Fittings
+
+A sophisticated, modern theme designed for furniture and bathroom fixture stores. The design emphasizes quality, craftsmanship, and contemporary aesthetics while providing a luxurious shopping experience for home furnishings and bathroom products.
+
+Key Design Elements:
+
+1. Color Scheme:
+- Primary colors: Deep navy (#17313e) for headings and accents
+- Secondary colors: Warm neutrals and soft grays
+- Accent colors: Metallic tones for luxury elements
+- Product overlays: Subtle dark overlays for product hover effects
+- Background: Clean white (#ffffff) with subtle texture
+- Accent highlights: Gold/silver for premium products
+
+2. Typography:
+- Primary font: Montserrat (clean, modern sans-serif)
+- Heading font: Playfair Display (elegant serif)
+- Subtitle font: Raleway (sophisticated sans-serif)
+- Base font size: 16px
+- Heading sizes: 26px-60px (scalable)
+- Emphasis on elegance and readability
+
+3. Layout Features:
+- Full-width lifestyle imagery
+- Grid-based product display (2-4 products per row)
+- Elegant product cards with hover effects
+- Spacious product detail pages
+- Sticky header with category navigation
+- Room visualization features
+- Newsletter for design inspiration
+
+4. Product Presentation:
+- High-quality product images with room context
+- 360° product views
+- Detailed specifications and dimensions
+- Material and finish information
+- Color and style variations
+- Product comparison features
+- Installation guides
+- Product badges for new arrivals and bestsellers
+
+5. Special Features:
+- Room visualization tool
+- Product filtering by style and category
+- Size and dimension guides
+- Material and finish selectors
+- Product comparison tool
+- Installation guides
+- Multiple currency support
+- Newsletter for design inspiration
+- Virtual room planner
+
+6. Mobile Optimization:
+- Responsive design
+- Touch-friendly navigation
+- Easy-to-read specifications
+- Optimized product images
+- Quick access to key features
+- Mobile-friendly room planner
+- Easy product comparison
+
+7. Marketing Elements:
+- Lifestyle imagery
+- Design inspiration galleries
+- Newsletter for design tips
+- Social media integration
+- Product countdown timers for sales
+- Clearance and sale badges
+- Customer testimonials
+- Design blog integration
+
+8. User Experience:
+- Intuitive category navigation
+- Advanced product filtering
+- Quick add to cart
+- Streamlined checkout
+- Product reviews and ratings
+- Related products suggestions
+- Recently viewed items
+- Size and compatibility guides
+- Room planning tools
+
+This theme is designed to create an immersive shopping experience that emphasizes the quality and design of furniture and bathroom fixtures while providing tools for customers to visualize products in their spaces. The design focuses on luxury, functionality, and modern aesthetics to appeal to customers looking for high-end home furnishings. 

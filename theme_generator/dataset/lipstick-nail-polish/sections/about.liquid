@@ -1,0 +1,1238 @@
+
+
+
+<div data-section-id="{{ section.id }}"  data-section-type="About section" class="about-us">
+  {% if section.settings.showvedaone_1_section %}
+  <div class="grid-uniform section_1">
+    <div class="container">
+      <div class="grid__item">
+        <div class="grid__item wide--one-half post-large--one-half large--one-half medium--one-whole small-grid__item">
+          {% if section.settings.abtone_1_title != blank %}
+          <div class="main-title">
+            <h2 style="color:{{section.settings.abtone_1_maintilte }}">{{ section.settings.abtone_1_title }}</h2>
+          </div>
+          {% endif %}
+          {% if section.settings.abtone_1_des != blank %}
+          <p style="color:{{section.settings.abtone_1_desc }}">{{section.settings.abtone_1_des }}</p>
+          {% endif %}          
+          {% if section.settings.abtone_1_quote != blank %}
+          <div class="quote" style="border:1px solid {{section.settings.abtone_1_quoteborder}}">
+            <p style="color:{{section.settings.abtone_1_quotecolor }}"> {{section.settings.abtone_1_quote }} </p>  
+            {% if section.settings.abtone_1_authorname!= blank %}    <span class="author-name" style="color:{{section.settings.abtone_1_authorcolor }}"> {{section.settings.abtone_1_authorname}}</span>{% endif %}
+          </div>
+          {% endif %}
+        </div>
+        {% if  section.settings.abtone_image_1 != blank %}
+        <div class="grid__item wide--one-half post-large--one-half large--one-half medium--one-whole small-grid__item">
+          <div class="section-one-rightimg">
+            <img src="{{  section.settings.abtone_image_1 | img_url: "master" }}" alt="{{ section.settings.abtone_image_1_heading }}" />
+          </div>
+        </div>
+        {% endif %} 
+      </div>
+    </div>
+  </div>
+  {% endif %} 
+
+
+
+  {% if section.settings.section_one %}
+  <div class="section-one" style="background-image:url({{section.settings.section_1_bgimg | img_url: 'master' }});background-attachment:fixed;background-position:center;">
+    <div class="grid__uniform">
+      <div class="grid__item wide--one-half post-large--one-half large--one-whole left-section"> 
+        <div class="main-title">
+          {% if section.settings.title_1 != blank %}<h2 style="color:{{section.settings.title_1_color}};">{{section.settings.title_1}}</h2>{% endif %}
+        </div>
+        {% if section.settings.desc_one != blank %}
+        <p style="color:{{section.settings.desc_1_color}};">{{section.settings.desc_one}}</p>
+        <div class="invisible-very-small"></div>
+        {% endif %} 
+        {% if section.settings.btn_1_text != blank %}
+        <a href="{{section.settings.link_1 }}"  class="btn" style="color:{{section.settings.btn_1_color}};background:{{section.settings.btn_1_bg}};">{{section.settings.btn_1_text }}</a>
+        {% endif %} 
+      </div>
+      <div class="grid__item wide--one-half post-large--one-half large--one-whole right-section"> 
+        <div class="grid__item">
+          <ul>
+            <li>
+              {% if section.settings.show_1_icon != blank %}
+              <div class="grid__item wide--one-half post-large--one-half large--one-half">
+                <div class="icon-section">
+                  <div class="icon-heading">
+                    {% if section.settings.icon_1_cls != blank %}
+                    <span class="icon">
+                      <i class="{{section.settings.icon_1_cls }}" aria-hidden="true"></i>
+                    </span>
+                    {% endif %} 
+                    {% if section.settings.icon_1_heading != blank %}  <h3>{{section.settings.icon_1_heading}}</h3> {% endif %} 
+                  </div>
+                  {% if section.settings.icon_1_desc != blank %}
+                  <div class="icon-desc">
+                    <p>{{section.settings.icon_1_desc}}</p>
+                  </div>
+                  {% endif %} 
+                </div>
+              </div>
+              {% endif %} 
+              {% if section.settings.show_2_icon != blank %}
+              <div class="grid__item wide--one-half post-large--one-half large--one-half">
+                <div class="icon-section">
+                  <div class="icon-heading">
+                    {% if section.settings.icon_2_cls != blank %}
+                    <span class="icon">
+                      <i class="{{section.settings.icon_2_cls }}" aria-hidden="true"></i>
+                    </span>
+                    {% endif %} 
+                    {% if section.settings.icon_2_heading != blank %}  <h3>{{section.settings.icon_2_heading}}</h3> {% endif %} 
+                  </div>
+                  {% if section.settings.icon_2_desc != blank %}
+                  <div class="icon-desc">
+                    <p>{{section.settings.icon_2_desc}}</p>
+                  </div>
+                  {% endif %} 
+                </div>
+              </div>
+              {% endif %} 
+            </li>
+            <li>
+              {% if section.settings.show_3_icon != blank %}
+              <div class="grid__item wide--one-half post-large--one-half large--one-half">
+                <div class="icon-section">
+                  <div class="icon-heading">
+                    {% if section.settings.icon_3_cls != blank %}
+                    <span class="icon">
+                      <i class="{{section.settings.icon_3_cls }}" aria-hidden="true"></i>
+                    </span>
+                    {% endif %} 
+                    {% if section.settings.icon_3_heading != blank %}  <h3>{{section.settings.icon_3_heading}}</h3> {% endif %} 
+                  </div>
+                  {% if section.settings.icon_3_desc != blank %}
+                  <div class="icon-desc">
+                    <p>{{section.settings.icon_3_desc}}</p>
+                  </div>
+                  {% endif %} 
+                </div>
+              </div>
+              {% endif %} 
+              {% if section.settings.show_4_icon != blank %}
+              <div class="grid__item wide--one-half post-large--one-half large--one-half">
+                <div class="icon-section">
+                  <div class="icon-heading">
+                    {% if section.settings.icon_4_cls != blank %}
+                    <span class="icon">
+                      <i class="{{section.settings.icon_4_cls }}" aria-hidden="true"></i>
+                    </span>
+                    {% endif %} 
+                    {% if section.settings.icon_4_heading != blank %}  <h3>{{section.settings.icon_4_heading}}</h3> {% endif %} 
+                  </div>
+                  {% if section.settings.icon_4_desc != blank %}
+                  <div class="icon-desc">
+                    <p>{{section.settings.icon_4_desc}}</p>
+                  </div>
+                  {% endif %} 
+                </div>
+              </div>
+              {% endif %} 
+            </li>
+            <li>
+              {% if section.settings.show_5_icon != blank %}
+              <div class="grid__item wide--one-half post-large--one-half large--one-half">
+                <div class="icon-section">
+                  <div class="icon-heading">
+                    {% if section.settings.icon_5_cls != blank %}
+                    <span class="icon">
+                      <i class="{{section.settings.icon_5_cls }}" aria-hidden="true"></i>
+                    </span>
+                    {% endif %} 
+                    {% if section.settings.icon_5_heading != blank %}  <h3>{{section.settings.icon_5_heading}}</h3> {% endif %} 
+                  </div>
+                  {% if section.settings.icon_5_desc != blank %}
+                  <div class="icon-desc">
+                    <p>{{section.settings.icon_5_desc}}</p>
+                  </div>
+                  {% endif %} 
+                </div>
+              </div>
+              {% endif %} 
+              {% if section.settings.show_6_icon != blank %}
+              <div class="grid__item wide--one-half post-large--one-half large--one-half">
+                <div class="icon-section">
+                  <div class="icon-heading">
+                    {% if section.settings.icon_6_cls != blank %}
+                    <span class="icon">
+                      <i class="{{section.settings.icon_6_cls }}" aria-hidden="true"></i>
+                    </span>
+                    {% endif %} 
+                    {% if section.settings.icon_6_heading != blank %}  <h3>{{section.settings.icon_6_heading}}</h3> {% endif %} 
+                  </div>
+                  {% if section.settings.icon_6_desc != blank %}
+                  <div class="icon-desc">
+                    <p>{{section.settings.icon_6_desc}}</p>
+                  </div>
+                  {% endif %} 
+                </div>
+              </div>
+              {% endif %} 
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+
+
+  {% if section.settings.show_image_section %}
+  <div class="section-four">   
+    <div class="container">
+      {% if section.settings.imgsection_1_section %}
+      <div class="grid__item inner-row" >        
+        {% if  section.settings.imgsection_1_img != blank %}
+        <div class="grid__item wide--one-half post-large--one-half large--one-half">
+          <div class="img-section">    
+            <img src="{{  section.settings.imgsection_1_img | img_url: "master" }}" alt="{{ section.settings.imgsection_1_img }}" />   
+          </div>
+        </div>
+        {% endif %}
+        <div class="grid__item wide--one-half post-large--one-half large--one-half">
+          <div class="img-section-desc right-section">
+            {% if section.settings.imgsection_1_desc != blank %}
+            <p>{{section.settings.imgsection_1_desc}}</p>  
+            {% endif %}
+            {% if section.settings.author_1_name != blank %}
+            <span>{{section.settings.author_1_name}}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% if section.settings.imgsection_2_section %}
+      <div class="grid__item inner-row" >
+        <div class="grid__item wide--one-half post-large--one-half large--one-half">
+          <div class="img-section-desc left-section">
+            {% if section.settings.imgsection_2_desc != blank %}
+            <p>{{section.settings.imgsection_2_desc}}</p>  
+            {% endif %}
+            {% if section.settings.author_2_name != blank %}
+            <span>{{section.settings.author_2_name}}</span>
+            {% endif %}
+          </div>
+        </div>        
+        {% if  section.settings.imgsection_2_img != blank %}
+        <div class="grid__item wide--one-half post-large--one-half large--one-half">
+          <div class="img-section">          
+            <img src="{{  section.settings.imgsection_2_img | img_url: "master" }}" alt="{{ section.settings.imgsection_2_img }}" />        
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+
+
+  {% if section.settings.test_section %}
+  <div class="testimonial-section">
+    <div class="container">
+      <div class="grid__item ">
+        
+        <div class="border-title">
+        {% if section.settings.test_title %}
+        <h2 style="color:{{section.settings.testtitle_color}}">{{section.settings.test_title}}</h2>
+        {% if section.settings.title_img != blank %}
+          <div class="tilte_img">
+            <img src="{{ section.settings.title_img | img_url: '69x23' }}" alt="" title=""  />
+          </div>
+          {% endif %}
+        <div class="invisible-small"></div>
+          
+          
+        {% endif %}
+        </div>
+        
+        <div class="grid__item testimonial-block">
+          <div id="testimonial-car" class="owl-carousel owl-theme">
+            {% if section.settings.testmonial_1_section %}
+            <div class="item">
+              {% if section.settings.test_1_desc %}
+              <div class="blockquote">
+                <blockquote>
+                  "{{section.settings.test_1_desc}}"
+                </blockquote>
+              </div>
+              {% endif %}
+              <div class="testimonial-author">
+                {% if  section.settings.test_1_img  != blank %}
+                <div class="author-img">   <img src="{{  section.settings.test_1_img  | img_url: "master" }}" alt="{{ section.settings.team_1_imgheading }}" /></div>
+                {% endif %}
+                <span>
+                  {% if section.settings.test_1_author %}
+                  <h4> {{section.settings.test_1_author}}</h4>
+                  {% endif %}
+                  {% if section.settings.test_1_designation %}
+                  <h6>{{section.settings.test_1_designation}}</h6>
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+            {% endif %} 
+            {% if section.settings.testmonial_2_section %}
+            <div class="item">
+              {% if section.settings.test_2_desc %}
+              <div class="blockquote">
+                <blockquote>
+                  "{{section.settings.test_2_desc}}"
+                </blockquote>
+              </div>
+              {% endif %}
+              <div class="testimonial-author">
+                {% if  section.settings.test_2_img  != blank %}
+                <div class="author-img">   <img src="{{  section.settings.test_2_img  | img_url: "master" }}" alt="{{ section.settings.team_2_imgheading }}" /></div>
+                {% endif %}                
+                {% if section.settings.test_2_author %}
+                <span>                  
+                  <h4> {{section.settings.test_2_author}}</h4>                
+                  {% if section.settings.test_2_designation %}
+                  <h6>{{section.settings.test_2_designation}}</h6>
+                  {% endif %}
+                </span>
+                {% endif %}           
+              </div>
+            </div>
+            {% endif %} 
+            {% if section.settings.testmonial_3_section %}
+            <div class="item">
+              {% if section.settings.test_3_desc %}
+              <div class="blockquote">
+                <blockquote>
+                  "{{section.settings.test_3_desc}}"
+                </blockquote>
+              </div>
+              {% endif %}
+              <div class="testimonial-author">
+                {% if  section.settings.test_3_img  != blank %}
+                <div class="author-img">   <img src="{{  section.settings.test_3_img  | img_url: "master" }}" alt="{{ section.settings.team_3_imgheading }}" /></div>
+                {% endif %}
+                <span>
+                  {% if section.settings.test_3_author %}
+                  <h4> {{section.settings.test_3_author}}</h4>
+                  {% endif %}
+                  {% if section.settings.test_3_designation %}
+                  <h6>{{section.settings.test_3_designation}}</h6>
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+            {% endif %} 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %} 
+
+  {% if section.settings.show_block_five != blank %}
+  <div class="grid-uniform section-five">
+    <div class="dt-sc-hr-invisible-large"></div>
+    <div class="container">
+      
+      <div class="border-title">
+      {% if section.settings.team_maintitle != blank %}
+      <div class="main-heading">
+        <h2 style="color:{{section.settings.team_maintitlecolor}}">  {{section.settings.team_maintitle }}
+        </h2>
+        
+        {% if section.settings.team_desc != blank  %}  
+        <h6 style="color:{{section.settings.team_desccolor}}">{{ section.settings.team_desc }}</h6>
+        {% endif %}
+      </div>
+      </div>
+      
+      {% endif %}
+      <div class="grid__item">
+        {% if section.blocks.size > 0 %}  
+        {% for block in section.blocks %}         
+        <div class="grid__item wide--one-quarter post-large--one-quarter large--one-quarter medium--one-half small-grid__item">
+          <div class="team-wrapper">
+            {% if block.settings.team_6_image != blank %}
+            <div class="team-img">
+              <img src="{{ block.settings.team_6_image | img_url: '1024x1024' }}" alt="" title="" /> 
+              <ul class="social-icon">
+                {% if block.settings.social_1_icon != blank %}
+                <li><a href="{{block.settings.social_1_link}}"><i class="{{block.settings.social_1_icon }}" aria-hidden="true"></i></a></li>
+                {% endif %}
+                {% if block.settings.social_2_icon != blank %}
+                <li><a href="{{block.settings.social_2_link}}"><i class="{{block.settings.social_2_icon }}" aria-hidden="true"></i></a></li>
+                {% endif %}
+                {% if block.settings.social_3_icon != blank %}
+                <li><a href="{{block.settings.social_3_link}}"><i class="{{block.settings.social_3_icon }}" aria-hidden="true"></i></a></li>
+                {% endif %}
+                {% if block.settings.social_4_icon != blank %}
+                <li><a href="{{block.settings.social_4_link}}"><i class="{{block.settings.social_4_icon }}" aria-hidden="true"></i></a></li>
+                {% endif %}
+              </ul> 
+            </div>
+            {% endif %}
+            <div class="team-detail">
+              {% if block.settings.team_title != blank %}
+              <h5 style="color:{{block.settings.team_titlecolor }}">{{block.settings.team_title }}</h5>
+              {% endif %}
+              {% if block.settings.team_subtitle != blank %}
+              <h6 style="color:{{block.settings.team_subtitlecolor}}">{{block.settings.team_subtitle }}</h6>
+              {% endif %}
+            </div>
+          </div>
+        </div>        
+        {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="dt-sc-hr-invisible-large"></div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+
+  .about-us .section-one .right-section{border-left: 1px solid {{section.settings.secttion_1_bordercolor}};}
+
+  .about-us .section-one::after { background: {{section.settings.secttion_1_bgcolor}};}
+
+  .about-us .icon-section .icon{background:{{section.settings.icon_bgcolor}};}
+
+  .about-us .icon-section .icon{color:{{section.settings.icon_color}};}
+
+  .about-us .icon-section  .icon-heading h3{color:{{section.settings.icon_headingcolor}};}
+
+  .about-us .icon-desc p{color:{{section.settings.icon_desccolor}};}
+
+  .about-us .section-three .main-heading  h2{color:{{section.settings.abtsix_headingcolor}};}
+
+  .about-us .section-three h4{color:{{section.settings.abtsix_headingcolor}};}
+
+  .about-us .tab-detail p{color:{{section.settings.tabdetailcolor}};}
+
+  .about-us .section-three .main-heading h5{color:{{section.settings.abtsix_subheadingcolor}};}
+
+
+  .about-us .img-section-desc{background:{{section.settings.imgsection_1_bg}}; }
+
+  .about-us .img-section-desc.right-section{box-shadow: 20px 20px 20px 0 {{section.settings.imgsection_1_box}};}
+
+  .about-us .img-section-desc.left-section{box-shadow: -20px 20px 20px 0 {{section.settings.imgsection_1_box}};}
+
+  .about-us .img-section-desc p{color:{{section.settings.imgsection_desccolor }};}
+
+  .about-us .img-section-desc span{color:{{section.settings.imgsectionauthorcolor }};}
+
+
+
+
+  .about-us .team-detail h4 { color:{{section.settings.team_4_authorcolor}};}
+
+  .about-us .team-detail h5{color:{{section.settings.team_4_designationcolor}};}
+
+  .about-us .team:hover .team-img {box-shadow: 0 0 0 10px {{section.settings.team_4_authorcolor}};}
+
+
+
+  .testimonial-one .authorimg::after{border-top: 1px solid {{section.settings.hoverborder_color }}; }
+
+  .testimonial-navigation .owl-prev, .testimonial-navigation .owl-next{border:1px solid {{section.settings.iconborder_color}};}
+
+  .testimonial-navigation .owl-prev a, .testimonial-navigation .owl-next a{color:{{section.settings.iconborder_color}};}
+
+  .testimonial-navigation .owl-prev:hover, .testimonial-navigation .owl-next:hover{background:{{section.settings.iconhoverbg_color}};border:1px solid {{section.settings.iconhoverbg_color}};}
+
+  .testimonial-navigation .owl-prev:hover a, .testimonial-navigation .owl-next:hover a{color:{{section.settings.iconhovertxt_color}};}
+
+
+  .about-us blockquote {border: 1px solid {{section.settings.test_bordercolor}};}
+
+  .about-us blockquote::after {background:transparent none repeat scroll 0 0;border-bottom: 1px solid {{section.settings.test_bordercolor}};border-right: 1px solid {{section.settings.test_bordercolor}};}
+
+  .about-us .author-img { border: 1px solid {{section.settings.test_bordercolor}};}
+
+  .about-us .testimonial-author h4{color:{{section.settings.test_color}};}
+
+  .about-us .testimonial-author h6{color:{{section.settings.test_bordercolor}};font-weight:bold;}
+
+  .about-us  .owl-buttons .owl-prev:hover , .vedabout-four  .owl-buttons .owl-next:hover{border:1px solid {{section.settings.teamhoverbg}};background:{{section.settings.teamhoverbg}};;color:{{section.settings.teamhovercolor}};}
+
+  .about-us  .testimonial-section {background:{{section.settings.test_bgcolor}};}
+
+  .about-us blockquote::before {border-top: 14px solid {{section.settings.test_bgcolor}};}
+
+  .about-us .team-wrapper li a{color:{{section.settings.team_socialiconcolor}};}
+
+  .about-us .team-wrapper h6{color:{{section.settings.team_socialiconcolor}};}
+
+  .about-us .team-wrapper h6::after {background: {{section.settings.team_socialhoverborder}} ;}
+
+ 
+
+  .about-us .team-wrapper:hover{}
+
+  .about-us .team-wrapper:hover h5{color:{{section.settings.team_socialhoverborder}};}
+
+  .about-us .border-title-left::before,.about-us .border-title-left::after , .about-us .border-title::after, .about-us .border-title::before{ background: {{section.settings.title_border_color}};}
+
+  .about-us .btn:hover{background:{{section.settings.btn_bg_color}}!important;color:{{section.settings.btn_color}}!important;}
+
+  .about-us .team-img::after,.about-us .team-img::before{background:{{section.settings.team_overlaybgcolor}};}
+
+  .about-us .social-icon a{background:{{section.settings.team_socialiconbgcolor}};}
+
+  .about-us .social-icon a:hover{background:{{section.settings.socialiconhovebgrcolor}};color:{{section.settings.socialiconhovercolor}};}
+  
+  .about-us .quote p::after{background:{{section.settings.abtone_1_quoteicon_bg}};color:{{section.settings.abtone_1_quoteicon_clr}};}
+  
+  .about-us .quote:hover{background:{{section.settings.abtone_1_quoteborder}}!important;}
+  
+  .about-us .testimonial-section .item:hover blockquote{background: {{section.settings.test_borderhovercolor}};border:1px solid {{section.settings.test_borderhovercolor}}!important;}
+  
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% schema %}
+{
+"name": "About-us Page",
+"settings": [
+{
+"type": "image_picker",
+"id": "title_img",
+"label": "Title Image",
+"info": "Size: 69x23"
+},
+{
+"type": "header",
+"content": "Block one"
+},
+{
+"type": "checkbox",
+"id": "showvedaone_1_section",
+"label": "Display  This Section"
+},
+{
+"type": "text",
+"id": "abtone_1_title",
+"label": "Heading"
+},
+{
+"type": "color",
+"id": "abtone_1_maintilte",
+"default": "#000",
+"label": "Heading COlor"
+},
+{
+"type": "textarea",
+"id": "abtone_1_des",
+"label": "Description"
+},
+{
+"type": "color",
+"id": "abtone_1_desc",
+"default": "#000",
+"label": "Desc COlor"
+},
+{
+"type": "color",
+"id": "abtone_1_quoteicon_bg",
+"default": "#000",
+"label": "Quote Icon Bg"
+},
+{
+"type": "color",
+"id": "abtone_1_quoteicon_clr",
+"default": "#000",
+"label": "Quote Icon Color"
+},
+{
+"type": "textarea",
+"id": "abtone_1_quote",
+"label": "Quote Desc"
+},
+{
+"type": "color",
+"id": "abtone_1_quotecolor",
+"default": "#000",
+"label": "Desc Color"
+},
+{
+"type": "color",
+"id": "abtone_1_quoteborder",
+"default": "#000",
+"label": "Quote Border Color"
+},
+{
+"type": "text",
+"id": "abtone_1_authorname",
+"label": "Authorname"
+},
+{
+"type": "color",
+"id": "abtone_1_authorcolor",
+"default": "#000",
+"label": "Name Color"
+},
+{
+"type": "image_picker",
+"id": "abtone_image_1",
+"label": "Image",
+"info": "Size: 768x768"
+},
+{
+"type": "text",
+"id": "abtone_image_1_heading",
+"label": "Image Alt Text"
+},
+
+{
+"type": "header",
+"content": "Block Two"
+},
+{
+"type": "checkbox",
+"id": "section_one",
+"label": "Display  This Section"
+},
+{
+"type": "image_picker",
+"id": "section_1_bgimg",
+"label": "Bg Image",
+"info": "Size: 800x409"
+},
+{
+"type": "color",
+"id": "secttion_1_bgcolor",
+"default": "#000",
+"label": "Bg Color"
+},
+{
+"type": "color",
+"id": "secttion_1_bordercolor",
+"default": "#000",
+"label": "Border Color"
+},
+{
+"type": "text",
+"id": "title_1",
+"label": "Heading"
+},
+{
+"type": "color",
+"id": "title_1_color",
+"default": "#000",
+"label": "Heading Color"
+},
+
+
+{
+"type": "textarea",
+"id": "desc_one",
+"label": "Desc"
+},
+{
+"type": "color",
+"id": "desc_1_color",
+"default": "#000",
+"label": "Desc Color"
+},
+{
+"type": "text",
+"id": "btn_1_text",
+"label": "Button Text"
+},
+{
+"type": "url",
+"id": "link_1",
+"label": "Link URL"
+},
+{
+"type": "color",
+"id": "btn_1_bg",
+"default": "#000",
+"label": "Button Bg"
+},
+{
+"type": "color",
+"id": "btn_1_color",
+"default": "#000",
+"label": "Btn Color"
+},
+{
+"type": "color",
+"id": "btn_bg_color",
+"default": "#000",
+"label": "Btn hover Bg Color"
+},
+{
+"type": "color",
+"id": "btn_color",
+"default": "#000",
+"label": "Btn hover Color"
+},
+{
+"type": "checkbox",
+"id": "show_1_icon",
+"label": "Display  This Section"
+},
+{
+"type": "text",
+"id": "icon_1_cls",
+"label": "Icon Name"
+},
+{
+"type": "text",
+"id": "icon_1_heading",
+"label": "Icon Heading"
+},
+{
+"type": "textarea",
+"id": "icon_1_desc",
+"label": "Desc"
+},
+{
+"type": "checkbox",
+"id": "show_2_icon",
+"label": "Display  This Section"
+},
+{
+"type": "text",
+"id": "icon_2_cls",
+"label": "Icon Name"
+},
+{
+"type": "text",
+"id": "icon_2_heading",
+"label": "Icon Heading"
+},
+{
+"type": "textarea",
+"id": "icon_2_desc",
+"label": "Desc"
+},
+{
+"type": "checkbox",
+"id": "show_3_icon",
+"label": "Display  This Section"
+},
+{
+"type": "text",
+"id": "icon_3_cls",
+"label": "Icon Name"
+},
+{
+"type": "text",
+"id": "icon_3_heading",
+"label": "Icon Heading"
+},
+{
+"type": "textarea",
+"id": "icon_3_desc",
+"label": "Desc"
+},
+{
+"type": "checkbox",
+"id": "show_4_icon",
+"label": "Display  This Section"
+},
+{
+"type": "text",
+"id": "icon_4_cls",
+"label": "Icon Name"
+},
+{
+"type": "text",
+"id": "icon_4_heading",
+"label": "Icon Heading"
+},
+{
+"type": "textarea",
+"id": "icon_4_desc",
+"label": "Desc"
+},
+{
+"type": "checkbox",
+"id": "show_5_icon",
+"label": "Display  This Section"
+},
+{
+"type": "text",
+"id": "icon_5_cls",
+"label": "Icon Name"
+},
+{
+"type": "text",
+"id": "icon_5_heading",
+"label": "Icon Heading"
+},
+{
+"type": "textarea",
+"id": "icon_5_desc",
+"label": "Desc"
+},
+{
+"type": "checkbox",
+"id": "show_6_icon",
+"label": "Display  This Section"
+},
+{
+"type": "text",
+"id": "icon_6_cls",
+"label": "Icon Name"
+},
+{
+"type": "text",
+"id": "icon_6_heading",
+"label": "Icon Heading"
+},
+{
+"type": "textarea",
+"id": "icon_6_desc",
+"label": "Desc"
+},
+{
+"type": "color",
+"id": "icon_headingcolor",
+"default": "#000",
+"label": "Icon Heading Color"
+},
+{
+"type": "color",
+"id": "icon_desccolor",
+"default": "#000",
+"label": "Icon Desc COlor"
+},
+{
+"type": "color",
+"id": "icon_bgcolor",
+"default": "#000",
+"label": "Icon Bg Color"
+},
+{
+"type": "color",
+"id": "icon_color",
+"default": "#000",
+"label": "Icon  Color"
+},
+{
+"type": "header",
+"content": "Block Three"
+},
+{
+"type": "checkbox",
+"id": "show_image_section",
+"label": "Display  This Section"
+},
+{
+"type": "checkbox",
+"id": "imgsection_1_section",
+"label": "Display  This Section"
+},
+{
+"type": "image_picker",
+"id": "imgsection_1_img",
+"label": "Image",
+"info": "Size: 800x409"
+},
+{
+"type": "text",
+"id": "imgsection_1_imgheading",
+"label": "Img alt text"
+},
+{
+"type": "textarea",
+"id": "imgsection_1_desc",
+"label": "Desc"
+},
+{
+"type": "text",
+"id": "author_1_name",
+"label": "Author Name"
+},
+{
+"type": "color",
+"id": "imgsection_1_bg",
+"default": "#000",
+"label": "Bg Color"
+},
+{
+"type": "color",
+"id": "imgsection_1_box",
+"default": "#000",
+"label": "Box Shadow"
+},
+{
+"type": "color",
+"id": "imgsection_desccolor",
+"default": "#000",
+"label": "Desc COlor"
+},
+{
+"type": "color",
+"id": "imgsectionauthorcolor",
+"default": "#000",
+"label": "Author Color"
+},
+{
+"type": "checkbox",
+"id": "imgsection_2_section",
+"label": "Display  This Section"
+},
+{
+"type": "image_picker",
+"id": "imgsection_2_img",
+"label": "Image",
+"info": "Size: 800x409"
+},
+{
+"type": "text",
+"id": "imgsection_2_imgheading",
+"label": "Img alt text"
+},
+{
+"type": "textarea",
+"id": "imgsection_2_desc",
+"label": "Desc"
+},
+{
+"type": "text",
+"id": "author_2_name",
+"label": "Author Name"
+},
+
+{
+"type": "header",
+"content": "Block Four"
+},
+
+
+{
+"type": "checkbox",
+"id": "test_section",
+"label": "Display  This Section"
+},
+{
+"type": "color",
+"id": "test_bgcolor",
+"default": "#000",
+"label": "testimonial bg color"
+},
+{
+"type": "text",
+"id": "test_title",
+"label": "testimonial Section"
+},
+{
+"type": "color",
+"id": "testtitle_color",
+"default": "#000",
+"label": "Title Color"
+},
+{
+"type": "checkbox",
+"id": "testmonial_1_section",
+"label": "Display  This Section"
+},
+{
+"type": "text",
+"id": "test_1_desc",
+"label": "Description"
+},
+{
+"type": "image_picker",
+"id": "test_1_img",
+"label": "Image",
+"info": "Size:90x90"
+},
+{
+"type": "text",
+"id": "test_1_imgheading",
+"label": "Text"
+},
+{
+"type": "text",
+"id": "test_1_author",
+"label": "Author Name"
+},
+{
+"type": "text",
+"id": "test_1_designation",
+"label": "Designation"
+},
+{
+"type": "checkbox",
+"id": "testmonial_2_section",
+"label": "Display  This Section"
+},
+{
+"type": "text",
+"id": "test_2_desc",
+"label": "Description"
+},
+{
+"type": "image_picker",
+"id": "test_2_img",
+"label": "Image",
+"info": "Size:90x90"
+},
+{
+"type": "text",
+"id": "test_2_imgheading",
+"label": "Text"
+},
+{
+"type": "text",
+"id": "test_2_author",
+"label": "Author Name"
+},
+{
+"type": "text",
+"id": "test_2_designation",
+"label": "Designation"
+},
+{
+"type": "checkbox",
+"id": "testmonial_3_section",
+"label": "Display  This Section"
+},
+{
+"type": "text",
+"id": "test_3_desc",
+"label": "Description"
+},
+{
+"type": "image_picker",
+"id": "test_3_img",
+"label": "Image",
+"info": "Size:90x90"
+},
+{
+"type": "text",
+"id": "test_3_imgheading",
+"label": "Text"
+},
+{
+"type": "text",
+"id": "test_3_author",
+"label": "Author Name"
+},
+{
+"type": "text",
+"id": "test_3_designation",
+"label": "Designation"
+},
+{
+"type": "color",
+"id": "test_bordercolor",
+"default": "#000",
+"label": "testimonial border color"
+},
+{
+"type": "color",
+"id": "test_borderhovercolor",
+"default": "#000",
+"label": "testimonial border Hover color"
+},
+{
+"type": "color",
+"id": "test_color",
+"default": "#000",
+"label": "testimonial author color"
+},
+{
+"type": "header",
+"content": "Block Five"
+},
+{
+"type": "checkbox",
+"id": "show_block_five",
+"label": "Display This Section"          
+},
+{
+"type": "text",
+"id": "team_maintitle",
+"label": "Heading",
+"default": "Heading"
+},
+{
+"type": "color",
+"id": "team_maintitlecolor",
+"label": "Title COlor",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "team_socialiconcolor",
+"label": "Icon color",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "team_socialiconbgcolor",
+"label": "Icon Bg",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "socialiconhovercolor",
+"label": "Icon Hover COlor",
+"default": "#000"
+},
+{
+"type": "color",
+"id": "socialiconhovebgrcolor",
+"label": "Icon Hover BG",
+"default": "#000"
+}
+],
+"blocks": [
+{
+"type": "text",
+"name":"Team Section",
+"settings": [
+{
+"type": "image_picker",
+"id": "team_6_image",
+"label": "Image",
+"info": "Size: 420x640"
+},
+{
+"type": "text",
+"id": "team_title",
+"label": "Heading",
+"default": "Heading"
+},
+{
+"type": "color",
+"id": "team_titlecolor",
+"label": "Title color",
+"default": "#000"
+},
+{
+"type": "text",
+"id": "team_subtitle",
+"label": "Sub Heading",
+"default": "Heading"
+},
+{
+"type": "color",
+"id": "team_subtitlecolor",
+"label": "Sub Title color",
+"default": "#000"
+},
+{
+"type": "text",
+"id": "social_1_icon",
+"label": "Social Icon",
+"default": "class name"
+},
+{
+"type": "text",
+"id": "social_1_link",
+"label": "Social Link",
+"default": "Icon Link"
+},
+{
+"type": "text",
+"id": "social_2_icon",
+"label": "Social Icon",
+"default": "class name"
+},
+{
+"type": "text",
+"id": "social_2_link",
+"label": "Social Link",
+"default": "Icon Link"
+},
+{
+"type": "text",
+"id": "social_3_icon",
+"label": "Social Icon",
+"default": "class name"
+},
+{
+"type": "text",
+"id": "social_3_link",
+"label": "Social Link",
+"default": "Icon Link"
+},
+{
+"type": "text",
+"id": "social_4_icon",
+"label": "Social Icon",
+"default": "class name"
+}
+]
+}
+]
+}
+{% endschema %}
+
+{% stylesheet %}
+
+
+{% endstylesheet %}
+
+<script type="text/javascript">
+  $(document).ready(function(){   
+    var testimonial = $("#testimonial-car");
+    testimonial.owlCarousel({
+      loop:false,
+      margin:10,
+      autoPlay: false,
+      nav:false,
+      // navContainer: ".skew-blog-type .nav_article",
+      //  navText: ['<a class="prev btn"><i class="fa fa-angle-left" ></i></a>','<a class="next btn"><i class="fa fa-angle-right" ></i></a>'],
+      dots: true,
+      responsive:{
+        0:{
+          items:2
+        },
+        568:{
+          items:1
+        },
+        768:{
+          items:2
+        },
+        1000:{
+          items:2
+        }
+      }
+    });
+
+  });
+
+</script>

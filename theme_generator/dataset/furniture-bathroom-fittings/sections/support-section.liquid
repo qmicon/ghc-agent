@@ -1,0 +1,104 @@
+
+<div data-section-id="{{ section.id }}"  data-section-type="support-block-type-1" class="support-block-type-1">  
+      <div class="grid-uniform">
+       <ul class="support_block" style="background:{{ section.settings.bg_bolor }};">         
+        {% if section.blocks.size > 0 %}      
+        {% for block in section.blocks %}
+        {% case section.blocks.size %}
+        {% when 1 %}
+         {%- assign block_width = 'one-whole text-center' -%}
+        {% when 2 %}
+         {%- assign block_width = 'wide--one-half post-large--one-half large--one-half medium--one-half small-grid__item' -%}
+        {% when 3 %}
+         {%- assign block_width = 'wide--one-third post-large--one-third large--one-third medium--one-half small-grid__item' -%}
+         {% when 4 %}
+         {%- assign block_width = 'wide--one-quarter post-large--one-quarter large--one-quarter medium--one-half small-grid__item' -%}
+        {% endcase %}
+        <li class="grid__item {{ block_width }} wow fadeInUp"  data-wow-delay="{{ settings.time_lazy_load }}ms">
+          <div class="support_section">                      
+             <div class="support_inner">    
+                   {% if block.settings.class != blank  %}  
+                  <div class="support_icon">                      
+                  <i class="{{ block.settings.class }}" style="color:{{ block.settings.class_clr }};"></i>
+                 </div>
+                  {% endif %}   
+                     <div class="support_text"> 
+                   {% if block.settings.title != blank  %}  
+                  <h2 style="color:{{ block.settings.title_clr }};">{{ block.settings.title }}</h2>
+                  {% endif %}                  
+                   </div>               
+            </div>
+        </div>       
+      </li>  
+         {% endfor %}
+        {% endif %}
+    </ul>
+
+      </div>
+</div>
+{% schema %}
+{
+  "name": "Support",
+  "class": "index-section",
+  "max_blocks":4,
+  "settings": [
+{
+        "type": "color",
+        "id": "bg_bolor",
+        "label": "Bg color",
+        "default": "#000"   
+        }
+],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "support block",
+      "settings": [ 
+        
+ 		 {
+          "type": "text",
+          "id": "class",
+          "label": "Font Awesoem class",
+          "default": "fa fa-plus"   
+        },
+		{
+          "type": "color",
+          "id": "class_clr",
+          "label": "Icon color",
+          "default": "#000"   
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading"          
+        },
+		{
+          "type": "color",
+          "id": "title_clr",
+          "label": "Heading",
+ 		  "default": "#000"  
+        }    
+		
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Support",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        }
+ 		
+      ]
+    }
+  ]
+}
+{% endschema %}

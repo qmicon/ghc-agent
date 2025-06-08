@@ -1,0 +1,65 @@
+{% if section.blocks.size > 0 %}  
+<div data-section-id="{{ section.id }}"  data-section-type="home-sidebar-promoimage" class="home-sidebar-promoimage">  
+<div class="widget widget_promo_img">
+  <ul id="promo-carousel">
+    {% for block in section.blocks %}
+    {% if block.settings.promo_img != blank %}
+    <li>
+      <a href="{{ block.settings.promo_link }}" title="{{ block.settings.promo_title }}"> 
+        <img src="{{ block.settings.promo_img | img_url : '750x750' }}" alt="{{ block.settings.promo_title }}" title="{{ block.settings.promo_title }}" /> 
+      </a>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+</div>
+{% endif %}
+{% schema %}
+{
+"name": "Home Sidebar Banner",
+"max_blocks": 3,
+"settings": [],
+"blocks": [
+{
+"type": "content",
+"name": "Promo  banner",
+"settings": [	
+{
+"type": "image_picker",
+"id": "promo_img",
+"label": "Image"
+},
+{
+"type": "url",
+"id": "promo_link",
+"label": "URL"
+}
+]
+}
+]
+}
+{% endschema %}
+
+{% stylesheet %}
+#instafeed a {width: 33%;}
+{% endstylesheet %}
+
+{% javascript %}
+$(document).ready(function(){
+$("#promo-carousel").owlCarousel({ 
+autoPlay: 3000, //Set AutoPlay to 3 seconds 
+items : 1,
+iitemsDesktop: [1199, 1],
+itemsDesktopSmall: [980, 1],
+itemsTablet: [630, 1],
+itemsTabletSmall: false,
+itemsMobile: [479, 1],
+singleItem: true,
+animation: "fade",
+pagination: true
+
+});
+});
+
+{% endjavascript %}

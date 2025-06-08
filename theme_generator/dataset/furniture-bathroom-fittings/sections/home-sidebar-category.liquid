@@ -1,0 +1,95 @@
+<div data-section-id="{{ section.id }}"  data-section-type="home-sidebar-category">  
+    
+  {% if linklists[section.settings.linkedlist].links.size > 0 %}
+  {%- assign sidebar_linklist = section.settings.linkedlist -%}
+  {% else %}
+    {%- assign sidebar_linklist = 'main-menu' -%}
+  {% endif %}
+  
+    {% if section.settings.enable_sidecategory %} 
+    <div class="widget widget_product_categories">
+      {% if linklists[sidebar_linklist].links.size > 0 %}
+      {% if section.settings.linkedlist_title != blank %}
+      <h4>{{ section.settings.linkedlist_title }}</h4>  
+      {% endif %}
+      
+      <ul class="product-categories dt-sc-toggle-frame-set">
+        {% for link in linklists[sidebar_linklist].links %}
+        {% assign child_list_handle = link.title | handle %}             
+        {% if linklists[child_list_handle] and linklists[child_list_handle].links.size > 0 %}
+        <li class="cat-item cat-item-39 cat-parent first">
+          <a href="{{ link.url }}" class="dt-sc-toggle {% if link.active %}active{% endif %}">{{ link.title | escape }}</a> 
+
+          {% if linklists[sidebar_linklist].links.size > 0 %}        
+          <ul class="children dt-sc-toggle-content">
+            {% for child_link in linklists[link.handle].links %}
+            <li><a href="{{ child_link.url }}">{{ child_link.title | escape }}</a></li>
+            {% endfor %}
+          </ul>
+          <span class="dt-menu-expand">+</span>    
+          {% endif %}
+        </li>
+        {% else %}
+        <li class="cat-item cat-item-39 cat-parent">
+          <a href="{{ link.url }}">{{ link.title | escape }}</a> 
+        </li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+      {% endif  %}
+    </div>
+    {% endif %}
+  </div>
+
+
+  {% schema %}
+  {
+    "name": "Home Sidebar Category",   
+    "settings": [
+	{
+        "type": "checkbox",
+        "id": "enable_sidecategory",
+        "label": "Enable category"
+      },
+ 	 {
+        "type": "link_list",
+        "id": "linkedlist",
+        "label": "Linklist"
+      },
+ 		{
+        "type": "text",
+        "id": "linkedlist_title",
+        "label": "Heading"
+      }     
+]
+  }
+{% endschema %}
+
+
+{% javascript %}
+$(document).ready(function(){
+  $(".dt-menu-expand").click(function(event){
+    event.preventDefault();
+    if( $(this).hasClass("dt-mean-clicked") ){
+      $(this).text("+");
+      if( $(this).prev('ul').length ) {
+        $(this).prev('ul').slideUp(400);
+      } else {
+        $(this).prev('.megamenu-child-container').find('ul:first').slideUp(600);
+      }
+    } else {
+      $(this).text("-");
+      if( $(this).prev('ul').length ) {
+        $(this).prev('ul').slideDown(400);
+      } else{
+        $(this).prev('.megamenu-child-container').find('ul:first').slideDown(2000);
+      }
+    }
+
+    $(this).toggleClass("dt-mean-clicked");
+    return false;
+  });
+
+});
+      
+{% endjavascript %}

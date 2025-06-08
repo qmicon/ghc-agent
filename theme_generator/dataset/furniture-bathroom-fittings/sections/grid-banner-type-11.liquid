@@ -1,0 +1,252 @@
+<div data-section-id="{{ section.id }}" data-section-type="grid-banner-type-11" class="grid-banner-type-11">   
+  <div class="grid-uniform">  
+    <div class="grid__item wide--one-half post-large--one-half large--one-half medium--grid__item small-grid__item">       
+    <div class="grid__item img-hover-effect-3 img-hover-effect">
+      {% if section.settings.link_1 != blank %}<a class="banner_half_img" href="{{ section.settings.link_1 }}">{% endif%}
+      {% if section.settings.image_1 != blank %}
+      <img src="{{ section.settings.image_1 | img_url: 'master' }}" alt="{{ section.settings.title_1 }}" />
+      {% else %}
+      {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif%}           
+      {% if section.settings.link_1 != blank %}  </a>
+      {% endif%}
+      <div class="featured-content">       
+        {% if section.settings.title_1 != blank %}
+        <h6 style="color:{{ section.settings.title_1_color }}">{{ section.settings.title_1 }}</h6>
+        {% endif %}
+        {% if section.settings.text_1 != blank %}
+        <h2 style="color:{{ section.settings.text_1_color }}">{{ section.settings.text_1}}</h2>    
+        {% endif %}  
+        {% if section.settings.button_1 != blank %}
+        <a class="btn three" href="{{ section.settings.link_1 }}" style="color:{{ section.settings.button_1_txt_color }};border:2px solid {{ section.settings.button_1_bg_color }};">{{ section.settings.button_1}}</a>    
+        {% endif %}         
+      </div>   
+    </div>      
+      </div>
+    <div class="grid__item wide--one-half post-large--one-half large--one-half medium--grid__item small-grid__item">    
+     <div class="grid__item img-hover-effect img-hover-effect-4">
+      {% if section.settings.link_2 != blank %}<a class="banner_half_img" href="{{ section.settings.link_2 }}">{% endif%}
+      {% if section.settings.image_2 != blank %}
+      <img src="{{ section.settings.image_2 | img_url: 'master' }}" alt="{{ section.settings.title_2 }}" />
+      {% else %}
+
+      {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif%}           
+      {% if section.settings.link_2 != blank %}  </a>
+
+      {% endif%}
+      <div class="featured-content">     
+        {% if section.settings.offer != blank or section.settings.offer_text != blank  %}
+        <div class="offer_text">{{ section.settings.offer }}<p><span>{{ section.settings.offer_text }}</span></p></div>
+        {% endif %} 
+        {% if section.settings.title_2 != blank %}
+        <h6 style="color:{{ section.settings.title_2_color }}">{{ section.settings.title_2 }}</h6>
+        {% endif %}
+        {% if section.settings.text_2 != blank %}
+        <h2 style="color:{{ section.settings.text_2_color }}">{{ section.settings.text_2}}</h2>    
+        {% endif %}  
+        
+        {% if section.settings.button_2 != blank %}
+        <a class="btn four" href="{{ section.settings.link_2 }}" style="color:{{ section.settings.button_2_txt_color }};border:2px solid {{ section.settings.button_2_bg_color }};">{{ section.settings.button_2}}</a>    
+        {% endif %}         
+       </div>
+      </div>     
+      </div>
+    </div>       
+  </div>
+<div class="dt-sc-hr-invisible-large"></div>  
+<style>
+  
+  
+  .grid-banner-type-11 .featured-content .btn.three:hover { border:2px solid {{ section.settings.button_1_hover_bg_color }} !important;background: {{ section.settings.button_1_hover_bg_color }} !important;color:{{ section.settings.button_1_hover_txt_color }} !important; }
+  .grid-banner-type-11 .featured-content .btn.four:hover { border:2px solid {{ section.settings.button_2_hover_bg_color }} !important;background:{{ section.settings.button_2_hover_bg_color }} !important;color:{{ section.settings.button_2_hover_txt_color }} !important; }
+  .grid-banner-type-11 .featured-content h2 span { color:{{ section.settings.hot_text }}; }
+  .grid-banner-type-11 .featured-content .offer_text { color:{{ section.settings.offer_text_clr }}; }  
+  .grid-banner-type-11 .img-hover-effect-1:before { background:{{ section.settings.overlay_bgcolor_2 | color_modify: 'alpha', 0.1 }}; }
+
+  
+</style>
+      
+
+{% schema %}
+{
+"name": "Grid Banner Type 2",
+"class": "index-section",
+"settings": [ 
+  {
+  "type": "image_picker",
+  "id": "image_1",
+  "label": "Image",
+"info": "Size: 1600x800"
+  },
+  {
+  "type": "color",
+  "id": "title_1_color",
+  "label": "Color",
+  "default":"#000"
+  },
+  {
+  "type": "text",
+  "id": "title_1",
+  "label": "Heading"
+  },
+  {
+  "type": "color",
+  "id": "text_1_color",
+  "label": "Color",
+  "default":"#000"
+  },
+  {
+  "type": "textarea",
+  "id": "text_1",
+  "label": "Description"
+  },
+{
+  "type": "color",
+  "id": "hot_text",
+  "label": "Hot Text",
+ "default":"#000"
+  },
+  {
+  "type": "text",
+  "id": "button_1",
+  "label": "Button text"
+  },
+{
+  "type": "color",
+  "id": "button_1_bg_color",
+  "label": "Button bg color",
+  "default": "#000"
+  },
+{
+  "type": "color",
+  "id": "button_1_txt_color",
+  "label": "Button text color",
+  "default": "#fff"
+  },
+{
+  "type": "color",
+  "id": "button_1_hover_bg_color",
+  "label": "Button hover Bg color",
+  "default": "#000"
+  },
+{
+  "type": "color",
+  "id": "button_1_hover_txt_color",
+  "label": "Button hover text color",
+  "default": "#fff"
+  },
+{
+  "type": "color",
+  "id": "overlay_bgcolor_4",
+  "label": "Overlay Bg",
+  "default": "#fff"
+  },
+  {
+  "type": "url",
+  "id": "link_1",
+  "label": "Link URL"
+  },
+  {
+  "type": "image_picker",
+  "id": "image_2",
+  "label": "Image",
+"info": "Size: 1600x800"
+  },
+
+  {
+  "type": "text",
+  "id": "title_2",
+  "label": "Heading"
+  },
+  {
+  "type": "color",
+  "id": "title_2_color",
+  "label": "Color",
+  "default":"#000"
+  },
+  {
+  "type": "textarea",
+  "id": "text_2",
+  "label": "Description"
+
+  },
+  {
+  "type": "color",
+  "id": "text_2_color",
+  "label": "Color",
+  "default":"#000"
+  },
+{
+  "type": "text",
+  "id": "offer",
+  "label": "Percentage"
+
+  },
+{
+  "type": "text",
+  "id": "offer_text",
+  "label": "Offer"
+
+  },
+{
+  "type": "color",
+  "id": "offer_text_clr",
+  "label": "Offer Color",
+"default":"#000"
+
+  },
+  {
+  "type": "text",
+  "id": "button_2",
+  "label": "Button text"
+  },
+{
+  "type": "color",
+  "id": "button_2_bg_color",
+  "label": "Button bg color",
+  "default": "#000"
+  },
+{
+  "type": "color",
+  "id": "button_2_txt_color",
+  "label": "Button text color",
+  "default": "#fff"
+  },
+{
+  "type": "color",
+  "id": "button_2_hover_bg_color",
+  "label": "Button hover bg color",
+  "default": "#000"
+  },
+{
+  "type": "color",
+  "id": "button_2_hover_txt_color",
+  "label": "Button hover text color",
+  "default": "#fff"
+  },
+{
+  "type": "color",
+  "id": "overlay_bgcolor_5",
+  "label": "Overlay Bg",
+  "default": "#fff"
+  },
+
+  {
+  "type": "url",
+  "id": "link_2",
+  "label": "Link URL"
+  }
+  ],
+  "presets": [
+  {
+  "name": "Grid Banner Type 2",
+  "category": "Image",
+  "blocks": []
+  }
+  ]
+  }
+{% endschema %}
+
+
+

@@ -1,0 +1,25 @@
+<!-- /snippets/collection-sidebar.liquid -->
+
+<div class="collection_sidebar">
+  {% section 'sidebar-category' %}
+  
+  {% if current_tags == blank %}
+  {% assign has_refined = false %} 
+  {% else %}
+  {% assign has_refined = true %} 
+  {% endif %}
+    <div class="refined-widgets">
+      <a href="javascript:void(0)" class="clear-all" {% if has_refined == false %}style="display:none"{% endif %}>
+        Clear All
+      </a>
+    </div>
+
+    <div class="sidebar-block">
+     {% section 'sidebar-colors' %}
+     {% section 'sidebar-tag-filters' %}
+  </div>
+ 
+
+  {% section 'sidebar-bestsellers' %}  
+  {% section 'sidebar-promoimage' %}
+</div>

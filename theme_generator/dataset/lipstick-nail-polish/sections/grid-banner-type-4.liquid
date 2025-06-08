@@ -1,0 +1,146 @@
+<div data-section-id="{{ section.id }}" data-section-type="grid-banner-type-4" class="grid-banner-type-4">   
+  <div class="grid-uniform">  
+    <div class="grid__item grid-banner-type-4-right-column wow fadeIn animated">   
+      <div class="img-hover-effect-1 img-hover-effect">     
+        {% if section.settings.link_4 != blank %}<a class="banner_half_img" href="{{ section.settings.link_4 }}">{% endif%}
+        {% if section.settings.image_4 != blank %}
+        <img src="{{ section.settings.image_4 | img_url: 'master' }}" alt="{{ section.settings.title_4 }}" />
+        {% else %}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif%}           
+        {% if section.settings.link_4 != blank %}  </a>
+        {% endif%}        
+      </div>       
+    </div>  
+    <div class="grid__item grid-banner-type-4-left-column wow fadeIn animated">   
+      <div class="img-hover-effect-2 img-hover-effect">       
+        {% if section.settings.link_3 != blank %}<a class="banner_half_img" href="{{ section.settings.link_3 }}">{% endif%}
+        {% if section.settings.image_3 != blank %}
+        <img src="{{ section.settings.image_3 | img_url: 'master' }}" alt="{{ section.settings.title_3 }}" />
+        {% else %}
+
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif%}           
+        {% if section.settings.link_3 != blank %}  </a>
+
+        {% endif%}
+
+      </div>
+    </div>    
+    <div class="grid__item grid-banner-type-4_top wow fadeIn animated">
+      <div class="grid__item wide--one-half post-large--one-half large--one-half medium-down--one-third small--grid__item img-hover-effect-3 img-hover-effect wow fadeIn animated">
+        {% if section.settings.link_1 != blank %}<a class="banner_half_img" href="{{ section.settings.link_1 }}">{% endif%}
+        {% if section.settings.image_1 != blank %}
+        <img src="{{ section.settings.image_1 | img_url: 'master' }}" alt="{{ section.settings.title_1 }}" />
+        {% else %}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif%}           
+        {% if section.settings.link_1 != blank %}  </a>
+        {% endif%}
+
+      </div> 
+      <div class="grid__item wide--one-half post-large--one-half large--one-half medium-down--one-third small--grid__item img-hover-effect img-hover-effect-4 wow fadeIn animated">
+        {% if section.settings.link_2 != blank %}<a class="banner_half_img" href="{{ section.settings.link_2 }}">{% endif%}
+        {% if section.settings.image_2 != blank %}
+        <img src="{{ section.settings.image_2 | img_url: 'master' }}" alt="{{ section.settings.title_2 }}" />
+        {% else %}
+
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif%}           
+        {% if section.settings.link_2 != blank %}  </a>
+
+        {% endif%}
+
+      </div>
+    </div>
+    <div class="dt-sc-hr-invisible-large"></div>
+  </div>    
+</div>
+
+
+
+{% schema %}
+{
+"name": "Grid Banner",
+"class": "index-section",
+"settings": [
+{
+"type": "image_picker",
+"id": "image_4",
+"label": "Image",
+"info": "Size: 1500x663"
+},
+{
+"type": "text",
+"id": "title_4",
+"label": "Heading"
+},
+{
+"type": "url",
+"id": "link_4",
+"label": "Link URL"
+},
+{
+"type": "image_picker",
+"id": "image_3",
+"label": "Image",
+"info": "Size: 100x668"
+},
+
+{
+"type": "text",
+"id": "title_3",
+"label": "Heading"
+},
+{
+"type": "url",
+"id": "link_3",
+"label": "Link URL"
+},
+{
+"type": "image_picker",
+"id": "image_1",
+"label": "Image",
+"info": "Size: 1000x378"
+},
+{
+"type": "text",
+"id": "title_1",
+"label": "Heading"
+},
+{
+"type": "url",
+"id": "link_1",
+"label": "Link URL"
+},
+{
+"type": "image_picker",
+"id": "image_2",
+"label": "Image",
+"info": "Size: 1000×378"
+},
+
+{
+"type": "text",
+"id": "title_2",
+"label": "Heading"
+},
+
+{
+"type": "url",
+"id": "link_2",
+"label": "Link URL"
+}
+],
+"presets": [
+{
+"name": "Grid Banner",
+"category": "Image",
+"blocks": []
+}
+]
+}
+{% endschema %}
+
+
+

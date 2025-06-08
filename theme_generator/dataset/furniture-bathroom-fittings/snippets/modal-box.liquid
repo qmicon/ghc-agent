@@ -1,0 +1,25 @@
+<div class="loading-modal modal">{{ 'general.search.loading' | t }}</div>
+<div class="ajax-error-modal modal">
+  <div class="modal-inner">
+    <div class="ajax-error-title">{{ 'general.search.error' | t }}</div>
+    <div class="ajax-error-message"></div>
+  </div>
+</div>
+<div class="ajax-success-modal modal">
+  	<div class="overlay"></div>
+	<div class="content"> 
+      
+      <p class="added-to-cart info">{{ 'cart.general.added_to_cart' | t }}</p>
+      <p class="added-to-wishlist info">{{ 'products.wishlist.added_to_wishlist' | t }}</p>
+      <div class="ajax-left">        
+      <img class="ajax-product-image" alt="modal window" src="/" />
+      </div>
+      <div class="ajax-right"> 
+        <h3 class="ajax-product-title">Product name</h3>
+        <span class="ajax_price"></span>
+        <div class="success-message added-to-cart"><a href="/cart" class="btn"><i class="fa fa-shopping-cart"></i>{{ 'cart.general.view_cart' | t }}</a> </div>  
+        <div class="success-message added-to-wishlist"> <a href="/pages/wishlist" class="btn"><i class="fa fa-heart"></i>{{ 'products.wishlist.view_wishlist' | t }}</a></div>                
+      </div>
+    <a href="javascript:void(0)" class="close-modal"><i class="fa fa-times-circle"></i></a>
+ 	</div>    
+</div>

@@ -1,0 +1,395 @@
+
+
+{% if section.settings.show_contact_4_page %}
+<div class="contact-page-four contact-page">
+  <div class="container">
+  <div class="grid-uniform">
+    <div class="contact-heading">
+      {% if section.settings.block_1_heading != blank  %}  
+      <h2 style="color:{{ section.settings.block_1_heading_color }};">{{ section.settings.block_1_heading }}</h2>           
+      {% endif %}
+      {% if section.settings.block_1_description != blank  %}  
+      <p  class="des"    style="color:{{ section.settings.block_1_description_color }};">{{ section.settings.block_1_description }}</p>
+      {% endif %}
+    </div>
+    <div class="grid__item">
+      {% if section.settings.show_contact_1_iconwrapper %}
+      <div class="grid-uniform detail-section">
+        <div class="container">
+          {% if section.settings.show_contact_1_address %}
+          <div class="grid__item wide--one-third post-large--one-third large--one-third medium--one-half small-grid__item ">
+            <div class="icon-section">
+              {% if  section.settings.contact_1_icon  != blank %}
+              <div class="icon">
+                <span class=""><i class="{{section.settings.contact_1_icon}}" aria-hidden="true"></i></span>
+              </div>
+              {% endif %}
+              {% if  section.settings.contact_add_heading  != blank %}
+              <h4>{{section.settings.contact_add_heading}}</h4>
+              {% endif %}
+              {% if  section.settings.contact_add_detail  != blank %}
+              <p>{{section.settings.contact_add_detail}} <br> {{section.settings.contact_add_2_detail}}</p>
+              {% endif %}
+            
+            </div>
+          </div>
+          {% endif %} 
+          {% if section.settings.show_contact_1_email %}
+          <div class="grid__item wide--one-third post-large--one-third large--one-third medium--one-half small-grid__item ">
+            <div class="icon-section">
+              {% if  section.settings.contact_2_icon  != blank %}
+              <div class="icon">
+                <span class=""><i class="{{section.settings.contact_2_icon}}" aria-hidden="true"></i></span>
+              </div>
+              {% endif %}
+              {% if  section.settings.contact_mail_heading  != blank %}
+              <h4>{{section.settings.contact_mail_heading}}</h4>
+              {% endif %}
+              {% if  section.settings.contact_mail_detail  != blank %}
+              <p><a href="">{{section.settings.contact_mail_detail}}  </a> <br><a href="">{{section.settings.contact_mail_2_detail}}</a></p>
+              {% endif %}
+             
+            </div>
+          </div>
+          {% endif %} 
+          {% if section.settings.show_contact_1_phone %}
+          <div class="grid__item wide--one-third post-large--one-third large--one-third medium--one-half small-grid__item ">
+            <div class="icon-section">
+              {% if  section.settings.contact_3_icon  != blank %}
+              <div class="icon">
+                <span class=""><i class="{{section.settings.contact_3_icon}}" aria-hidden="true"></i></span>
+              </div>
+              {% endif %}
+              {% if  section.settings.contact_phone_heading  != blank %}
+              <h4>{{section.settings.contact_phone_heading}}</h4>
+              {% endif %}
+              {% if  section.settings.contact_phone_detail  != blank %}
+              <p>{{section.settings.contact_phone_detail}}<br>{{section.settings.contact_phone_2_detail}}</p>
+              {% endif %}
+             
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %} 
+    </div>
+
+    <div class="dt-sc-hr-invisible-large"></div>
+    <div class="grid__item ">
+      <div class="container">
+        <div class="grid__item contct-form-section" >
+          {% if section.settings.show_contact_4_contactform %}
+          <div class="grid__item wide--one-half post-large--one-half large--one-half medium-down--one-third small--grid__item form-section">
+            {% form 'contact' %}
+            {% if form.posted_successfully? %}
+            <p class="note form-success">
+              {{ 'contact.form.post_success' | t }}
+            </p>
+            {% endif %}
+            {{ form.errors | default_errors }}
+            {% assign name_attr = 'contact.form.name' | t | handle %}
+            <label for="ContactFormName" class="label--hidden">{{ 'contact.form.name' | t }}</label>
+            <input type="text" id="ContactFormName" name="contact[{{ name_attr }}]" placeholder="{{ 'contact.form.name' | t }}" autocapitalize="words" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.name }}{% endif %}">
+            <label for="ContactFormEmail" class="label--hidden">{{ 'contact.form.email' | t }}</label>
+            <input type="email" id="ContactFormEmail" name="contact[email]" placeholder="{{ 'contact.form.email' | t }}" autocorrect="off" autocapitalize="off" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}">
+            {% assign name_attr = 'contact.form.phone' | t | handle %}
+            <label for="ContactFormPhone" class="label--hidden">{{ 'contact.form.phone' | t }}</label>
+            <input type="tel" id="ContactFormPhone" name="contact[{{ name_attr }}]" placeholder="phone" pattern="[0-9\-]*" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.phone }}{% endif %}">
+            <label for="ContactFormMessage" class="label--hidden">{{ 'contact.form.message' | t }}</label>
+            <textarea rows="5" id="ContactFormMessage" name="contact[body]" placeholder="{{ 'contact.form.message' | t }}">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+            <button class="contact-btn" value="">{{ 'contact.form.send' | t }}</button>
+            {% endform %}
+          </div>
+          {% endif %}
+          <div class="grid__item wide--one-half post-large--one-half large--one-half medium-down--one-third small--grid__item">
+            <div class="map-section">
+              <div id="map">{{section.settings.contact_iframe_code }} </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<div class="dt-sc-hr-invisible-large"></div>
+{% endif %}
+
+
+
+
+
+<style>
+
+
+
+  .contact-page-four .contact-form input, .contact-page-four .contact-form textarea{background:{{section.settings.input_bgcolor}};}
+
+  .detail-section .icon-section  h4{color:{{section.settings.detail_titlecolor}};}
+
+  .contact-page-four .icon-section p{color:{{section.settings.contact_4_paragraphcolor}};}
+
+  .contact-page-four .contct-form-section {background: {{section.settings.contact_4_formbgcolor}}; }
+
+  .contact-page .icon-section { border: 1px solid  {{section.settings.detail_bordercolor}};}
+
+  .contact-page-four a{color:{{section.settings.contact_4_linkcolor}};   transition: all 0.3s linear 0s;}
+
+  .contact-page-four a:hover{color:{{section.settings.contact_4_linkhovercolor}};}
+
+  .contact-page-four .contact-btn{background:{{section.settings.contact_4_btnbg}};color:{{section.settings.contact_4_btncolor}};}
+
+  .contact-page-four .contact-btn:hover{color:{{section.settings.contact_4_btnhovercolor}};}
+
+  .contact-page-four .contact-btn:hover{background:{{section.settings.contact_4_btnhoverbg}};}
+
+  .contact-page-four .icon {color:{{section.settings.contact_4_iconcolor}};}
+
+  .contact-page-four .icon-text{color:{{section.settings.contact_4_icontextcolor}};}
+
+  .contact-page-four .contact-icon:hover .icon{background:{{section.settings.contact_4_iconhoverbg}};}
+
+  .contact-page .contact-large { color: {{section.settings.large_icon_color}};}
+
+
+
+
+
+
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% schema %}
+{
+"name": "Contact Section",
+"settings": [
+
+
+{
+"type": "checkbox",
+"id": "show_contact_4_page",
+"label": "Show contact page"
+},
+{
+"type": "text",
+"id": "block_1_heading",
+"label": "Heading"          
+},
+{
+"type": "color",
+"id": "block_1_heading_color",
+"label": "Color",
+"default":"#000"
+},
+{
+"type": "textarea",
+"id": "block_1_description",
+"label": "Description"          
+},
+{
+"type": "color",
+"id": "block_1_description_color",
+"label": "Color",
+"default":"#000"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_iconwrapper",
+"label": "Show contact icon wrapper"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_address",
+"label": "Show Address"
+},
+{
+"type": "text",
+"id": "contact_1_icon",
+"label": "Contact Icon"
+},
+{
+"type": "text",
+"id": "contact_add_heading",
+"label": "Address Heading"
+},
+{
+"type": "text",
+"id": "contact_add_detail",
+"label": "Address Detail"
+},
+{
+"type": "text",
+"id": "contact_add_2_detail",
+"label": "Address Detail"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_email",
+"label": "Show contact Email"
+},
+{
+"type": "text",
+"id": "contact_2_icon",
+"label": "Contact Icon"
+},
+{
+"type": "text",
+"id": "contact_mail_heading",
+"label": "mail Heading"
+},
+{
+"type": "text",
+"id": "contact_mail_detail",
+"label": "mail Detail"
+},
+{
+"type": "text",
+"id": "contact_mail_2_detail",
+"label": "mail Detail"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_phone",
+"label": "Show contact phone"
+},
+{
+"type": "text",
+"id": "contact_3_icon",
+"label": "Contact Icon"
+},
+{
+"type": "text",
+"id": "contact_phone_heading",
+"label": "phone Heading"
+},
+{
+"type": "text",
+"id": "contact_phone_detail",
+"label": "phone Detail"
+},
+{
+"type": "text",
+"id": "contact_phone_2_detail",
+"label": "phone Detail"
+},
+{
+"type": "color",
+"id": "detail_titlecolor",
+"default": "#000",
+"label": "Detail Title Color"
+},
+{
+"type": "color",
+"id": "detail_bordercolor",
+"default": "#000",
+"label": "Detail Border Color"
+},
+{
+"type": "color",
+"id": "contact_4_iconcolor",
+"default": "#000",
+"label": "Icon color"
+},
+{
+"type": "color",
+"id": "large_icon_color",
+"default": "#000",
+"label": "Large Icon COlor"
+},
+{
+"type": "color",
+"id": "contact_4_linkcolor",
+"default": "#000",
+"label": "Contact link color"
+},
+{
+"type": "color",
+"id": "contact_4_linkhovercolor",
+"default": "#000",
+"label": "Contact link hover color"
+},
+{
+"type": "color",
+"id": "contact_4_paragraphcolor",
+"default": "#000",
+"label": "Address Detail color"
+},
+{
+"type": "checkbox",
+"id": "show_contact_4_contactform",
+"label": "Show contact form"
+},
+{
+"type": "color",
+"id": "contact_4_formbgcolor",
+"default": "#000",
+"label": "Contact form bg color"
+},
+{
+"type": "color",
+"id": "contact_4_btnbg",
+"default": "#000",
+"label": "Button bg color"
+},
+{
+"type": "color",
+"id": "contact_4_btncolor",
+"default": "#000",
+"label": "Button border and text color"
+},
+{
+"type": "color",
+"id": "contact_4_btnhoverbg",
+"default": "#000",
+"label": "Button hover bg color"
+},
+{
+"type": "color",
+"id": "contact_4_btnhovercolor",
+"default": "#000",
+"label": "Button text hover color"
+},
+{
+"type": "color",
+"id": "input_bgcolor",
+"default": "#000",
+"label": "Input Bg Color"
+},
+{
+"type": "checkbox",
+"id": "enable_gmap",
+"label": "Enable Contact Map?"
+},
+{
+"type": "textarea",
+"id": "contact_iframe_code",
+"label": "Map Code[iframe]",
+"info": "[Where do I find googlemap action URL?](https:\/\/support.google.com\/maps\/answer\/3544418?hl=en)"
+}
+]
+}
+{% endschema %}
+
+{% stylesheet %}
+
+
+
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

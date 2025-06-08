@@ -1,0 +1,149 @@
+<div data-section-id="{{ section.id }}" data-section-type="wide-banner-type-1" class="wide-banner-type-1"> 
+  <div class="grid-uniform CollectionItems">    
+    <div class="wide-banner-type-1-bock" {% if section.settings.image_1 != blank %} style="background-image:url('{{ section.settings.image_1 | img_url: 'master' }}');background-attachment:fixed;background-repeat:no-repeat;background-position:center center;" {% endif%} >
+      <div class="wrapper">
+        
+        
+        
+        <div class="grid__item wide--one-half post-large--one-half large--one-whole medium--one-whole small-grid__item"></div>
+        
+        
+         <div class="grid__item wide--one-half post-large--one-half large--one-whole medium--one-whole small-grid__item">
+        <div class="wide-banner-type-1-content"> 
+          
+          <div class="grid__item wow fadeInDown animated">
+          {% if section.settings.text_1 != blank %}
+          <h5 class="small-title "  style="color:{{ section.settings.text_color }};">{{ section.settings.text_1 }}     </h5>   
+          {% endif %}  
+          {% if section.settings.title_1 != blank %}
+          <h2 style="color:{{ section.settings.title_color }};">{{ section.settings.title_1 }} </h2>
+          {% endif %}
+          </div>
+          
+          <div class="deal-clock lof-clock-timer-detail fadeInUp animated"></div>
+          {% assign dealTime = section.settings.deal_end_date | replace: '_',' ' %}  
+          <div class="deal-content wow fadeInUp animated">
+           
+          
+            <script>
+              //<![CDATA[
+              jQuery(document).ready(function($){
+                $(".lof-clock-timer-detail").lofCountDown({      
+                  TargetDate:"{{ dealTime }}",
+                  DisplayFormat:"<ul class='list-inline'><li class='day fadeInUp animated'>%%D%%<span>Days</span></li><li class='hours'>%%H%%<span>Hours</span></li><li class='mins'>%%M%%<span>Minutes</span></li><li class='seconds'>%%S%%<span>Seconds</span></li></ul>",
+                  FinishMessage: "Expired"
+                });
+              });
+              //]]>
+            </script>
+            {% if section.settings.button_1 != blank %}
+            <div class="deal-btn"> <a class="btn" href="{{ section.settings.link_1 }}">{{ section.settings.button_1 }}</a> </div>   
+            {% endif %}         
+          </div>  
+        </div>
+        </div>
+        
+        
+        
+        
+        
+      </div>
+      </div>   
+    </div>
+    <style>
+      .lof-clock-timer-detail ul li,.lof-clock-timer-detail ul li span { color:{{ section.settings.time_color }}; }
+      .wide-banner-type-1-content .lof-clock-timer-detail li:after { background:{{ section.settings.time_color }}; }
+      .wide-banner-type-1-content .deal-clock.lof-clock-timer-detail li{border-bottom:1px solid {{section.settings.border_time_color}};background:{{section.settings.bg_time_color | color_modify: 'alpha', 0.07 }};}
+      .wide-banner-type-1-content .lof-clock-timer-detail li::before{border-bottom: 7px solid {{section.settings.border_time_color}};}
+    </style>
+  </div>
+  <div class="dt-sc-hr-invisible-large"></div>
+
+
+
+
+
+  {% schema %}
+  {
+  "name": "Wide Banner",
+  "class": "index-section",
+  "settings": [
+  {
+  "type": "image_picker",
+  "id": "image_1",
+  "label": "Image",
+  "info": "Size: 1920x1000"
+  },
+  {
+  "type": "text",
+  "id": "title_1",
+  "label": "Title"
+  },
+  {
+  "type": "color",
+  "id": "title_color",
+  "label":"Title color",
+  "default": "#000"
+  },
+ 
+  {
+  "type": "text",
+  "id": "text_1",
+  "label": "Sub Heading"
+  },
+  {
+  "type": "color",
+  "id": "text_color",
+  "label":"Sub Heading color",
+  "default": "#000"
+  },
+  {
+  "type": "color",
+  "id": "time_color",
+  "label":"Deal time color",
+  "default": "#000"
+  },
+  
+{
+  "type": "color",
+  "id": "bg_time_color",
+  "label":"Bg time color",
+  "default": "#000"
+  },
+ {
+  "type": "color",
+  "id": "border_time_color",
+  "label":"Border time color",
+  "default": "#000"
+  },
+  {
+  "type": "text",
+  "id": "button_1",
+  "label": "Button text"
+  },
+ 
+  {
+  "type": "url",
+  "id": "link_1",
+  "label": "Link URL"
+  },
+  {
+  "type": "text",
+  "id": "deal_end_date",
+  "label": "Deal end date",
+  "info": "format should be MM/DD/YYYY_HH:MM:SS "
+  }
+
+
+  ],
+  "presets": [
+  {
+  "name": "Wide Banner",
+  "category": "Image",
+  "blocks": []
+  }
+  ]
+  }
+  {% endschema %}
+
+

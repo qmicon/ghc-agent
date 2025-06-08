@@ -1,0 +1,30 @@
+{% capture show_featured_product_menu %}show_featured_product_menu_{{ i }}{% endcapture %}  
+{% capture menu_featured_product_title %}menu_featured_product_title_{{ i }}{% endcapture %}
+{% capture menu_featured_product_list_collection %}menu_featured_product_list_collection_{{ i }}{% endcapture %}
+
+{% if section.settings[show_featured_product_menu] %}
+<div class="widget-featured-product">
+  {% if section.settings[menu_featured_product_title] != blank %}
+  <div class="widget-title">   
+    <h3>     
+      <span>{{ section.settings[menu_featured_product_title]  }}</span>      
+    </h3>
+  </div>
+  {% endif %}
+  
+  {% assign found = section.settings[menu_featured_product_list_collection] %}
+  
+  {% if found == blank %}
+  <p style="margin-bottom: 30px; {{ section.settings[found] }}">Please select a collection in Theme Setting to display the products (Navigation -> Featured Product in Mega Menu)</p>
+  {% else %}
+  <div class="widget-product">
+	<div class="products-grid">	  
+	  {% for product in collections[found].products limit: 1 %}
+      {% include 'mega-menu-product-grid' %}	  
+  	  {% endfor %}
+    </div>   
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+

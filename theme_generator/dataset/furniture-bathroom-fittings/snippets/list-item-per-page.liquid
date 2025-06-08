@@ -1,0 +1,13 @@
+{% if settings.collections_items_enable %}
+<div class="per-page-section">
+<p>{{ 'collections.general.items_perpage' | t }}:</p>
+<ul class="dropdown-menu" role="menu"> 
+   {% assign current_page_size = paginate.page_size %}
+    <li {% if current_page_size == 8 %} class="active" {% endif %}><a href="?view=list">8</a></li>
+    <li {% if current_page_size == 12 %} class="active" {% endif %}><a href="?view=list12">12</a></li>
+    <li {% if current_page_size == 24 %} class="active" {% endif %} ><a href="?view=list24">24</a></li>       	     
+   	<li {% if current_page_size == 36 %} class="active" {% endif %} ><a href="?view=list36">36</a></li>
+   	<li {% if current_page_size == 50 %} class="active" {% endif %} ><a href="?view=listall">{{ 'collections.sorting.all_tags' | t }}</a></li>
+</ul>
+</div>
+{% endif %}

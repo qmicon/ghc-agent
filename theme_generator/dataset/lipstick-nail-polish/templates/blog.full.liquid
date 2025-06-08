@@ -1,0 +1,65 @@
+
+{% paginate blog.articles by 6 %}
+<div class="blog-design-4"> 
+    <div class="blog-section">
+      {% for article in blog.articles %}
+      <div class="grid__item wide--one-half post-large--one-half large--one-half">
+        <div class="article">
+          {% if settings.show_blog_4_img %}
+          {% if article.image %}
+          {% assign image_alt = article.title | escape %}
+          <div class="article-img">
+            {{ article | img_url: 'master' | img_tag: image_alt, 'article__image' | link_to: article.url }}
+          </div>
+          {% endif %}
+          {% endif %}
+          <div class="blog-description">
+              <div class="blogs-sub-title">
+                {% if settings.show_blog_4_date %}
+		 	<p class="blog-date">
+              <span data-datetime="{{ article.published_at | date: '%Y-%m-%d' }}"><span class="date">{{ article.published_at | date: '%b' }} {{ article.published_at | date: '%d' }} , {{ article.published_at | date: '%Y' }}</span></span>             
+              </p>
+                {% endif %}
+
+                {% if article.comments_enabled? %}
+                {% assign number_of_comments = article.comments_count %}
+                <p class="comments-count">{{  number_of_comments }} {{ 'blogs.comments.comments' | t }}</p>
+                {% endif %}
+                <p class="author">
+                  {% if settings.show_blog_4_author %}            
+                  <i class="zmdi zmdi-account"></i>
+                  <span> {{ article.author }}</span>
+                  {% endif %}
+                </p>                
+              </div>
+              <div class="home-blog-content blog-detail">				
+                <h4><a href="{{ article.url }}">{{ article.title }}</a></h4>
+                {% if settings.show_blog_4_content %}
+                <p>{{ article.content | strip_html | truncate: 200 }}</p>
+                {% endif %}
+                
+                {% if article.tags.size > 0 and settings.show_blog_4_tag %}
+                <div class="blog-tag">
+                <i class="fa fa-tags" aria-hidden="true"></i>
+                {% for tag in article.tags %}
+                <a class="blog-tags" href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %} <span class="meta-sep">&#44;</span> {% endunless %}
+                {% endfor %}
+                </div>
+                {% endif %}
+               {% if settings.show_blog_4_btn %}
+                 <div class="blog-btn">
+                  <a class="btn" href="{{ article.url }}">{{ 'blogs.article.read_more' | t }}<i class="fa fa-angle-double-right"></i></a>
+                </div>
+                {% endif %}
+              </div>
+
+            </div>
+      </div>
+      </div>
+      {% endfor %}
+        {% if paginate.pages > 1 %}
+          <div class="text-center">
+            {% include 'pagination-default' %}
+          </div>
+        {% endif %}      
+{% endpaginate %}

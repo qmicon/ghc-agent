@@ -1,0 +1,49 @@
+<ul id="MobileNav" class="mobile-nav wide--hide post-large--hide large--hide">  
+  {% for link in linklists.main-menu.links %}   
+  {% assign child_list_handle = link.title | handleize %}
+  <li class="mobile-nav__link" aria-haspopup="true">
+    {% if linklists[child_list_handle].links != blank %}
+    <a href="{{ link.url }}" class="{% if link.active %}current{% endif %}">
+      {{ link.title }}
+
+    </a>
+    <span class="mobile-nav__sublist-trigger">{% include 'mobile-nav-icons' %}</span>
+    <ul class="mobile-nav__sublist">  
+      {% for child in linklists[child_list_handle].links %}
+      {% assign sibil = child.title | handleize %}   
+      {% if linklists[sibil].links != blank %}    
+      <li class="mobile-nav__link" aria-haspopup="true">
+
+        <a href="{{ child.url }}" class="{% if child.active %}current{% endif %}">
+          {{ child.title }}
+        </a>
+        <span class="mobile-nav__sublist-trigger">{% include 'mobile-nav-icons' %}</span>
+
+        <ul class="mobile-nav__sublist">  
+          {% for sibil in linklists[sibil].links %}            
+          <li class="mobile-nav__sublist-link">
+            <a href="{{ sibil.url }}" class="{% if sibil.active %}current{% endif %}">{{ sibil.title }}</a>
+          </li>
+          {% endfor %}
+        </ul> 
+
+      </li>
+      {% else %}
+      <li class="mobile-nav__sublist-link">
+        <a class="mobile-nav {% if child.active %}current{% endif %}"  href="{{ child.url }}">{{ child.title }}</a>
+      </li>
+
+      {% endif %}
+      {% endfor %}
+    </ul>
+    {% else %}
+    <a href="{{ link.url }}" class="mobile-nav {% if link.active %}current{% endif %}" >
+      {{ link.title }}
+    </a>
+    {% endif %}
+  </li>
+  {% endfor %}
+
+
+
+</ul>

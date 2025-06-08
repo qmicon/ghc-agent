@@ -1,0 +1,53 @@
+{% if  product.options.size < 3 %}{% assign colorindex = -1 %}{% assign sizeindex = -1 %}
+        {% unless product.options[0] contains 'Title' %}
+        {% for option in product.options %}
+        {% assign downcased_option = option | downcase %}
+        {% if downcased_option contains 'color' or downcased_option contains 'colour' %}
+        {% assign colorindex = forloop.index0 %}
+        {% else %}{% assign sizeindex = forloop.index0 %}
+        {% endif %}
+        {% endfor %}
+        {% endunless %}
+
+        
+          {% if colorindex > -1 %}
+            {% assign check = "" %}
+            <ul class="options-swatch options-swatch--color productitem-color-js">
+              {% assign images_color = '' %}{% for i in (1..10) %}{% assign key = 'filter_color' | append: forloop.index %}{% assign value = '__' | append: settings[key] | handle | downcase | strip | append: '__' | append: forloop.index %}{% assign images_color = images_color | append: value | append: ';' %}{% endfor %}
+              {% for variant in product.variants %}
+              {% unless variant.available %}{% continue %}{% endunless %}
+
+              {% assign tag = variant.options[colorindex] %}
+              {% unless check contains tag %}
+              {% assign check = check | append: tag %}
+              <li>
+                <a href="#" data-tag="{{ tag | handle }}" class="color-border-{{ tag | handle }}" data-img="{% if variant.image %}{{ variant.image.src | product_img_url: 'large' }}{% else %}{% endif %}" data-pr_id="{{ pr_variant.id }}" data-var_id="{{ variant.id }}" data-price="{{ variant.price }}" data-compprice="{{ variant.compare_at_price }}">
+                  {% assign _tag_ = tag | handle | downcase %}
+                  {% assign _tag_ = "__" | append: _tag_ | append: '__' %}
+                  {% if images_color contains _tag_ %}
+                  {% assign imagescr = images_color | split: _tag_ | last %}
+                  {% assign imagescr = imagescr | split: ';' | first %}
+                  {% assign imagescr = 'filter_color' | append: imagescr | append: '.png' %}
+                  <img src="{{ imagescr | asset_url }}" alt="">
+                  {% else %}<span class="swatch-label color-{{ tag | handle }}"></span>
+                  {% endif %}
+                </a>
+              </li>
+              {% endunless %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+          {% if sizeindex > -1 %}
+            <ul class="options-swatch options-swatch--size productitem-size-js">
+              {% for variant in product.variants %}
+              {% unless variant.available %}{% continue %}{% endunless %}
+              {% if colorindex > -1 %}{% assign color = variant.options[colorindex] %}{% endif %}
+              {% assign tag = variant.options[sizeindex] %}
+              <li class="{{ color | handle }}-js"{% if colorindex > -1 %} style="display:none;"{% endif %}>
+                <a href="#" data-pr_id="{{ pr_variant.id }}" data-img="{% if variant.image %}{{ variant.image.src | product_img_url: 'large' }}{% else %}{% endif %}" data-var_id="{{ variant.id }}" data-price="{{ variant.price }}" data-compprice="{{ variant.compare_at_price }}">{{ tag }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+		
+          {% endif %}

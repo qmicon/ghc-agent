@@ -1,0 +1,511 @@
+
+
+
+<div data-section-id="{{ section.id }}"  data-section-type="About section" class="contact-us">
+  {% if section.settings.show_contact_1_page %}
+  <div class="contact-page-one">
+    {% if section.settings.show_contact_1_iconwrapper %}
+    <div class="grid-uniform detail-section">
+      <div class="container">
+        {% if section.settings.show_contact_1_address %}
+        <div class="grid__item wide--one-quarter post-large--one-quarter large--one-half medium--one-half icon-section">
+          <div class="icon">
+            <span class=""><i class="fa fa-location-arrow" aria-hidden="true"></i></span>
+          </div>
+          {% if  section.settings.contact_add_heading  != blank %}
+          <h4>{{section.settings.contact_add_heading}}</h4>
+          {% endif %}
+          {% if  section.settings.contact_add_detail  != blank %}
+          <p>{{section.settings.contact_add_detail}}</p>
+          {% endif %}
+        </div>
+        {% endif %} 
+        {% if section.settings.show_contact_1_email %}
+        <div class="grid__item wide--one-quarter post-large--one-quarter large--one-half medium--one-half icon-section">
+          <div class="icon">
+            <span class=""><i class="fa fa-envelope-o" aria-hidden="true"></i></span>
+          </div>
+          {% if  section.settings.contact_mail_heading  != blank %}
+          <h4>{{section.settings.contact_mail_heading}}</h4>
+          {% endif %}
+          {% if  section.settings.contact_mail_detail  != blank %}
+          <p>email:<a href="">{{section.settings.contact_mail_detail}}</a></p>
+          {% endif %}
+        </div>
+        {% endif %} 
+        {% if section.settings.show_contact_1_phone %}
+        <div class="grid__item wide--one-quarter post-large--one-quarter large--one-half medium--one-half icon-section">
+          <div class="icon">
+            <span class=""><i class="fa fa-phone" aria-hidden="true"></i></span>
+          </div>
+          {% if  section.settings.contact_phone_heading  != blank %}
+          <h4>{{section.settings.contact_phone_heading}}</h4>
+          {% endif %}
+          {% if  section.settings.contact_phone_detail  != blank %}
+          <p>{{section.settings.contact_phone_detail}}</p>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% if section.settings.show_contact_1_time %}
+        <div class="grid__item wide--one-quarter post-large--one-quarter large--one-half medium--one-half icon-section">
+          <div class="icon">
+            <span class=""><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+          </div>
+          {% if  section.settings.contact_time_heading  != blank %}
+          <h4>{{section.settings.contact_time_heading}}</h4>
+          {% endif %}
+          {% if  section.settings.contact_time_detail  != blank %}
+          <p>{{section.settings.contact_time_detail}}</p>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %} 
+    <div class="grid-uniform">
+      {% if section.settings.enable_gmap %}
+      <div class="map-section">
+        <div id="map">{{ section.settings.contact_iframe_code }} </div>
+      </div>
+      {% endif %} 
+      {% if section.settings.show_contact_1_contactform %}
+      <div class="container">
+        <div class="contact">
+          {% form 'contact' %}
+          <div class="grid__item contact-frm">
+            {% if  section.settings.contact_form_heading  != blank %}
+            <h3>{{section.settings.contact_form_heading}}</h3>
+            <div class="header-border"></div>
+            {% endif %}
+            <div class="grid__item wide--one-half post-large--one-half large--one-half medium--grid__item">
+              {% if form.posted_successfully? %}
+              <p class="note form-success">
+                {{ 'contact.form.post_success' | t }}
+              </p>
+              {% endif %}
+              {{ form.errors | default_errors }}
+              {% assign name_attr = 'contact.form.name' | t | handle %}
+              <label for="ContactFormName" class="label--hidden">{{ 'contact.form.name' | t }}</label>
+              <input type="text" id="ContactFormName" name="contact[{{ name_attr }}]" placeholder="{{ 'contact.form.name' | t }}" autocapitalize="words" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.name }}{% endif %}">
+              <label for="ContactFormEmail" class="label--hidden">{{ 'contact.form.email' | t }}</label>
+              <input type="email" id="ContactFormEmail" name="contact[email]" placeholder="{{ 'contact.form.email' | t }}" autocorrect="off" autocapitalize="off" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}">
+              {% assign name_attr = 'contact.form.phone' | t | handle %}
+              <label for="ContactFormPhone" class="label--hidden">{{ 'contact.form.phone' | t }}</label>
+              <input type="tel" id="ContactFormPhone" name="contact[{{ name_attr }}]" placeholder="phone" pattern="[0-9\-]*" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.phone }}{% endif %}">
+            </div>
+            <div class="grid__item wide--one-half post-large--one-half large--one-half medium--grid__item">
+              <label for="ContactFormMessage" class="label--hidden">{{ 'contact.form.message' | t }}</label>
+              <textarea rows="7" id="ContactFormMessage" name="contact[body]" placeholder="{{ 'contact.form.message' | t }}">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+              <button  class="contact-btn" >{{ 'contact.form.send' | t }}</button>
+            </div>
+          </div>
+          {% endform %}
+        </div>
+      </div>
+      {% endif %} 
+    </div>
+    {% if section.settings.show_contact_1_socialicon %}
+    <div class="grid-uniform social-icon-wrapper">
+      <div class="wrapper">
+        <ul class="social-icon">
+          {% if section.settings.show_contact_1_facebook %}
+          <li><a href="{{settings.contact_1_facebook}}"><i class="{{section.settings.contact_1_icon}}" aria-hidden="true"></i></a></li>
+          {% endif %}
+          {% if section.settings.show_contact_1_twitter %}
+          <li><a href="{{settings.contact_1_twitter}}"><i class="{{section.settings.contact_2_icon}}" aria-hidden="true"></i></a></li>
+          {% endif %}
+          {% if section.settings.show_contact_1_googleplus%}
+          <li><a href="{{settings.contact_1_googleplus}}"><i class="{{section.settings.contact_3_icon}}" aria-hidden="true"></i></a></li>
+          {% endif %}
+          {% if section.settings.show_contact_1_youtube%}
+          <li><a href="{{settings.contact_1_youtube}}"><i class="{{section.settings.contact_4_icon}}" aria-hidden="true"></i></a></li>
+          {% endif %}
+          {% if section.settings.show_contact_1_pinterest%}
+          <li><a href="{{settings.contact_1_pinterest}}"><i class="{{section.settings.contact_5_icon}}" aria-hidden="true"></i></a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    {% endif %} 
+  </div>
+  {% endif %} 
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+
+  {% if section.settings.enable_gmap %} .contact-page-one .contact {  margin-top: -200px; } {% endif %}
+  
+  .contact-page-one .icon span {background:{{section.settings.contact_1_iconbg}};}
+
+  .contact-page-one .icon span {color: {{section.settings.contact_1_iconcolor}};}
+
+  .contact-page-one .icon-section:hover .icon span::after {background: {{section.settings.contact_1_iconhoverbg}};}
+
+  .contact-page-one h4{color:{{section.settings.contact_1_iconheadingcolor}};}
+
+  .contact-page-one .detail-section p {color: {{section.settings.contact_1_icondetailcolor}};}
+
+  .contact-page-one h3{color:{{section.settings.contact_1_formheadingcolor}};}
+
+  .contact-page-one .header-border {background:{{section.settings.contact_1_formheadingbordercolor}};}
+
+  .contact-page-one .contact-frm {background: {{section.settings.contact_1_formbgcolor}};}
+
+  .contact-page-one .header-border::after { border-bottom: 3px solid {{section.settings.contact_1_formheadingbordercolor}};}
+
+  .contact-page-one .contact{ border-bottom: 1px solid {{section.settings.contact_1_formborder}};}
+
+  .contact-page-one .contact-btn { background: {{section.settings.contact_1_formbtnbg}};color:{{section.settings.contact_1_formbtncolor}};}
+
+  .contact-page-one .contact-btn:hover{background:{{section.settings.contact_1_formbtnhoverbg}};color:{{section.settings.contact_1_formbtnhovercolor}};}
+
+  .contact-page-one .social-icon a {color: {{section.settings.contact_1_socialiconcolor}};}
+
+  .contact-page-one .social-icon a:hover::after{background:{{section.settings.contact_1_socialiconhoverbg}};}
+
+  .contact-page-one .social-icon a:hover{color:{{section.settings.contact_1_socialiconhovercolor}};}
+
+  .contact-page-one a{color:{{section.settings.contact_1_linkcolor}};transition: all 0.3s linear 0s;}
+
+  .contact-page-one a:hover{color:{{section.settings.contact_1_linkhovercolor}};}
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% schema %}
+  {
+    "name": "Contact us block",
+    "settings": [
+{
+"type": "checkbox",
+"id": "show_contact_1_page",
+"label": "Show contact page"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_iconwrapper",
+"label": "Show contact icon wrapper"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_address",
+"label": "Show Address"
+},
+{
+"type": "text",
+"id": "contact_add_heading",
+"label": "Address Heading"
+},
+{
+"type": "text",
+"id": "contact_add_detail",
+"label": "Address Detail"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_email",
+"label": "Show contact Email"
+},
+{
+"type": "text",
+"id": "contact_mail_heading",
+"label": "mail Heading"
+},
+{
+"type": "text",
+"id": "contact_mail_detail",
+"label": "mail Detail"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_phone",
+"label": "Show contact phone"
+},
+{
+"type": "text",
+"id": "contact_phone_heading",
+"label": "phone Heading"
+},
+{
+"type": "text",
+"id": "contact_phone_detail",
+"label": "phone Detail"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_time",
+"label": "Show contact time"
+},
+{
+"type": "text",
+"id": "contact_time_heading",
+"label": "time Heading"
+},
+{
+"type": "text",
+"id": "contact_time_detail",
+"label": "time Detail"
+},
+{
+"type": "checkbox",
+"id": "enable_gmap",
+"label": "Enable Contact Map?"
+},
+{
+"type": "textarea",
+"id": "contact_iframe_code",
+"label": "Map Code[iframe]",
+"info": "[Where do I find googlemap action URL?](https:\/\/support.google.com\/maps\/answer\/3544418?hl=en)"
+},
+
+{
+"type": "color",
+"id": "contact_1_linkcolor",
+"default": "#000",
+"label": "Contact link color"
+},
+{
+"type": "color",
+"id": "contact_1_linkhovercolor",
+"default": "#000",
+"label": "Contact link hover color"
+},
+{
+"type": "color",
+"id": "contact_1_iconbg",
+"default": "#000",
+"label": "Contact icon bg"
+},
+{
+"type": "color",
+"id": "contact_1_iconcolor",
+"default": "#000",
+"label": "Contact icon color"
+},
+{
+"type": "color",
+"id": "contact_1_iconhoverbg",
+"default": "#000",
+"label": "Contact icon hover bg"
+},
+{
+"type": "color",
+"id": "contact_1_iconheadingcolor",
+"default": "#000",
+"label": "Contact icon heading color"
+},
+{
+"type": "color",
+"id": "contact_1_icondetailcolor",
+"default": "#000",
+"label": "Contact icon detail color"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_contactform",
+"label": "Show contact form"
+},
+{
+"type": "text",
+"id": "contact_form_heading",
+"label": "Contact Form Heading"
+},
+{
+"type": "color",
+"id": "contact_1_formheadingcolor",
+"default": "#000",
+"label": "Contact form heading color"
+},
+{
+"type": "color",
+"id": "contact_1_formheadingbordercolor",
+"default": "#000",
+"label": "Contact form heading border color"
+},
+{
+"type": "color",
+"id": "contact_1_formbgcolor",
+"default": "#000",
+"label": "Contact form bg color"
+},
+{
+"type": "color",
+"id": "contact_1_formborder",
+"default": "#000",
+"label": "Contact form border color"
+},
+{
+"type": "color",
+"id": "contact_1_formbtnbg",
+"default": "#000",
+"label": "Contact form btn bg"
+},
+{
+"type": "color",
+"id": "contact_1_formbtncolor",
+"default": "#000",
+"label": "Contact form btn color"
+},
+{
+"type": "color",
+"id": "contact_1_formbtnhoverbg",
+"default": "#000",
+"label": "Contact form btn hover bg"
+},
+{
+"type": "color",
+"id": "contact_1_formbtnhovercolor",
+"default": "#000",
+"label": "Contact form btn hover color"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_socialicon",
+"label": "Show contact form social icon"
+},
+{
+"type": "color",
+"id": "contact_1_socialiconcolor",
+"default": "#000",
+"label": "Social icon color"
+},
+{
+"type": "color",
+"id": "contact_1_socialiconhoverbg",
+"default": "#000",
+"label": "Social icon hover bg"
+},
+{
+"type": "color",
+"id": "contact_1_socialiconhovercolor",
+"default": "#000",
+"label": "Social icon hover color"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_facebook",
+"label": "Show facebook"
+},
+{
+"type": "text",
+"id": "contact_1_icon",
+"label": "Icon Class"
+},
+{
+"type": "text",
+"id": "contact_1_facebook",
+"label": "Facebook link"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_twitter",
+"label": "Show twitter"
+},
+{
+"type": "text",
+"id": "contact_2_icon",
+"label": "Icon Class"
+},
+{
+"type": "text",
+"id": "contact_1_twitter",
+"label": "Twitter link"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_googleplus",
+"label": "Show google plus"
+},
+{
+"type": "text",
+"id": "contact_3_icon",
+"label": "Icon Class"
+},
+{
+"type": "text",
+"id": "contact_1_googleplus",
+"label": "Google plus link"
+},
+
+{
+"type": "checkbox",
+"id": "show_contact_1_youtube",
+"label": "Show youtube"
+},
+{
+"type": "text",
+"id": "contact_4_icon",
+"label": "Icon Class"
+},
+{
+"type": "text",
+"id": "contact_1_youtube",
+"label": "youtube link"
+},
+{
+"type": "text",
+"id": "contact_5_icon",
+"label": "Icon Class"
+},
+{
+"type": "checkbox",
+"id": "show_contact_1_pinterest",
+"label": "Show pinterest"
+},
+{
+"type": "text",
+"id": "contact_1_pinterest",
+"label": "pinterest link"
+}
+
+]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
