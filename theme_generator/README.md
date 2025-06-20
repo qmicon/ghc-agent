@@ -1,167 +1,131 @@
 # Theme Generator
 
-A suite of tools for generating Shopify themes from website screenshots. This toolchain helps analyze website designs and convert them into production-ready Shopify themes.
+A robust pipeline for generating Shopify themes from website screenshots, orchestrated by just two main scripts. This toolchain is designed for developers who want to automate theme creation, track all intermediate steps, and ensure reproducibility and traceability.
 
 ## Setup
 
-1. Change to the theme_generator directory:
-```bash
-cd theme_generator
-```
+1. **Clone the repository and change to the theme_generator directory:**
+   ```bash
+   cd theme_generator
+   ```
 
-2. Create and activate a Python virtual environment in the parent directory:
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
+2. **Create and activate a Python virtual environment:**
+   ```bash
+   # Windows
+   python -m venv venv
+   venv\Scripts\activate
 
-# macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
-```
+   # macOS/Linux
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 
-3. Install required packages:
-```bash
-pip install -r requirements.txt
-```
+3. **Install required packages:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-4. Set up environment variables:
-```bash
-# Create .env file in the parent directory
-ANTHROPIC_API_KEY=your_api_key_here
-```
+4. **Set up environment variables:**
+   ```bash
+   # Create .env file in the parent directory
+   ANTHROPIC_API_KEY=your_api_key_here
+   ```
+
+5. **Ensure the reference Dawn theme is present:**
+   - The `dawn-main/` directory must be present in `theme_generator/`. It will be copied into each new project as the starting point for theme code.
 
 ## Usage
 
-The theme generation process consists of several steps, each handled by a specific script. Here's the workflow:
+The workflow is streamlined into two main commands:
 
-### 1. Take Screenshots
+### 1. Create a Project Folder
 
-Capture screenshots of the target website for analysis:
-
-```bash
-python take_screenshot.py www.example.com
-```
-
-This will:
-- Take full-page screenshots of the website
-- Save them in `screenshots/www_example_com/default_1920x1080/`
-- Create a metadata.json file with screenshot information
-
-### 2. Generate Design Documentation
-
-Analyze the screenshots to create detailed design documentation:
+This script creates a new project folder, copies the reference Dawn theme, and sets up the required structure for intermediate files and theme code.
 
 ```bash
-python generate_prompt_from_image.py
+python create_theme_project.py
 ```
+- Prints the new project folder name (e.g., `theme_abc12345`).
+- The folder is created in `theme-projects/`.
 
-This will:
-- Analyze the screenshots and generate design documentation
-- Save documentation in `screenshots/www_example_com/default_1920x1080//design_docs/`
-- Create markdown files with design analysis and implementation notes
+### 2. Run the Clone Script
 
-### 3. Generate Section Design Plans
-
-Create detailed implementation plans for each section:
+This script orchestrates the entire pipeline: screenshots, design doc generation, section planning, code example extraction, section and page code generation, and checkpointing.
 
 ```bash
-python generate_section_design_plan.py --website www_example_com --viewport default_1920x1080
+python clone_theme_from_website.py <website> <project_folder> <page_type> --viewport <viewport>
 ```
+- `<website>`: The website domain (e.g., `marsghc.com`)
+- `<project_folder>`: The folder created in step 1
+- `<page_type>`: The type of page to clone (e.g., `Home`, `Collection`, `Product`, `AllBlogs`, `SingleBlog`)
+- `--viewport`: (Optional) `mobile` or `desktop` (default: `mobile`)
 
-This will:
-- Generate implementation plans for sections
-- Save plans in `screenshots/www_example_com/default_1920x1080/design_docs/sections/`
-- Create numbered markdown files (e.g., `01-hero-section.md`)
-
-### 4. Generate Theme Examples
-
-Find relevant code examples for implementation:
-
+**Example:**
 ```bash
-python generate_theme_examples.py --website www_example_com --viewport default_1920x1080
+python clone_theme_from_website.py marsghc.com theme_10836f00 Home
 ```
 
-This will:
-- Analyze section designs and find relevant examples
-- Search through the dataset directory for matching patterns
-- Save examples in `screenshots/www_example_com/default_1920x1080/design_docs/examples/`
-- Create numbered example files (e.g., `01-examples.txt`)
+#### What Happens When You Run the Clone Script?
+- The script resolves the canonical URL for the page type.
+- All intermediate files and outputs are created in `theme-projects/<project_folder>/intermediate_files/<url>/<viewport>/`.
+- The generated Shopify theme code is saved in `theme-projects/<project_folder>/theme_code/sections/` and `/templates/`.
+- A `checkpoint.json` is created to allow resuming from the last successful step if interrupted.
+- All section files in `theme_code/sections/` are suffixed with a unique epoch to avoid collisions across runs. The template JSON is updated to reference these unique section types.
 
-### 5. Generate Shopify Sections
-
-Create the actual Shopify section files:
-
-```bash
-python generate_shopify_section.py --website www_example_com --viewport default_1920x1080
-```
-
-This will:
-- Generate Shopify section files from the design plans
-- Use examples to inform the implementation
-- Save files in `screenshots/www_example_com/default_1920x1080/shopify_code/`
-- Create `.liquid` files with proper schema and implementation
-
-### 6. Generate Shopify Page
-
-Combine all sections into a complete page:
-
-```bash
-python generate_shopify_page.py --website www_example_com --viewport default_1920x1080
-```
-
-This will:
-- Combine all generated sections into a complete page
-- Create the page template and settings
-- Save files in `screenshots/www_example_com/default_1920x1080/shopify_code/templates/`
-- Generate `page.custom.json`
+#### Multiple Runs and Checkpointing
+- If you run the clone script again with the same arguments, it will **resume from the last successful step** using `checkpoint.json`.
+- If you change the website, page type, or viewport, a new set of intermediate files and code will be generated.
+- The canonical theme code in `theme_code/sections/` and `theme_code/templates/` will always reflect the latest run, with unique section file names to avoid collisions.
 
 ## Directory Structure
 
 ```
 theme_generator/
-├── dataset/                    # Example code dataset
-├── screenshots/               # Generated screenshots and code
-│   └── [website]/            # Website-specific directory
-│       └── [viewport]/       # Viewport-specific directory
-│           ├── design_docs/  # Design documentation
-│           │   ├── sections/ # Section design plans
-│           │   └── examples/ # Implementation examples
-│           └── shopify_code/ # Generated Shopify files
-│               └── templates/# Page templates
-├── requirements.txt          # Python package requirements
-├── take_screenshot.py       # Screenshot capture tool
-├── generate_prompt_from_image.py    # Design analysis
-├── generate_section_design_plan.py  # Section planning
-├── generate_theme_examples.py       # Example generation
-├── generate_shopify_section.py      # Section generation
-└── generate_shopify_page.py         # Page generation
+├── create_theme_project.py         # Creates a new project folder and copies dawn-main
+├── clone_theme_from_website.py     # Main pipeline/orchestration script
+├── dawn-main/                      # Reference Shopify Dawn theme (copied into each new project)
+├── dataset/                        # Example code datasets
+├── requirements.txt
+├── ... (other utility scripts, not run directly)
+└── theme-projects/
+    └── <project_folder>/
+        ├── intermediate_files/
+        │   └── <url>/<viewport>/
+        │       ├── screenshots/
+        │       ├── design_docs/
+        │       ├── section_design_plans/
+        │       │   └── sections/
+        │       ├── theme_examples/
+        │       ├── code_changes/
+        │       │   ├── sections/
+        │       │   └── templates/
+        │       └── checkpoint.json
+        └── theme_code/
+            ├── sections/      # Final Shopify section files (with unique epoch suffix)
+            └── templates/     # Final Shopify page templates (with updated section type references)
 ```
 
-## Notes
+## Developer Notes
 
-- All scripts support processing either a single section (using `--section`) or all sections
-- The `--section` argument is optional; if not provided, all sections will be processed
-- Each script builds on the output of the previous script in the workflow
-- The generated Shopify code follows best practices and includes:
-  - Proper section schemas
-  - Responsive design
-  - Accessibility features
-  - Performance optimizations
-- The dataset directory contains example code that informs the generation process
-- All generated files are saved in the screenshots directory for easy review and testing
+- **You only need to run `create_theme_project.py` and `clone_theme_from_website.py`.** All other scripts are orchestrated automatically.
+- The pipeline is fully checkpointed. If a step fails, fix the issue and rerun the clone script; it will resume from the last successful step.
+- All intermediate files are kept for traceability and debugging.
+- The canonical theme code is always up to date and collision-free, with unique section file names for each run.
+- You can run the clone script multiple times for the same or different websites, page types, or viewports.
+- The `dawn-main/` directory is used as the base for all new projects. Update it if you want to change the starting point for theme code.
+- The `dataset/` directory contains example code used for code generation.
+- The `checkpoint.json` in each run's intermediate directory records which steps have completed.
 
 ## Error Handling
 
-- Each script includes error handling and validation
-- Failed sections are logged but don't stop the entire process
-- Check the console output for warnings and errors
-- Review the generated files to ensure they meet your requirements
+- Each step is checkpointed; if a step fails, you can rerun the script and it will resume from the last successful step.
+- Failed steps are logged to the console.
+- Review the generated files to ensure they meet your requirements.
 
 ## Best Practices
 
-1. Start with a clear target website
-2. Review the generated design documentation
-3. Check the section plans before generating code
+1. Start with a clear target website and page type
+2. Use a unique project folder for each theme project
+3. Review the generated design documentation and code in the intermediate files if needed
 4. Test the generated Shopify theme in a development store
-5. Make adjustments as needed using the editing workflow 
+5. Rerun the clone script as needed to resume or update the theme code 

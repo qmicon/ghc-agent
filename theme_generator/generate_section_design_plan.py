@@ -38,41 +38,28 @@ design_llm = ChatAnthropic(
 )
 
 class SectionDesignAnalyzer:
-    def __init__(self, screenshots_dir="screenshots"):
-        """Initialize the analyzer with screenshots directory."""
+    def __init__(self, design_docs_dir, screenshots_dir, output_dir):
+        """Initialize the analyzer with design docs, screenshots, and output directories."""
+        self.design_docs_dir = design_docs_dir
         self.screenshots_dir = screenshots_dir
+        self.output_dir = output_dir
 
-    def _get_design_docs(self, website, viewport):
-        """Get all design documentation for a specific website and viewport."""
+    def _get_design_docs(self):
+        """Get all design documentation in the design docs directory."""
         design_docs = []
-        
-        # Path to the design docs directory
-        docs_dir = os.path.join(self.screenshots_dir, website, viewport, "design_docs")
-        if not os.path.exists(docs_dir):
-            raise FileNotFoundError(f"Design docs not found for {website}/{viewport}")
-        
-        # Get all markdown files
-        md_files = glob.glob(os.path.join(docs_dir, "*_design.md"))
+        md_files = glob.glob(os.path.join(self.design_docs_dir, "*_design.md"))
         for md_file in sorted(md_files):
             with open(md_file, "r", encoding="utf-8") as f:
                 design_docs.append({
                     "filename": os.path.basename(md_file),
                     "content": f.read()
                 })
-        
         return design_docs
 
-    def _get_screenshots(self, website, viewport):
-        """Get all screenshots for a specific website and viewport."""
+    def _get_screenshots(self):
+        """Get all screenshots in the screenshots directory."""
         screenshots = []
-        
-        # Path to the screenshots directory
-        screenshots_path = os.path.join(self.screenshots_dir, website, viewport)
-        if not os.path.exists(screenshots_path):
-            raise FileNotFoundError(f"Screenshots not found for {website}/{viewport}")
-        
-        # Get all PNG files
-        png_files = glob.glob(os.path.join(screenshots_path, "screenshot_*.png"))
+        png_files = glob.glob(os.path.join(self.screenshots_dir, "???-shopify-section-*.png"))
         for png_file in sorted(png_files):
             with open(png_file, "rb") as f:
                 image_data = base64.b64encode(f.read()).decode('utf-8')
@@ -80,7 +67,6 @@ class SectionDesignAnalyzer:
                     "filename": os.path.basename(png_file),
                     "data": image_data
                 })
-        
         return screenshots
 
     def _parse_and_save_sections(self, content: str, output_dir: str):
@@ -125,15 +111,12 @@ class SectionDesignAnalyzer:
         
         return saved_files
 
-    async def generate_section_plans(self, website, viewport):
+    async def generate_section_plans(self):
         """Generate detailed design plans for each section."""
-        # Get design docs and screenshots
-        design_docs = self._get_design_docs(website, viewport)
-        screenshots = self._get_screenshots(website, viewport)
-        
+        design_docs = self._get_design_docs()
+        screenshots = self._get_screenshots()
         if not design_docs or not screenshots:
             raise ValueError("No design docs or screenshots found")
-        
         # Prepare the prompts
         system_prompt = """
         You are a senior frontend developer and UI/UX expert tasked with creating detailed design plans for website sections.
@@ -244,9 +227,6 @@ class SectionDesignAnalyzer:
         user_prompt = f"""
         Create detailed design plans for each section of the website based on the following design documentation and screenshots.
 
-        Website: {website}
-        Viewport: {viewport}
-
         Design Documentation:
         {docs_text}
 
@@ -262,10 +242,7 @@ class SectionDesignAnalyzer:
         messages = [
             SystemMessage(content=system_prompt),
             HumanMessage(content=[
-                {
-                    "type": "text",
-                    "text": user_prompt
-                },
+                {"type": "text", "text": user_prompt},
                 *[{
                     "type": "image",
                     "source": {
@@ -283,26 +260,25 @@ class SectionDesignAnalyzer:
             content = response.content.strip()
             
             # Save the design plans
-            output_dir = os.path.join(self.screenshots_dir, website, viewport, "design_docs")
-            os.makedirs(output_dir, exist_ok=True)
+            os.makedirs(self.output_dir, exist_ok=True)
             
             # Save raw response
-            raw_file = os.path.join(output_dir, "raw_section_plans.txt")
+            raw_file = os.path.join(self.output_dir, "raw_section_plans.txt")
             with open(raw_file, "w", encoding="utf-8") as f:
                 f.write(content)
             print(f"\n✓ Raw section plans saved to {raw_file}")
             
             # Save formatted markdown
-            plans_file = os.path.join(output_dir, "section_design_plans.md")
+            plans_file = os.path.join(self.output_dir, "section_design_plans.md")
             with open(plans_file, "w", encoding="utf-8") as f:
                 f.write(content)
             print(f"✓ Section design plans saved to {plans_file}")
             
             # Parse and save individual section files
-            section_files = self._parse_and_save_sections(content, output_dir)
+            section_files = self._parse_and_save_sections(content, self.output_dir)
             print("\n✓ Individual section files saved:")
             for section_file in section_files:
-                print(f"  - {os.path.relpath(section_file, output_dir)}")
+                print(f"  - {os.path.relpath(section_file, self.output_dir)}")
             
             return content
             
@@ -310,11 +286,9 @@ class SectionDesignAnalyzer:
             print(f"Error generating section design plans: {str(e)}")
             return None
 
-    def parse_existing_plans(self, website: str, viewport: str):
+    def parse_existing_plans(self):
         """Parse an existing section_design_plans.md file into individual section files."""
-        output_dir = os.path.join(self.screenshots_dir, website, viewport, "design_docs")
-        plans_file = os.path.join(output_dir, "section_design_plans.md")
-        
+        plans_file = os.path.join(self.output_dir, "section_design_plans.md")
         if not os.path.exists(plans_file):
             raise FileNotFoundError(f"Section design plans not found at {plans_file}")
         
@@ -322,10 +296,10 @@ class SectionDesignAnalyzer:
             with open(plans_file, "r", encoding="utf-8") as f:
                 content = f.read()
             
-            section_files = self._parse_and_save_sections(content, output_dir)
+            section_files = self._parse_and_save_sections(content, self.output_dir)
             print("\n✓ Individual section files saved:")
             for section_file in section_files:
-                print(f"  - {os.path.relpath(section_file, output_dir)}")
+                print(f"  - {os.path.relpath(section_file, self.output_dir)}")
             
             return section_files
             
@@ -334,26 +308,21 @@ class SectionDesignAnalyzer:
             return None
 
 async def main():
-    # Check for required environment variables
     if "ANTHROPIC_API_KEY" not in os.environ:
         raise EnvironmentError("❌ ANTHROPIC_API_KEY must be set")
-    
-    # Set up argument parser
     parser = argparse.ArgumentParser(description="Generate or parse detailed design plans for website sections")
-    parser.add_argument("--website", required=True, help="Website directory name")
-    parser.add_argument("--viewport", required=True, help="Viewport directory name")
-    parser.add_argument("--parse-only", action="store_true", 
-                       help="Only parse existing section_design_plans.md into individual section files")
+    parser.add_argument("--design-docs-dir", required=True, help="Directory containing design docs (*.md)")
+    parser.add_argument("--screenshots-dir", required=True, help="Directory containing screenshots (*.png)")
+    parser.add_argument("--output-dir", required=True, help="Directory to save section design plans and parsed sections")
+    parser.add_argument("--parse-only", action="store_true", help="Only parse existing section_design_plans.md into individual section files")
     args = parser.parse_args()
-    
-    analyzer = SectionDesignAnalyzer()
-    
+    analyzer = SectionDesignAnalyzer(design_docs_dir=args.design_docs_dir, screenshots_dir=args.screenshots_dir, output_dir=args.output_dir)
     if args.parse_only:
-        print(f"\nParsing existing section design plans for {args.website}/{args.viewport}...")
-        analyzer.parse_existing_plans(args.website, args.viewport)
+        print(f"\nParsing existing section design plans...")
+        analyzer.parse_existing_plans()
     else:
-        print(f"\nGenerating section design plans for {args.website}/{args.viewport}...")
-        await analyzer.generate_section_plans(args.website, args.viewport)
+        print(f"\nGenerating section design plans...")
+        await analyzer.generate_section_plans()
 
 if __name__ == "__main__":
     asyncio.run(main()) 

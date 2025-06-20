@@ -29,42 +29,23 @@ design_llm = ChatAnthropic(
 )
 
 class WebsiteDesignAnalyzer:
-    def __init__(self, screenshots_dir="screenshots"):
-        """Initialize the analyzer with screenshots directory."""
-        self.screenshots_dir = screenshots_dir
+    def __init__(self, input_dir, output_dir):
+        """Initialize the analyzer with input and output directories."""
+        self.input_dir = input_dir
+        self.output_dir = output_dir
         self.design_data = {}
 
     def _get_screenshot_paths(self):
-        """Get all screenshot paths organized by website and viewport."""
-        screenshot_paths = {}
-        
-        # Walk through the screenshots directory
-        for website_dir in os.listdir(self.screenshots_dir):
-            website_path = os.path.join(self.screenshots_dir, website_dir)
-            if not os.path.isdir(website_path):
-                continue
-                
-            screenshot_paths[website_dir] = {}
-            
-            # Get viewport directories
-            for viewport_dir in os.listdir(website_path):
-                viewport_path = os.path.join(website_path, viewport_dir)
-                if not os.path.isdir(viewport_path):
-                    continue
-                    
-                # Get all PNG screenshots in this viewport directory
-                screenshots = glob.glob(os.path.join(viewport_path, "screenshot_*.png"))
-                if screenshots:
-                    screenshot_paths[website_dir][viewport_dir] = sorted(screenshots)
-        
-        return screenshot_paths
+        """Get all screenshot paths organized by website and viewport (flat in input_dir)."""
+        screenshots = glob.glob(os.path.join(self.input_dir, "???-shopify-section-*.png"))
+        return sorted(screenshots)
 
     def _get_image_dimensions(self, image_path):
         """Get the dimensions of an image."""
         with Image.open(image_path) as img:
             return img.size
 
-    async def analyze_design(self, image_path):
+    async def analyze_design(self, image_path, output_dir=None):
         """Analyze a single screenshot to generate design documentation."""
         # Get image dimensions
         width, height = self._get_image_dimensions(image_path)
@@ -220,67 +201,37 @@ class WebsiteDesignAnalyzer:
             return None
 
     async def analyze_all_screenshots(self):
-        """Analyze all screenshots and save design documentation."""
-        screenshot_paths = self._get_screenshot_paths()
-        
-        for website, viewports in screenshot_paths.items():
-            self.design_data[website] = {}
-            
-            for viewport, screenshots in viewports.items():
-                print(f"\nAnalyzing {website} - {viewport}")
-                self.design_data[website][viewport] = []
-                
-                for screenshot_path in screenshots:
-                    print(f"Processing {os.path.basename(screenshot_path)}...")
-                    design_doc = await self.analyze_design(screenshot_path)
-                    
-                    if design_doc:
-                        # Create design documentation directory
-                        output_dir = os.path.join(
-                            os.path.dirname(screenshot_path),
-                            "design_docs"
-                        )
-                        os.makedirs(output_dir, exist_ok=True)
-                        
-                        # Save design documentation as markdown
-                        base_filename = os.path.splitext(os.path.basename(screenshot_path))[0]
-                        output_file = os.path.join(output_dir, f"{base_filename}_design.md")
-                        
-                        with open(output_file, "w", encoding="utf-8") as f:
-                            f.write(f"# Design Documentation for {base_filename}\n\n")
-                            f.write(f"Viewport: {viewport}\n")
-                            f.write(f"Image dimensions: {self._get_image_dimensions(screenshot_path)}\n\n")
-                            f.write(design_doc)
-                
-                # Create a combined markdown file for this viewport
-                combined_file = os.path.join(
-                    self.screenshots_dir,
-                    website,
-                    viewport,
-                    "combined_design.md"
-                )
-                
-                with open(combined_file, "w", encoding="utf-8") as f:
-                    f.write(f"# Combined Design Documentation for {website}\n\n")
-                    f.write(f"Viewport: {viewport}\n\n")
-                    
-                    for screenshot_path in screenshots:
-                        base_filename = os.path.splitext(os.path.basename(screenshot_path))[0]
-                        f.write(f"## {base_filename}\n\n")
-                        f.write(f"![Screenshot]({os.path.basename(screenshot_path)})\n\n")
-                        
-                        # Read and include individual design doc
-                        doc_path = os.path.join(
-                            os.path.dirname(screenshot_path),
-                            "design_docs",
-                            f"{base_filename}_design.md"
-                        )
-                        if os.path.exists(doc_path):
-                            with open(doc_path, "r", encoding="utf-8") as doc_file:
-                                f.write(doc_file.read())
-                        f.write("\n---\n\n")
+        """Analyze all screenshots in input_dir and save design documentation to output_dir."""
+        screenshots = self._get_screenshot_paths()
+        if not screenshots:
+            print(f"No screenshots found in {self.input_dir}")
+            return
+        os.makedirs(self.output_dir, exist_ok=True)
+        for screenshot_path in screenshots:
+            print(f"Processing {os.path.basename(screenshot_path)}...")
+            design_doc = await self.analyze_design(screenshot_path)
+            if design_doc:
+                base_filename = os.path.splitext(os.path.basename(screenshot_path))[0]
+                output_file = os.path.join(self.output_dir, f"{base_filename}_design.md")
+                with open(output_file, "w", encoding="utf-8") as f:
+                    f.write(f"# Design Documentation for {base_filename}\n\n")
+                    f.write(f"Image dimensions: {self._get_image_dimensions(screenshot_path)}\n\n")
+                    f.write(design_doc)
+        # Create a combined markdown file
+        combined_file = os.path.join(self.output_dir, "combined_design.md")
+        with open(combined_file, "w", encoding="utf-8") as f:
+            f.write(f"# Combined Design Documentation\n\n")
+            for screenshot_path in screenshots:
+                base_filename = os.path.splitext(os.path.basename(screenshot_path))[0]
+                f.write(f"## {base_filename}\n\n")
+                f.write(f"![Screenshot]({os.path.basename(screenshot_path)})\n\n")
+                doc_path = os.path.join(self.output_dir, f"{base_filename}_design.md")
+                if os.path.exists(doc_path):
+                    with open(doc_path, "r", encoding="utf-8") as doc_file:
+                        f.write(doc_file.read())
+                f.write("\n---\n\n")
 
-    async def analyze_single_screenshot(self, screenshot_path):
+    async def analyze_single_screenshot(self, screenshot_path, output_dir=None):
         """Analyze a single screenshot and save the design documentation."""
         if not os.path.exists(screenshot_path):
             raise FileNotFoundError(f"Screenshot not found: {screenshot_path}")
@@ -296,8 +247,11 @@ class WebsiteDesignAnalyzer:
         viewport_dir = path_parts[-2]  # e.g., default_1920x1080
         
         # Create design documentation directory
-        output_dir = os.path.join(os.path.dirname(screenshot_path), "design_docs")
-        os.makedirs(output_dir, exist_ok=True)
+        if output_dir:
+            output_dir_final = os.path.join(output_dir, website_dir, viewport_dir, "design_docs")
+        else:
+            output_dir_final = os.path.join(os.path.dirname(screenshot_path), "design_docs")
+        os.makedirs(output_dir_final, exist_ok=True)
         
         # Analyze the screenshot
         design_doc = await self.analyze_design(screenshot_path)
@@ -305,7 +259,7 @@ class WebsiteDesignAnalyzer:
         if design_doc:
             # Save design documentation as markdown
             base_filename = os.path.splitext(os.path.basename(screenshot_path))[0]
-            output_file = os.path.join(output_dir, f"{base_filename}_design.md")
+            output_file = os.path.join(output_dir_final, f"{base_filename}_design.md")
             
             with open(output_file, "w", encoding="utf-8") as f:
                 f.write(f"# Design Documentation for {base_filename}\n\n")
@@ -326,25 +280,24 @@ class WebsiteDesignAnalyzer:
         return None
 
 async def main():
-    # Check for required environment variables
     if "ANTHROPIC_API_KEY" not in os.environ:
         raise EnvironmentError("❌ Missing ANTHROPIC_API_KEY environment variable")
-    
-    # Set up argument parser
     parser = argparse.ArgumentParser(description="Generate design documentation from website screenshots")
     parser.add_argument("--test", help="Path to a single screenshot to analyze")
+    parser.add_argument("--input-dir", required=False, help="Directory containing screenshots to process")
+    parser.add_argument("--output-dir", required=True, help="Directory to save design documentation")
     args = parser.parse_args()
-    
-    analyzer = WebsiteDesignAnalyzer()
-    
     if args.test:
         # Test mode: analyze single screenshot
+        analyzer = WebsiteDesignAnalyzer(input_dir=os.path.dirname(args.test), output_dir=args.output_dir)
         try:
-            await analyzer.analyze_single_screenshot(args.test)
+            await analyzer.analyze_single_screenshot(args.test, output_dir=args.output_dir)
         except Exception as e:
             print(f"❌ Error: {str(e)}")
     else:
-        # Full mode: analyze all screenshots
+        if not args.input_dir:
+            raise ValueError("--input-dir is required unless --test is used.")
+        analyzer = WebsiteDesignAnalyzer(input_dir=args.input_dir, output_dir=args.output_dir)
         await analyzer.analyze_all_screenshots()
         print("\n✅ Design documentation generation complete!")
 

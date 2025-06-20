@@ -31,55 +31,45 @@ shopify_llm = ChatAnthropic(
 )
 
 class ShopifyPageGenerator:
-    def __init__(self, screenshots_dir="screenshots"):
-        """Initialize the generator with screenshots directory."""
-        self.screenshots_dir = screenshots_dir
+    def __init__(self, sections_dir, shopify_code_dir, output_dir):
+        """Initialize the generator with sections, shopify code, and output directories."""
+        self.sections_dir = sections_dir
+        self.shopify_code_dir = shopify_code_dir
+        self.output_dir = output_dir
 
-    def _find_section_files(self, website: str, viewport: str) -> list:
+    def _find_section_files(self) -> list:
         """Find all section files in order (01-, 02-, etc.)."""
-        sections_dir = os.path.join("screenshots", website, viewport, "design_docs", "sections")
-        if not os.path.exists(sections_dir):
-            raise FileNotFoundError(f"Sections directory not found: {sections_dir}")
-        
-        # Look for all numbered section files
+        if not os.path.exists(self.sections_dir):
+            raise FileNotFoundError(f"Sections directory not found: {self.sections_dir}")
         pattern = "[0-9][0-9]-*.md"
-        matching_files = glob.glob(os.path.join(sections_dir, pattern))
-        
+        matching_files = glob.glob(os.path.join(self.sections_dir, pattern))
         if not matching_files:
-            raise FileNotFoundError(f"No section files found in {sections_dir}")
-        
-        # Sort files by their number prefix
+            raise FileNotFoundError(f"No section files found in {self.sections_dir}")
         matching_files.sort(key=lambda x: int(os.path.basename(x).split('-')[0]))
         return [os.path.basename(f) for f in matching_files]
 
-    def _get_section_schema(self, section_file: str, shopify_code_dir: str) -> str:
+    def _get_section_schema(self, section_file: str) -> str:
         """Extract schema from generated section liquid file."""
         section_name = section_file.replace('.md', '.liquid')
-        section_path = os.path.join(shopify_code_dir, section_name)
-        
+        section_path = os.path.join(self.shopify_code_dir, section_name)
         if not os.path.exists(section_path):
             raise FileNotFoundError(f"Section file not found: {section_path}")
-        
         try:
             with open(section_path, 'r', encoding='utf-8') as f:
                 content = f.read()
-                
-            # Extract schema block
             schema_match = re.search(r'{%\s*schema\s*%}(.*?){%\s*endschema\s*%}', content, re.DOTALL)
             if not schema_match:
                 raise ValueError(f"No schema found in {section_name}")
-                
             return schema_match.group(1).strip()
         except Exception as e:
             print(f"Warning: Could not read schema from {section_path}: {e}")
             return ""
 
-    def _get_section_content(self, section_file: str, website: str, viewport: str) -> str:
+    def _get_section_content(self, section_file: str) -> str:
         """Get section markdown content."""
-        section_path = os.path.join("screenshots", website, viewport, "design_docs", "sections", section_file)
+        section_path = os.path.join(self.sections_dir, section_file)
         if not os.path.exists(section_path):
             raise FileNotFoundError(f"Section file not found: {section_path}")
-        
         try:
             with open(section_path, 'r', encoding='utf-8') as f:
                 return f.read()
@@ -87,19 +77,12 @@ class ShopifyPageGenerator:
             print(f"Warning: Could not read {section_path}: {e}")
             return ""
 
-    async def generate_page_code(self, website: str, viewport: str):
-        """Generate Shopify page code by combining sections in order."""
+    async def generate_page_code(self, output_file: str = None):
         try:
-            # Get all section files in order
-            section_files = self._find_section_files(website, viewport)
+            section_files = self._find_section_files()
             if not section_files:
                 raise ValueError("No section files found")
-            
-            # Get shopify code directory
-            shopify_code_dir = os.path.join(self.screenshots_dir, website, viewport, "shopify_code")
-            if not os.path.exists(shopify_code_dir):
-                raise FileNotFoundError(f"Shopify code directory not found: {shopify_code_dir}")
-            
+            os.makedirs(self.output_dir, exist_ok=True)
             # Prepare the prompts
             system_prompt = f"""
             You are a Shopify Template architect specialized in creating cohesive page layouts.
@@ -141,18 +124,15 @@ class ShopifyPageGenerator:
             ```
             ---
             """
-
-            # Prepare section information
             sections_info = []
             for section_file in section_files:
-                section_content = self._get_section_content(section_file, website, viewport)
-                section_schema = self._get_section_schema(section_file, shopify_code_dir)
+                section_content = self._get_section_content(section_file)
+                section_schema = self._get_section_schema(section_file)
                 sections_info.append({
                     "file": section_file,
                     "content": section_content,
                     "schema": section_schema
                 })
-
             user_prompt = f"""
             Generate a complete Shopify page implementation that combines the following sections in order:
 
@@ -175,69 +155,44 @@ class ShopifyPageGenerator:
 
             Generate the code in the specified format, ensuring it follows Shopify's requirements and best practices.
             """
-
-            # Create messages for Claude
             messages = [
                 SystemMessage(content=system_prompt),
                 HumanMessage(content=user_prompt)
             ]
-
-            # Get code generation from Claude
             response = await shopify_llm.ainvoke(messages)
-            
-            # Save the generated code
-            output_dir = os.path.join(self.screenshots_dir, website, viewport, "shopify_code")
-            os.makedirs(output_dir, exist_ok=True)
-            
-            # Save the full response
-            output_file = os.path.join(output_dir, "generated_page_code.txt")
-            with open(output_file, "w", encoding="utf-8") as f:
+            response_file = os.path.join(self.output_dir, "generated_page_code.txt")
+            with open(response_file, "w", encoding="utf-8") as f:
                 f.write(response.content)
-            
-            # Extract and save individual files
             file_pattern = r"---\s*FILE:\s*([^\n]+)\s*TYPE:\s*([^\n]+)\s*CONTENT:\s*```(?:[^\n]*)\n([\s\S]*?)```\s*---"
-            
             for match in re.finditer(file_pattern, response.content):
                 file_path = match.group(1).strip()
                 file_type = match.group(2).strip()
                 file_content = match.group(3).strip()
-                
-                # Create full path
-                full_path = os.path.join(output_dir, file_path.lstrip("/"))
-                os.makedirs(os.path.dirname(full_path), exist_ok=True)
-                
-                # Save file
-                with open(full_path, "w", encoding="utf-8") as f:
+                with open(output_file, "w", encoding="utf-8") as f:
                     f.write(file_content)
-            
-            print(f"\n✅ Shopify page code generated and saved to: {output_dir}")
+            print(f"\n✅ Shopify page code generated and saved to: {self.output_dir}")
             print("\nGenerated files:")
-            for root, _, files in os.walk(output_dir):
+            for root, _, files in os.walk(self.output_dir):
                 for file in files:
                     if not file.endswith("_code.txt"):
-                        print(f"- {os.path.relpath(os.path.join(root, file), output_dir)}")
-            
+                        print(f"- {os.path.relpath(os.path.join(root, file), self.output_dir)}")
             return response.content
-            
         except Exception as e:
             print(f"Error generating Shopify page code: {str(e)}")
             return None
 
 async def main():
-    # Check for required environment variables
     if "ANTHROPIC_API_KEY" not in os.environ:
         raise EnvironmentError("❌ Missing ANTHROPIC_API_KEY environment variable")
-    
-    # Set up argument parser
     parser = argparse.ArgumentParser(description="Generate Shopify page code from design documentation")
-    parser.add_argument("--website", required=True, help="Website directory name")
-    parser.add_argument("--viewport", required=True, help="Viewport directory name")
+    parser.add_argument("--sections-dir", required=True, help="Directory containing parsed section markdown files")
+    parser.add_argument("--shopify-code-dir", required=True, help="Directory containing generated section .liquid files")
+    parser.add_argument("--output-dir", required=True, help="Directory to save generated page code and templates")
+    parser.add_argument("--output-file", help="Output file path for the main page JSON (e.g., index.json)")
     args = parser.parse_args()
-    
-    generator = ShopifyPageGenerator()
-    
+    generator = ShopifyPageGenerator(sections_dir=args.sections_dir, shopify_code_dir=args.shopify_code_dir, output_dir=args.output_dir)
     try:
-        await generator.generate_page_code(args.website, args.viewport)
+        await generator.generate_page_code(output_file=args.output_file)
     except Exception as e:
         print(f"❌ Error: {str(e)}")
 

@@ -60,66 +60,48 @@ async def get_dataset_purposes() -> dict:
     return purposes
 
 def get_section_number(section_file: str) -> int:
-    """Extract section number from filename (e.g., '1-hero-section.md' -> 1)."""
+    """Extract section number from filename (e.g., '01-hero-section.md' -> 1)."""
     match = re.match(r'^(\d+)-', os.path.basename(section_file))
     if not match:
         raise ValueError(f"Invalid section filename format: {section_file}. Must start with a number followed by a hyphen.")
     return int(match.group(1))
 
-def _find_section_file(website: str, viewport: str, section_number: int) -> str:
-    """Find the section file that starts with the given number."""
-    if section_number < 1:
-        raise ValueError("Section number must be positive")
-        
-    sections_dir = os.path.join("screenshots", website, viewport, "design_docs", "sections")
+def get_all_section_files(sections_dir: str) -> list:
+    """Get all section files from the sections directory."""
     if not os.path.exists(sections_dir):
         raise FileNotFoundError(f"Sections directory not found: {sections_dir}")
-    
-    # Look for files starting with the section number
-    pattern = f"{section_number:02d}-*.md"
-    matching_files = glob.glob(os.path.join(sections_dir, pattern))
-    
-    if not matching_files:
-        raise FileNotFoundError(f"No section file found starting with {section_number}- in {sections_dir}")
-    if len(matching_files) > 1:
-        raise ValueError(f"Multiple section files found starting with {section_number}- in {sections_dir}")
-        
-    return os.path.basename(matching_files[0])
-
-def get_design_docs(website: str, viewport: str, section_number: int = None) -> str:
-    """Get design documentation for a specific website, viewport, and optionally a specific section."""
-    design_docs = []
-    
-    # Path to the design docs directory
-    docs_dir = os.path.join("screenshots", website, viewport, "design_docs")
-    if not os.path.exists(docs_dir):
-        raise FileNotFoundError(f"Design docs not found for {website}/{viewport}")
-    
-    if section_number is not None:
-        # Get specific section file
-        section_file = _find_section_file(website, viewport, section_number)
-        section_path = os.path.join(docs_dir, "sections", section_file)
+    section_files = []
+    for file in glob.glob(os.path.join(sections_dir, "*.md")):
         try:
-            with open(section_path, "r", encoding="utf-8") as f:
+            section_number = get_section_number(file)
+            section_files.append((section_number, os.path.basename(file)))
+        except ValueError as e:
+            print(f"Warning: {e}")
+    section_files.sort(key=lambda x: x[0])
+    return section_files
+
+def get_design_docs(sections_dir: str, section_number: int = None) -> str:
+    """Get design documentation for a specific section or all sections in the directory."""
+    design_docs = []
+    if section_number is not None:
+        pattern = f"{section_number:02d}-*.md"
+        matching_files = glob.glob(os.path.join(sections_dir, pattern))
+        if not matching_files:
+            raise FileNotFoundError(f"No section file found starting with {section_number}- in {sections_dir}")
+        section_file = matching_files[0]
+        with open(section_file, "r", encoding="utf-8") as f:
+            design_docs.append({
+                "filename": os.path.basename(section_file),
+                "content": f.read()
+            })
+    else:
+        md_files = sorted(Path(sections_dir).glob("*.md"))
+        for md_file in md_files:
+            with open(md_file, "r", encoding="utf-8") as f:
                 design_docs.append({
-                    "filename": section_file,
+                    "filename": md_file.name,
                     "content": f.read()
                 })
-        except Exception as e:
-            print(f"Warning: Could not read {section_path}: {e}")
-    else:
-        # Get all markdown files
-        md_files = sorted(Path(docs_dir).glob("*_design.md"))
-        for md_file in md_files:
-            try:
-                with open(md_file, "r", encoding="utf-8") as f:
-                    design_docs.append({
-                        "filename": md_file.name,
-                        "content": f.read()
-                    })
-            except Exception as e:
-                print(f"Warning: Could not read {md_file}: {e}")
-    
     return "\n\n".join([f"## {doc['filename']}\n{doc['content']}" for doc in design_docs])
 
 async def analyze_design_and_select_datasets(design_docs: str, dataset_purposes: dict) -> dict:
@@ -238,49 +220,51 @@ async def analyze_design_and_select_datasets(design_docs: str, dataset_purposes:
         print(f"Error analyzing design and selecting datasets: {str(e)}")
         return None
 
-def extract_code_examples_from_dataset(dataset_dir: str, keywords: dict) -> list:
-    """Extract code examples from dataset directory based on keywords."""
+def truncate_content(content: str, max_lines: int = 150) -> str:
+    """Truncate content to a maximum number of lines, keeping important parts."""
+    lines = content.split('\n')
+    if len(lines) <= max_lines:
+        return content
+    # Keep first and last parts
+    first_part = lines[:max_lines//2]
+    last_part = lines[-max_lines//2:]
+    return '\n'.join(first_part + ['... (truncated) ...'] + last_part)
+
+def extract_code_examples_from_dataset(dataset_dir: str, keywords: dict, max_lines: int = 150) -> list:
+    """Extract code examples from dataset directory based on keywords. Only .liquid files, truncate long files."""
     examples = []
-    
     if not os.path.exists(dataset_dir):
         print(f"Warning: {dataset_dir} not found")
         return examples
-    
     # Calculate keyword scores
     def calculate_keyword_score(content: str, primary_keywords: list, secondary_keywords: list) -> float:
         content_lower = content.lower()
         primary_score = sum(2 for keyword in primary_keywords if keyword.lower() in content_lower)
         secondary_score = sum(1 for keyword in secondary_keywords if keyword.lower() in content_lower)
         return (primary_score + secondary_score) / (len(content.split()) ** 0.5)
-    
     # Walk through the dataset directory
     for root, _, files in os.walk(dataset_dir):
         for file in files:
-            if file.endswith(('.liquid', '.json')):
+            if file.endswith('.liquid'):
                 file_path = os.path.join(root, file)
                 try:
                     with open(file_path, "r", encoding="utf-8") as f:
                         content = f.read()
-                        
+                        # Truncate content
+                        content = truncate_content(content, max_lines)
                         # Calculate relevance score
                         score = calculate_keyword_score(
                             content,
                             keywords["primary_keywords"],
                             keywords["secondary_keywords"]
                         )
-                        
                         if score > 0:
                             # Determine file type and path
-                            if file.endswith('.json'):
-                                file_type = 'json'
-                                relative_path = os.path.join('templates', file)
+                            file_type = 'liquid'
+                            if 'sections' in root:
+                                relative_path = os.path.join('sections', file)
                             else:
-                                file_type = 'liquid'
-                                if 'sections' in root:
-                                    relative_path = os.path.join('sections', file)
-                                else:
-                                    relative_path = os.path.join('snippets', file)
-                            
+                                relative_path = os.path.join('snippets', file)
                             examples.append({
                                 "type": "implementation",
                                 "file_path": relative_path,
@@ -290,7 +274,6 @@ def extract_code_examples_from_dataset(dataset_dir: str, keywords: dict) -> list
                             })
                 except Exception as e:
                     print(f"Warning: Could not read {file_path}: {e}")
-    
     # Sort by score and limit to top examples
     examples.sort(key=lambda x: x["score"], reverse=True)
     return examples[:10]  # Return top 10 examples
@@ -307,111 +290,66 @@ CONTENT:
 ```
 ---"""
 
-def get_all_section_files(website: str, viewport: str) -> list:
-    """Get all section files from the sections directory."""
-    sections_dir = os.path.join("screenshots", website, viewport, "design_docs", "sections")
-    if not os.path.exists(sections_dir):
-        raise FileNotFoundError(f"Sections directory not found: {sections_dir}")
-    
-    # Get all markdown files and sort them by section number
-    section_files = []
-    for file in glob.glob(os.path.join(sections_dir, "*.md")):
-        try:
-            section_number = get_section_number(file)
-            section_files.append((section_number, os.path.basename(file)))
-        except ValueError as e:
-            print(f"Warning: {e}")
-    
-    # Sort by section number
-    section_files.sort(key=lambda x: x[0])
-    return section_files
-
-async def generate_examples(website: str, viewport: str, section_number: int = None):
-    """Generate examples based on design docs and dataset analysis."""
+async def generate_examples(sections_dir: str, section_number: int = None, output_dir: str = None, max_lines: int = 150):
     try:
-        # Get dataset purposes
         print("Reading dataset purposes...")
         dataset_purposes = await get_dataset_purposes()
         if not dataset_purposes:
             raise ValueError("No dataset purposes found")
-        
-        # Get section files to process
         if section_number is not None:
-            section_files = [(section_number, _find_section_file(website, viewport, section_number))]
+            section_files = [(section_number, glob.glob(os.path.join(sections_dir, f"{section_number:02d}-*.md"))[0])]
         else:
             print("\nNo section number provided. Processing all section files...")
-            section_files = get_all_section_files(website, viewport)
-        
-        # Process each section
+            section_files = get_all_section_files(sections_dir)
         for section_num, section_file in section_files:
             print(f"\nProcessing section {section_num}: {section_file}")
-            
-            # Get design docs for this section
-            design_docs = get_design_docs(website, viewport, section_num)
+            design_docs = get_design_docs(sections_dir, section_num)
             if not design_docs:
                 print(f"Warning: No design docs found for section {section_num}")
                 continue
-            
-            # Analyze design and select datasets
             print(f"\nAnalyzing design for section {section_num}...")
             analysis_data = await analyze_design_and_select_datasets(design_docs, dataset_purposes)
             if not analysis_data:
                 print(f"Warning: Failed to analyze design for section {section_num}")
                 continue
-            
-            # Create examples directory structure
-            examples_dir = os.path.join("screenshots", website, viewport, "design_docs", "examples")
-            os.makedirs(examples_dir, exist_ok=True)
-            
-            # Save analysis results
-            analysis_file = os.path.join(examples_dir, f"{section_num:02d}-dataset_analysis.json")
+            base_dir = output_dir if output_dir else "examples"
+            os.makedirs(base_dir, exist_ok=True)
+            analysis_file = os.path.join(base_dir, f"{section_num:02d}-dataset_analysis.json")
             with open(analysis_file, "w", encoding="utf-8") as f:
                 json.dump(analysis_data, f, indent=2)
             print(f"✓ Analysis saved to {analysis_file}")
-            
-            # Extract and format examples
             print(f"\nExtracting implementation examples for section {section_num}...")
             all_examples = []
             for dataset in analysis_data["datasets"]:
                 dataset_dir = os.path.join("dataset", dataset["name"])
-                examples = extract_code_examples_from_dataset(dataset_dir, dataset)
+                examples = extract_code_examples_from_dataset(dataset_dir, dataset, max_lines=max_lines)
                 if examples:
                     all_examples.extend(examples)
-            
             if not all_examples:
                 print(f"Warning: No relevant examples found for section {section_num}")
                 continue
-            
-            # Save examples
-            examples_file = os.path.join(examples_dir, f"{section_num:02d}-examples.txt")
+            examples_file = os.path.join(base_dir, f"{section_num:02d}-examples.txt")
             with open(examples_file, "w", encoding="utf-8") as f:
-                # Write implementation examples
                 f.write("IMPLEMENTATION EXAMPLES\n")
                 f.write("=" * 50 + "\n\n")
                 formatted_examples = [format_implementation_example(ex) for ex in all_examples]
                 f.write("\n".join(formatted_examples))
-            
             print(f"✓ Examples saved to {examples_file}")
-        
         print("\n✅ All sections processed successfully!")
-        
     except Exception as e:
         print(f"❌ Error: {str(e)}")
 
 async def main():
-    # Check for required environment variables
     if "ANTHROPIC_API_KEY" not in os.environ:
         raise EnvironmentError("❌ ANTHROPIC_API_KEY must be set")
-    
-    # Set up argument parser
     import argparse
     parser = argparse.ArgumentParser(description="Generate theme examples from design documentation")
-    parser.add_argument("--website", required=True, help="Website directory name")
-    parser.add_argument("--viewport", required=True, help="Viewport directory name")
-    parser.add_argument("--section", type=int, help="Optional: Section number to generate examples for (e.g., 1 for 1-hero-section.md). If not provided, processes all sections.")
+    parser.add_argument("--sections-dir", required=True, help="Directory containing parsed section markdown files")
+    parser.add_argument("--section", type=int, help="Optional: Section number to generate examples for (e.g., 1 for 01-hero-section.md). If not provided, processes all sections.")
+    parser.add_argument("--output-dir", required=True, help="Directory to save examples and analysis")
+    parser.add_argument("--max-lines", type=int, default=150, help="Maximum number of lines to keep in each example file (default: 150)")
     args = parser.parse_args()
-    
-    await generate_examples(args.website, args.viewport, args.section)
+    await generate_examples(args.sections_dir, args.section, output_dir=args.output_dir, max_lines=args.max_lines)
 
 if __name__ == "__main__":
     asyncio.run(main()) 

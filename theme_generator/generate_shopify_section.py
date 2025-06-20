@@ -35,10 +35,10 @@ shopify_llm = ChatAnthropic(
     }
 )
 
-def load_examples(website: str, viewport: str, section_number: int) -> str:
-    """Load examples from examples.txt file in the design_docs directory."""
+def load_examples(examples_dir: str, section_number: int) -> str:
+    """Load examples from examples.txt file in the examples directory."""
     try:
-        examples_file = os.path.join("screenshots", website, viewport, "design_docs", "examples", f"{section_number:02d}-examples.txt")
+        examples_file = os.path.join(examples_dir, f"{section_number:02d}-examples.txt")
         with open(examples_file, "r", encoding="utf-8") as f:
             return f.read()
     except FileNotFoundError:
@@ -48,13 +48,10 @@ def load_examples(website: str, viewport: str, section_number: int) -> str:
         print(f"Warning: Error reading examples.txt: {e}")
         return ""
 
-def get_all_section_files(website: str, viewport: str) -> list:
+def get_all_section_files(sections_dir: str) -> list:
     """Get all section files from the sections directory."""
-    sections_dir = os.path.join("screenshots", website, viewport, "design_docs", "sections")
     if not os.path.exists(sections_dir):
         raise FileNotFoundError(f"Sections directory not found: {sections_dir}")
-    
-    # Get all markdown files and sort them by section number
     section_files = []
     for file in glob.glob(os.path.join(sections_dir, "*.md")):
         try:
@@ -62,55 +59,39 @@ def get_all_section_files(website: str, viewport: str) -> list:
             section_files.append((section_number, os.path.basename(file)))
         except (ValueError, IndexError) as e:
             print(f"Warning: Invalid section filename format: {file}")
-    
-    # Sort by section number
     section_files.sort(key=lambda x: x[0])
     return section_files
 
 class ShopifySectionGenerator:
-    def __init__(self, screenshots_dir="screenshots"):
-        """Initialize the generator with screenshots directory."""
-        self.screenshots_dir = screenshots_dir
+    def __init__(self, sections_dir, examples_dir, output_dir):
+        """Initialize the generator with sections, examples, and output directories."""
+        self.sections_dir = sections_dir
+        self.examples_dir = examples_dir
+        self.output_dir = output_dir
 
-    def _find_section_file(self, website: str, viewport: str, section_number: int) -> str:
+    def _find_section_file(self, section_number: int) -> str:
         """Find the section file that starts with the given number."""
         if section_number < 1:
             raise ValueError("Section number must be positive")
-            
-        sections_dir = os.path.join(self.screenshots_dir, website, viewport, "design_docs", "sections")
-        if not os.path.exists(sections_dir):
-            raise FileNotFoundError(f"Sections directory not found: {sections_dir}")
-        
-        # Look for files starting with the section number
         pattern = f"{section_number:02d}-*.md"
-        matching_files = glob.glob(os.path.join(sections_dir, pattern))
-        
+        matching_files = glob.glob(os.path.join(self.sections_dir, pattern))
         if not matching_files:
-            raise FileNotFoundError(f"No section file found starting with {section_number}- in {sections_dir}")
+            raise FileNotFoundError(f"No section file found starting with {section_number}- in {self.sections_dir}")
         if len(matching_files) > 1:
-            raise ValueError(f"Multiple section files found starting with {section_number}- in {sections_dir}")
-            
+            raise ValueError(f"Multiple section files found starting with {section_number}- in {self.sections_dir}")
         return os.path.basename(matching_files[0])
 
-    def _get_section_design(self, website: str, viewport: str, section_number: int):
+    def _get_section_design(self, section_number: int):
         """Get the section design markdown content."""
-        # Find the section file
-        section_file = self._find_section_file(website, viewport, section_number)
-        
-        # Path to the section design file
-        design_file = os.path.join(self.screenshots_dir, website, viewport, "design_docs", "sections", section_file)
+        section_file = self._find_section_file(section_number)
+        design_file = os.path.join(self.sections_dir, section_file)
         with open(design_file, "r", encoding="utf-8") as f:
             return f.read(), section_file
 
-    async def generate_section_code(self, website: str, viewport: str, section_number: int):
-        """Generate Shopify section code from section design markdown."""
-        # Get section design and filename
-        section_design, section_file = self._get_section_design(website, viewport, section_number)
-        
-        # Load examples
-        examples = load_examples(website, viewport, section_number)
-        
-        # Prepare the prompts
+    async def generate_section_code(self, section_number: int):
+        section_design, section_file = self._get_section_design(section_number)
+        examples = load_examples(self.examples_dir, section_number)
+
         system_prompt = f"""
         You are a Shopify Liquid architect specialized in designing high-impact sections.
         Create a complete section implementation from scratch based on the provided section design documentation.
@@ -237,90 +218,65 @@ class ShopifySectionGenerator:
         try:
             # Get code generation from Claude
             response = await shopify_llm.ainvoke(messages)
-            
-            # Save the generated code
-            output_dir = os.path.join(self.screenshots_dir, website, viewport, "shopify_code")
-            os.makedirs(output_dir, exist_ok=True)
-            
-            # Save the full response
-            output_file = os.path.join(output_dir, f"generated_{section_file.replace('.md', '_code.txt')}")
+            os.makedirs(self.output_dir, exist_ok=True)
+            output_file = os.path.join(self.output_dir, f"generated_{section_file.replace('.md', '_code.txt')}")
             with open(output_file, "w", encoding="utf-8") as f:
                 f.write(response.content)
-            
             # Extract and save individual files
             import re
             file_pattern = r"---\s*FILE:\s*([^\n]+)\s*TYPE:\s*([^\n]+)\s*CONTENT:\s*```(?:[^\n]*)\n([\s\S]*?)```\s*---"
-            
             for match in re.finditer(file_pattern, response.content):
                 file_path = match.group(1).strip()
                 file_type = match.group(2).strip()
                 file_content = match.group(3).strip()
-                
-                # Create full path
-                full_path = os.path.join(output_dir, file_path.lstrip("/"))
+                full_path = os.path.join(self.output_dir, file_path.lstrip("/"))
                 os.makedirs(os.path.dirname(full_path), exist_ok=True)
-                
-                # Save file
                 with open(full_path, "w", encoding="utf-8") as f:
                     f.write(file_content)
-            
-            print(f"\n✅ Shopify section code generated and saved to: {output_dir}")
+            print(f"\n✅ Shopify section code generated and saved to: {self.output_dir}")
             print("\nGenerated files:")
-            for root, _, files in os.walk(output_dir):
+            for root, _, files in os.walk(self.output_dir):
                 for file in files:
                     if not file.endswith("_code.txt"):
-                        print(f"- {os.path.relpath(os.path.join(root, file), output_dir)}")
-            
+                        print(f"- {os.path.relpath(os.path.join(root, file), self.output_dir)}")
             return response.content
-            
         except Exception as e:
             print(f"Error generating Shopify section code: {str(e)}")
             return None
 
-    async def generate_all_sections(self, website: str, viewport: str):
-        """Generate Shopify section code for all sections."""
+    async def generate_all_sections(self):
         try:
-            # Get all section files
-            section_files = get_all_section_files(website, viewport)
+            section_files = get_all_section_files(self.sections_dir)
             if not section_files:
                 raise ValueError("No section files found")
-            
             print(f"\nFound {len(section_files)} sections to process")
-            
-            # Process each section
             for section_num, section_file in section_files:
                 print(f"\nProcessing section {section_num}: {section_file}")
                 try:
-                    await self.generate_section_code(website, viewport, section_num)
+                    await self.generate_section_code(section_num)
                 except Exception as e:
                     print(f"Warning: Failed to process section {section_num}: {str(e)}")
                     continue
-            
             print("\n✅ All sections processed successfully!")
-            
         except Exception as e:
             print(f"❌ Error: {str(e)}")
 
 async def main():
-    # Check for required environment variables
     if "ANTHROPIC_API_KEY" not in os.environ:
         raise EnvironmentError("❌ Missing ANTHROPIC_API_KEY environment variable")
-    
-    # Set up argument parser
     parser = argparse.ArgumentParser(description="Generate Shopify section code from section design documentation")
-    parser.add_argument("--website", required=True, help="Website directory name")
-    parser.add_argument("--viewport", required=True, help="Viewport directory name")
-    parser.add_argument("--section", type=int, help="Optional: Section number to generate code for (e.g., 1 for 1-hero-section.md). If not provided, processes all sections.")
+    parser.add_argument("--sections-dir", required=True, help="Directory containing parsed section markdown files")
+    parser.add_argument("--examples-dir", required=True, help="Directory containing examples for each section")
+    parser.add_argument("--section", type=int, help="Optional: Section number to generate code for (e.g., 1 for 01-hero-section.md). If not provided, processes all sections.")
+    parser.add_argument("--output-dir", required=True, help="Directory to save generated Shopify section code")
     args = parser.parse_args()
-    
-    generator = ShopifySectionGenerator()
-    
+    generator = ShopifySectionGenerator(sections_dir=args.sections_dir, examples_dir=args.examples_dir, output_dir=args.output_dir)
     try:
         if args.section is not None:
-            await generator.generate_section_code(args.website, args.viewport, args.section)
+            await generator.generate_section_code(args.section)
         else:
             print("\nNo section number provided. Processing all sections...")
-            await generator.generate_all_sections(args.website, args.viewport)
+            await generator.generate_all_sections()
     except ValueError as e:
         print(f"❌ Validation Error: {str(e)}")
     except Exception as e:
