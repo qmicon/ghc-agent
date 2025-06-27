@@ -30,7 +30,7 @@ SCRIPTS = {
     "section_plan": "generate_section_design_plan.py",
     "theme_examples": "generate_theme_examples.py",
     "shopify_section": "generate_shopify_section.py",
-    "shopify_page": "generate_shopify_page.py"
+    "shopify_page": "generate_shopify_page_from_settings.py"
 }
 
 THEME_PROJECTS_DIR = "theme-projects"
@@ -70,6 +70,7 @@ def main():
     theme_code_dir = os.path.join(project_path, THEME_CODE_DIR_NAME)
 
     # 1. Get the target page URL
+    print(f"\n[Step 1] Resolving canonical URL using: {SCRIPTS['get_url']} {website} {page_type}")
     url = run_script([
         sys.executable, SCRIPTS["get_url"], website, page_type
     ], capture_output=True)
@@ -114,6 +115,7 @@ def main():
 
     # 2. Take screenshots
     if not checkpoint.get("screenshots"):
+        print(f"\n[Step 2] Taking screenshots using: {SCRIPTS['screenshot']} {website} {viewport} --output-dir {screenshots_dir}")
         run_script([
             sys.executable, SCRIPTS["screenshot"], website, viewport, "--output-dir", screenshots_dir
         ])
@@ -123,6 +125,7 @@ def main():
 
     # 3. Generate design documentation
     if not checkpoint.get("design_docs"):
+        print(f"\n[Step 3] Generating design documentation using: {SCRIPTS['design_doc']} --input-dir {screenshots_dir} --output-dir {design_docs_dir}")
         run_script([
             sys.executable, SCRIPTS["design_doc"], "--input-dir", screenshots_dir, "--output-dir", design_docs_dir
         ])
@@ -130,39 +133,43 @@ def main():
     else:
         print("[Checkpoint] Skipping design_docs step.")
 
-    # 4. Generate section design plans
-    if not checkpoint.get("section_plans"):
-        run_script([
-            sys.executable, SCRIPTS["section_plan"], "--design-docs-dir", design_docs_dir, "--screenshots-dir", screenshots_dir, "--output-dir", section_plans_dir
-        ])
-        save_checkpoint("section_plans")
-    else:
-        print("[Checkpoint] Skipping section_plans step.")
+    # 4. Generate section design plans (SKIPPED)
+    # if not checkpoint.get("section_plans"):
+    #     print(f"\n[Step 4] Generating section design plans using: {SCRIPTS['section_plan']} --design-docs-dir {design_docs_dir} --screenshots-dir {screenshots_dir} --output-dir {section_plans_dir}")
+    #     run_script([
+    #         sys.executable, SCRIPTS["section_plan"], "--design-docs-dir", design_docs_dir, "--screenshots-dir", screenshots_dir, "--output-dir", section_plans_dir
+    #     ])
+    #     save_checkpoint("section_plans")
+    # else:
+    #     print("[Checkpoint] Skipping section_plans step.")
 
-    # 5. Generate theme examples
+    # 5. Generate theme examples (use design_docs_dir as sections_dir)
     if not checkpoint.get("theme_examples"):
+        print(f"\n[Step 4] Generating theme examples using: {SCRIPTS['theme_examples']} --sections-dir {design_docs_dir} --output-dir {examples_dir}")
         run_script([
-            sys.executable, SCRIPTS["theme_examples"], "--sections-dir", sections_dir, "--output-dir", examples_dir
+            sys.executable, SCRIPTS["theme_examples"], "--sections-dir", design_docs_dir, "--output-dir", examples_dir
         ])
         save_checkpoint("theme_examples")
     else:
         print("[Checkpoint] Skipping theme_examples step.")
 
-    # 6. Generate Shopify sections (output to code_changes/sections)
+    # 6. Generate Shopify sections (use design_docs_dir as sections_dir)
     if not checkpoint.get("shopify_sections"):
+        print(f"\n[Step 5] Generating Shopify sections using: {SCRIPTS['shopify_section']} --sections-dir {design_docs_dir} --examples-dir {examples_dir} --output-dir {code_changes_sections}")
         run_script([
-            sys.executable, SCRIPTS["shopify_section"], "--sections-dir", sections_dir, "--examples-dir", examples_dir, "--output-dir", code_changes_sections
+            sys.executable, SCRIPTS["shopify_section"], "--sections-dir", design_docs_dir, "--examples-dir", examples_dir, "--output-dir", code_changes_sections
         ])
         save_checkpoint("shopify_sections")
     else:
         print("[Checkpoint] Skipping shopify_sections step.")
 
-    # 7. Generate the page template (output to code_changes/templates)
+    # 7. Generate the page template (use design_docs_dir as sections_dir)
     if not checkpoint.get("shopify_page"):
         template_file = PAGE_TYPE_TO_TEMPLATE[page_type]
         output_file = os.path.join(code_changes_templates, template_file)
+        print(f"\n[Step 6] Generating Shopify page template using: {SCRIPTS['shopify_page']} --sections-dir {design_docs_dir} --shopify-code-dir {code_changes_sections} --output-dir {code_changes_templates} --output-file {output_file}")
         run_script([
-            sys.executable, SCRIPTS["shopify_page"], "--sections-dir", sections_dir, "--shopify-code-dir", code_changes_sections, "--output-dir", code_changes_templates, "--output-file", output_file
+            sys.executable, SCRIPTS["shopify_page"], "--shopify-code-dir", code_changes_sections, "--output-dir", code_changes_templates, "--output-file", output_file
         ])
         save_checkpoint("shopify_page")
     else:
@@ -170,6 +177,7 @@ def main():
 
     # 8. Copy code_changes to canonical theme_code (flat, not nested by website/viewport)
     if not checkpoint.get("code_copy"):
+        print(f"\n[Step 7] Copying generated code to canonical theme_code directory")
         def copy_sections_with_epoch(src, dst, epoch):
             if not os.path.exists(src):
                 return {}

@@ -64,7 +64,7 @@ def main():
 
     for idx, el_id in enumerate(section_ids, 1):
         print(f"Element {idx}: {el_id}")
-        screenshot_path = os.path.join(output_dir, f"{str(idx).zfill(3)}-{el_id}.png")
+        screenshot_path = os.path.join(output_dir, f"{str(idx).zfill(2)}-{el_id}.png")
         try:
             capture_element_screenshot(
                 url=base_url,

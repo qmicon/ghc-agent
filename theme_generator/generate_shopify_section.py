@@ -22,7 +22,7 @@ load_dotenv()
 shopify_llm = ChatAnthropic(
     model="claude-3-7-sonnet-latest",
     temperature=0.1,
-    max_tokens=40000  # Increased for complex section generation
+    max_tokens=50000  # Increased for complex section generation
 ).with_retry(
     stop_after_attempt=5,  # Maximum number of attempts
     wait_exponential_jitter=True,  # Add jitter to the exponential backoff
@@ -100,9 +100,11 @@ class ShopifySectionGenerator:
         1. Step-by-step implementation guide
         2. Detailed implementation instructions
         3. Actual code blocks that follows the implementation instructions
+        4. settings of the liquid code to be set to match the requirements mentioned by the design document
 
         Required File Structure:
         - sections/{section_file.replace('.md', '.liquid')} (main section file with all the code)
+        - sections/settings_{section_file.replace('.md', '.json')} (settings of this section file according to the design document to be used by the template json)
 
         Focus on:
         - Clear component structure
@@ -125,6 +127,14 @@ class ShopifySectionGenerator:
            - Must be valid liquid format
            - Include all necessary CSS and JavaScript
            - Use proper snippet includes
+        2. sections/settings_{section_file.replace('.md', '.json')}
+           - Required settings of section schema
+           - should be according to the design requirements in the documents
+           - valid json
+           - should contain only the contents of "settings" values that should be used in a template
+           - data that can be used for the setting values:
+            = Collection Handle: all 
+            = Current Date and Time: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 
         Please provide a detailed written plan that includes:
 
@@ -155,12 +165,31 @@ class ShopifySectionGenerator:
         CRITICAL INSTRUCTION: A plan should contain all the detailed information so that a beginner Shopify developer could save the implementation to files and it would work without any additional guidance.
 
         CRITICAL INSTRUCTION FOR CODE BLOCKS OUTPUT FORMAT: When showing implementation code, follow this exact format:
+        liquid format:
         ---
         FILE: {section_file.replace('.md', '.liquid')}
         TYPE: liquid
         CONTENT:
         ```liquid
         [actual code content]
+        ```
+        ---
+
+        json format:
+        ---
+        FILE: settings_{section_file.replace('.md', '.json')}
+        TYPE: json
+        CONTENT:
+        ```json
+        {{
+            "<section-name>": {{
+                "type": "{section_file.replace('.md', '')}",
+                "settings": {{
+                    "<setting_type>": <setting_value>,
+                    ... (so on, these values must be according to the design document)
+                }}
+            }}
+        }}
         ```
         ---
 
@@ -185,18 +214,14 @@ class ShopifySectionGenerator:
         - Implementation approaches
         - Best practices for Shopify theme development
 
-        Do not copy the examples directly - instead, understand the patterns and adapt them to the mentioned requirements.
+        Do not copy the examples directly or use its design features - instead, understand the patterns and adapt them to the mentioned requirements.
         """
 
         user_prompt = f"""
         Generate a complete Shopify section implementation based on the following section design documentation.
 
-        Section File: {section_file}
-
         Section Design Documentation:
         {section_design}
-
-        Current Date and Time: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 
         Please generate a complete, production-ready Shopify section implementation that:
         1. Matches the design documentation

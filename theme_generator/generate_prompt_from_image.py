@@ -15,7 +15,7 @@ load_dotenv()
 design_llm = ChatAnthropic(
     model="claude-sonnet-4-20250514",
     temperature=0.1,
-    max_tokens=5000
+    max_tokens=20000
 ).with_retry(
     stop_after_attempt=5,  # Maximum number of attempts
     wait_exponential_jitter=True,  # Add jitter to the exponential backoff
@@ -37,7 +37,7 @@ class WebsiteDesignAnalyzer:
 
     def _get_screenshot_paths(self):
         """Get all screenshot paths organized by website and viewport (flat in input_dir)."""
-        screenshots = glob.glob(os.path.join(self.input_dir, "???-shopify-section-*.png"))
+        screenshots = glob.glob(os.path.join(self.input_dir, "??-shopify-section-*.png"))
         return sorted(screenshots)
 
     def _get_image_dimensions(self, image_path):
@@ -212,7 +212,7 @@ class WebsiteDesignAnalyzer:
             design_doc = await self.analyze_design(screenshot_path)
             if design_doc:
                 base_filename = os.path.splitext(os.path.basename(screenshot_path))[0]
-                output_file = os.path.join(self.output_dir, f"{base_filename}_design.md")
+                output_file = os.path.join(self.output_dir, f"{base_filename}.md")
                 with open(output_file, "w", encoding="utf-8") as f:
                     f.write(f"# Design Documentation for {base_filename}\n\n")
                     f.write(f"Image dimensions: {self._get_image_dimensions(screenshot_path)}\n\n")
@@ -225,7 +225,7 @@ class WebsiteDesignAnalyzer:
                 base_filename = os.path.splitext(os.path.basename(screenshot_path))[0]
                 f.write(f"## {base_filename}\n\n")
                 f.write(f"![Screenshot]({os.path.basename(screenshot_path)})\n\n")
-                doc_path = os.path.join(self.output_dir, f"{base_filename}_design.md")
+                doc_path = os.path.join(self.output_dir, f"{base_filename}.md")
                 if os.path.exists(doc_path):
                     with open(doc_path, "r", encoding="utf-8") as doc_file:
                         f.write(doc_file.read())
@@ -259,7 +259,7 @@ class WebsiteDesignAnalyzer:
         if design_doc:
             # Save design documentation as markdown
             base_filename = os.path.splitext(os.path.basename(screenshot_path))[0]
-            output_file = os.path.join(output_dir_final, f"{base_filename}_design.md")
+            output_file = os.path.join(output_dir_final, f"{base_filename}.md")
             
             with open(output_file, "w", encoding="utf-8") as f:
                 f.write(f"# Design Documentation for {base_filename}\n\n")
