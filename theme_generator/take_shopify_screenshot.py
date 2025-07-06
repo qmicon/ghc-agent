@@ -20,12 +20,32 @@ def capture_element_screenshot(url, selector, screenshot_path, form_factor):
         elif form_factor == "desktop":
             page.set_viewport_size({"width": 1920, "height": 1080})
         page.goto(url)
-        element = page.wait_for_selector(selector, timeout=5000)
+        
+        # Wait for the element to be attached to the DOM
+        element = page.wait_for_selector(selector, state='attached', timeout=5000)
+        
+        # Scroll the element into view
         element.scroll_into_view_if_needed()
+        
+        # Wait for the element to be visible after scrolling
+        page.wait_for_selector(selector, state='visible', timeout=5000)
+        
+        # Additional wait for any animations or lazy loading
         time.sleep(2)
+        
+        # Take the screenshot
         element = page.query_selector(selector)
         element.screenshot(path=screenshot_path)
         browser.close()
+
+def scroll_to_bottom(page):
+    """Scroll to the bottom of the page to load all content."""
+    # Scroll to bottom
+    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+    time.sleep(2)  # Wait for any lazy-loaded content
+    # Scroll back to top
+    page.evaluate("window.scrollTo(0, 0)")
+    time.sleep(1)  # Brief pause after scrolling back
 
 def get_all_section_ids(url, form_factor):
     with sync_playwright() as p:
@@ -38,6 +58,10 @@ def get_all_section_ids(url, form_factor):
         page.goto(url)
         # Wait for at least one section to appear (wait for attachment, not visibility)
         page.wait_for_selector('[id^="shopify-section-"]', state='attached', timeout=5000)
+        
+        # Scroll to bottom to load all sections, then back to top
+        scroll_to_bottom(page)
+        
         elements = page.query_selector_all('[id^="shopify-section-"]')
         section_ids = [element.get_attribute("id") for element in elements]
         browser.close()
