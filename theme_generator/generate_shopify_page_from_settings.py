@@ -82,8 +82,9 @@ def main():
     template = generate_page_template(sections)
 
     output_path = args.output_file
-    if not os.path.isabs(output_path):
-        output_path = os.path.join(args.output_dir, output_path)
+    # If output_file is just a file name (no directory), join with output_dir
+    if os.path.dirname(args.output_file) == "":
+        output_path = os.path.join(args.output_dir, args.output_file)
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(template, f, indent=2)
     print(f"[INFO] Shopify page template saved to: {output_path}")
