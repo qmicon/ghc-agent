@@ -16,7 +16,7 @@ except ImportError:
     pass
 
 def get_section_order_and_settings(sections_dir):
-    """Return a list of (section_number, section_type, type_value, section_settings) sorted by section_number."""
+    """Return a list of (section_number, section_type, type_value, section_settings, section_blocks) sorted by section_number."""
     section_files = []
     for file in os.listdir(sections_dir):
         if file.startswith("settings_") and file.endswith(".json"):
@@ -33,7 +33,8 @@ def get_section_order_and_settings(sections_dir):
                 section_obj = settings_json[section_type]
                 type_value = section_obj.get("type", section_type)
                 section_settings = section_obj.get("settings", {})
-                section_files.append((section_number, section_type, type_value, section_settings))
+                section_blocks = section_obj.get("blocks", None)
+                section_files.append((section_number, section_type, type_value, section_settings, section_blocks))
             except Exception as e:
                 print(f"Warning: Could not parse {file}: {e}")
     section_files.sort(key=lambda x: x[0])
@@ -45,12 +46,18 @@ def generate_page_template(sections):
         "sections": {},
         "order": []
     }
-    for idx, (section_number, section_type, type_value, section_settings) in enumerate(sections, 1):
+    for idx, (section_number, section_type, type_value, section_settings, section_blocks) in enumerate(sections, 1):
         section_id = f"{section_type}_{idx}"
-        template["sections"][section_id] = {
+        section_dict = {
             "type": type_value,
             "settings": section_settings
         }
+        if section_blocks is not None:
+            section_dict["blocks"] = section_blocks
+            # Add block_order as a list of keys in the blocks dict, in order
+            if isinstance(section_blocks, dict):
+                section_dict["block_order"] = list(section_blocks.keys())
+        template["sections"][section_id] = section_dict
         template["order"].append(section_id)
     return template
 
