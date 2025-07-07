@@ -87,6 +87,7 @@ def main():
     section_plans_dir = os.path.join(parent_dir, "section_design_plans")
     examples_dir = os.path.join(parent_dir, "theme_examples")
     sections_dir = os.path.join(section_plans_dir, "sections")
+    iteration_dir = os.path.join(parent_dir, "iterations")
     code_changes_sections = os.path.join(parent_dir, "code_changes", "sections")
     code_changes_templates = os.path.join(parent_dir, "code_changes", "templates")
     theme_code_parent = os.path.join(theme_code_dir, website, viewport)
@@ -187,6 +188,12 @@ def main():
                 if os.path.isfile(s) and s.endswith('.liquid'):
                     base, ext = os.path.splitext(item)
                     new_name = f"{base}-{epoch}{ext}"
+                    # If new_name is more than 50 characters, shorten base from behind
+                    if len(new_name) > 50:
+                        # Calculate how many characters base can be
+                        allowed_base_len = 49 - len(ext) - len(epoch) - 1  # 1 for dash
+                        base_new = base[:allowed_base_len]
+                        new_name = f"{base_new}-{epoch}{ext}"
                     d = os.path.join(dst, new_name)
                     os.makedirs(dst, exist_ok=True)
                     shutil.copy2(s, d)
@@ -215,8 +222,10 @@ def main():
         # Copy sections with epoch suffix and build mapping
         epoch = str(int(time.time()))
         section_type_map = copy_sections_with_epoch(code_changes_sections, os.path.join(theme_code_dir, "sections"), epoch)
+        copy_sections_with_epoch(code_changes_sections, os.path.join(iteration_dir, "original", "sections"), epoch)
         # Copy templates, updating section type fields
         copy_template_with_section_types(code_changes_templates, os.path.join(theme_code_dir, "templates"), section_type_map)
+        copy_template_with_section_types(code_changes_templates, os.path.join(iteration_dir, "original", "templates"), section_type_map)
         save_checkpoint("code_copy")
     else:
         print("[Checkpoint] Skipping code_copy step.")
