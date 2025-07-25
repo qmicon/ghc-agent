@@ -36,7 +36,10 @@ def capture_element_screenshot(url, selector, screenshot_path, form_factor):
         # Take the screenshot
         element = page.query_selector(selector)
         element.screenshot(path=screenshot_path)
+        # Get the outer HTML of the element
+        element_html = element.evaluate('el => el.outerHTML')
         browser.close()
+        return element_html
 
 def scroll_to_bottom(page):
     """Scroll to the bottom of the page to load all content."""
@@ -72,11 +75,13 @@ def main():
     parser.add_argument("website_url", help="Canonical website URL (e.g., abc.com)")
     parser.add_argument("form_factor", choices=["mobile", "desktop"], help="Form factor: mobile or desktop")
     parser.add_argument("--output-dir", default="screenshots", help="Base output directory (default: screenshots)")
+    parser.add_argument("--save-selector-code", action="store_true", help="Save selector code alongside screenshots")
     args = parser.parse_args()
 
     website_url = args.website_url
     form_factor = args.form_factor
     output_dir = args.output_dir
+    save_selector_code = args.save_selector_code
 
     base_url = f"https://{website_url}"
     section_ids = get_all_section_ids(base_url, form_factor)
@@ -90,13 +95,21 @@ def main():
         print(f"Element {idx}: {el_id}")
         screenshot_path = os.path.join(output_dir, f"{str(idx).zfill(2)}-{el_id}.png")
         try:
-            capture_element_screenshot(
+            element_html = capture_element_screenshot(
                 url=base_url,
                 selector=f"#{el_id}",
                 screenshot_path=screenshot_path,
                 form_factor=form_factor
             )
             print(f"Saved screenshot: {screenshot_path}")
+            
+            # Save selector code if requested
+            if save_selector_code:
+                selector_code_path = os.path.join(output_dir, f"{str(idx).zfill(2)}-{el_id}.txt")
+                with open(selector_code_path, 'w', encoding='utf-8') as f:
+                    f.write(element_html)
+                print(f"Saved element HTML: {selector_code_path}")
+                
         except Exception as e:
             print(f"{str(idx)} {el_id} could not be saved (possibly hidden section): {e}")
 

@@ -168,14 +168,13 @@ async def generate_offer_plan(shopify_url):
     Following this format is very important as the beginner developer is using a regex tool to extract the code blocks and save them to correct file paths.
 
     CRITICAL VALIDATION INSTRUCTIONS:
-    1. Picker settings of types article, blog, collection, collection_list, product, and product_list
-    MUST NOT include any `default` attribute in section schemas.
-    2. liquid templates under templates/ must have all code according to the requirements.
-    3. Do not use filters (e.g., | times) directly within tag parameters like limit in for loops or conditions in if statements. Instead, perform calculations separately using the assign tag with unique variable names, then reference the resulting variable within your tags.
-    4. Do not use limit as a filter within assign statements. The limit keyword is a parameter for for loops, not a filter. To limit the number of items in an array outside of a loop, use the slice filter
-    5. Do not include limit parameters within if statements. The limit parameter is not valid in this context and will cause syntax errors.
-    6. When you need to retrieve the first item from a filtered collection, use the first filter instead of combining where with limit.
-    7. Range settings in the section schema must have at least 3 steps, which means the difference between the min and max value should be at least 3 times the step value.
+    1. liquid templates under templates/ must have all code according to the requirements.
+    2. Do not use filters (e.g., | times) directly within tag parameters like limit in for loops or conditions in if statements. Instead, perform calculations separately using the assign tag with unique variable names, then reference the resulting variable within your tags.
+    3. Do not use limit as a filter within assign statements. The limit keyword is a parameter for for loops, not a filter. To limit the number of items in an array outside of a loop, use the slice filter
+    4. Do not include limit parameters within if statements. The limit parameter is not valid in this context and will cause syntax errors.
+    5. When you need to retrieve the first item from a filtered collection, use the first filter instead of combining where with limit.
+    6. Dont put <html> tag as its not valid in liquid file, other tags like <div>, <style>, <section>, etc. can be used
+    7. dont put {% schema %} in the code
 
     Below are some examples of how the code developed by shopify developers looks like, it has two types of examples:
     1. OFFER PAGE IMPLEMENTATION CODE EXAMPLES: Complete implementation examples from similar offer pages, showing the structure and patterns used in production.

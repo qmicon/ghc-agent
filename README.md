@@ -77,6 +77,38 @@ python save_implementations.py
 ```
 This script reads `offer_plan_claude.txt` and creates the files according to the plan in the claude workspace directory.
 
+6. Align template styling (optional):
+```bash
+python align_template_styling.py --website your-store.com --template path/to/template.liquid --output-dir styled_templates
+```
+This script:
+- Analyzes a product page from your Shopify store to extract design elements
+- Takes screenshots of each section and extracts HTML code
+- Uses LLM to analyze design patterns, colors, typography, and layout
+- Generates a design consistency document
+- Applies styling changes to your template to match the product page design
+- Saves the styled template to the output directory
+
+**Arguments:**
+- `--website`: Your Shopify store domain (e.g., marsghc.com)
+- `--template`: Path to the template file you want to style
+- `--output-dir`: Directory to save the final styled template
+- `--int-dir`: Intermediate files directory (default: styling_int_files)
+- `--log-dir`: Log files directory (default: logs)
+
+**Requirements:**
+- `ANTHROPIC_API_KEY` environment variable must be set
+- Requires `playwright` for screenshot capture
+- Requires `PIL` for image processing
+
+**Output:**
+- Screenshots and HTML files in `styling_int_files/screenshots/`
+- Design analysis in `styling_int_files/design_elements/`
+- Design consistency document in `styling_int_files/design_consistency.md`
+- Suggested edits in `styling_int_files/suggested_edits.txt`
+- Final styled template in your specified output directory
+- Detailed logs in the logs directory
+
 ## Directory Structure
 
 ```
@@ -95,7 +127,8 @@ This script reads `offer_plan_claude.txt` and creates the files according to the
 ├── generate_offer_plan_claude.py       # Multi-file approach
 ├── generate_one_page_liquid_claude.py  # Single-file approach
 ├── enhance_prompt.py         # Requirements enhancement
-└── save_implementations.py   # Save files from plan
+├── save_implementations.py   # Save files from plan
+└── align_template_styling.py # Align template styling with store design
 ```
 
 ## Notes
