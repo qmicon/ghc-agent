@@ -409,7 +409,7 @@ def main():
         
         logger.info(f"Running screenshot script for domain: {domain}")
         result = subprocess.run([
-            sys.executable, 'theme_generator/take_shopify_screenshot.py', domain, 'desktop',
+            sys.executable, 'theme_generator/take_shopify_screenshot.py', domain, 'mobile',
             '--output-dir', screenshots_dir, '--save-selector-code'
         ], capture_output=True, text=True)
         
