@@ -118,7 +118,12 @@ async def generate_offer_plan(shopify_url):
     - Order of implementation
     - Dependencies between components
 
-    2. Implementation Notes
+    2. Required Components
+    - list of all the components that are required for the offer page
+    - Purpose and functionality of each component
+    - How components will interact with each other
+
+    3. Implementation Notes
     - Detailed description of implementation notes for the template code
     - Explain the logic and reasoning behind the implementation code
     - Explain architecture decisions and trade-offs
