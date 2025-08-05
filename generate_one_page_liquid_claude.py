@@ -85,7 +85,7 @@ async def generate_offer_plan(shopify_url):
     Your task is to create a detailed implementation plan that includes:
     1. Step-by-step implementation guide
     2. Detailed implementation instructions
-    3. Actual code blocks that follows the implementation instructions
+    3. Actual code block that follows the implementation instructions
 
     Required File Structure:
     - templates/page.offer.liquid (main template with all the code)
@@ -95,7 +95,6 @@ async def generate_offer_plan(shopify_url):
     - Modern, responsive design
     - User-friendly interface
     - Step-by-step implementation details
-    - File structure and organization
     - Proper error handling and validation
 
     Technical Requirements:
@@ -110,6 +109,7 @@ async def generate_offer_plan(shopify_url):
     1. templates/page.offer.liquid
        - Must define all sections in the correct order
        - Must be valid liquid format
+       - Must contain all the code for the offer page
 
     Please provide a detailed written plan that includes:
 
@@ -118,19 +118,8 @@ async def generate_offer_plan(shopify_url):
     - Order of implementation
     - Dependencies between components
 
-    2. Required Components
-    - List of all sections needed
-    - List of all snippets needed
-    - Purpose and functionality of each component
-    - How components will interact with each other
-
-    3. File Structure
-    - List of all files to be created
-    - Purpose of each file
-    - Dependencies between files
-
-    4. Implementation Notes
-    - Detailed description of implementation notes for each section and snippet code
+    2. Implementation Notes
+    - Detailed description of implementation notes for the template code
     - Explain the logic and reasoning behind the implementation code
     - Explain architecture decisions and trade-offs
     - Document error handling strategy
@@ -142,6 +131,7 @@ async def generate_offer_plan(shopify_url):
     3. User interactions are handled efficiently and reliably
     4. Error cases are handled gracefully
     5. avoid using local storage as states get corrupted when the page is loaded in a new tab
+    6. All the code should be in the templates/page.offer.liquid file
 
     CRITICAL INSTRUCTION: A plan should contain all the detailed information so that a beginner Shopify developer could save the implementation to files and it would work without any additional guidance.
 
@@ -181,7 +171,6 @@ async def generate_offer_plan(shopify_url):
     2. RELEVANT CODE EXAMPLES FOR UI COMPONENTS: Reusable UI components and patterns that can be adapted for the offer requirements.
 
     Use these examples as reference for:
-    - File structure and organization
     - Component architecture and patterns
     - Implementation approaches
     - Best practices for Shopify theme development
