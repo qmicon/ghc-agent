@@ -1,6 +1,8 @@
 import os
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import HumanMessage
+from dotenv import load_dotenv
+load_dotenv()
 
 template = """
 # Shopify Page Prompt Enhancement Instruction Template

@@ -13,6 +13,7 @@ OUTPUT
 import os
 import re
 from pathlib import Path
+import argparse
 
 def extract_code_blocks(plan_content: str) -> list:
     """Extract code blocks from the plan content."""
@@ -54,15 +55,26 @@ def save_code_blocks(code_blocks: list, base_dir: str = "claude_workspace"):
         print(f"✓ Saved: {block['file_path']}")
 
 def main():
+    parser = argparse.ArgumentParser(description="Save implementation files from either the main plan or the converted one-file plan.")
+    parser.add_argument(
+        "--source",
+        choices=["main", "converted"],
+        default="converted",
+        help="Select the source plan to read code blocks from: 'main' uses offer_plan_claude.txt, 'converted' uses one_page_offer_from_plan.txt (default)."
+    )
+    args = parser.parse_args()
+
+    plan_file = "offer_plan_claude.txt" if args.source == "main" else "one_page_offer_from_plan.txt"
+
     # Read the plan file
     try:
-        with open("offer_plan_claude.txt", "r", encoding="utf-8") as f:
+        with open(plan_file, "r", encoding="utf-8") as f:
             plan_content = f.read()
     except FileNotFoundError:
-        print("❌ offer_plan.txt not found")
+        print(f"❌ {plan_file} not found")
         return
     except Exception as e:
-        print(f"❌ Error reading offer_plan.txt: {e}")
+        print(f"❌ Error reading {plan_file}: {e}")
         return
     
     # Extract code blocks

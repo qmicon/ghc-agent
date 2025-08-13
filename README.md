@@ -47,35 +47,43 @@ This script:
 - Finds relevant examples from `example_components/` and `dataset/`
 - Creates `examples.txt` with implementation examples and UI component examples
 
-4. Generate the offer page (choose one approach):
-
-   a. Multi-file approach (recommended for complex pages):
-   ```bash
-   python generate_offer_plan_claude.py
-   ```
-   This script:
-   - Reads from `offer_requirements_prompt.txt`
-   - Uses `examples.txt` if available
-   - Fetches your Shopify store data
-   - Generates a detailed implementation plan in `offer_plan_claude.txt`
-   - The plan includes code for multiple files (sections, snippets, templates)
-
-   b. Single-file approach (simpler pages):
-   ```bash
-   python generate_one_page_liquid_claude.py
-   ```
-   This script:
-   - Reads from `offer_requirements_prompt.txt`
-   - Uses `examples.txt` if available
-   - Fetches your Shopify store data
-   - Generates a detailed implementation plan in `offer_plan_claude.txt`
-   - The plan includes code for a single template file
-
-5. Save the implementation:
+4. Generate the offer plan (multi-file plan recommended):
 ```bash
-python save_implementations.py
+python generate_offer_plan_claude.py
 ```
-This script reads `offer_plan_claude.txt` and creates the files according to the plan in the claude workspace directory.
+This script:
+- Reads from `offer_requirements_prompt.txt`
+- Uses `examples.txt` if available
+- Fetches your Shopify store data
+- Generates a detailed implementation plan in `offer_plan_claude.txt`
+- The plan includes code for multiple files (sections, snippets, templates)
+
+5. Convert the plan into a single Liquid template (optional but recommended for deployment as one file):
+```bash
+python convert_plan_to_one_liquid_claude.py
+```
+This script:
+- Reads the multi-file plan from `offer_plan_claude.txt`
+- Reads the grounding requirements from `offer_requirements_prompt.txt`
+- Instructs the model to consolidate all code into one file
+- Writes the single-file implementation to `one_page_offer_from_plan.txt`
+
+Optional environment overrides:
+```bash
+PLAN_PATH=offer_plan_claude.txt OUTPUT_PATH=one_page_offer_from_plan.txt python convert_plan_to_one_liquid_claude.py
+```
+
+6. Save the implementation:
+```bash
+# Save from converted single-file plan (default)
+python save_implementations.py
+
+# Save from the original multi-file plan
+python save_implementations.py --source main
+```
+This script extracts code blocks and writes files under `claude_workspace/`:
+- Default mode (converted): reads `one_page_offer_from_plan.txt` and saves a single `templates/page.offer.liquid` file.
+- Main mode: reads `offer_plan_claude.txt` and saves all referenced files (sections, snippets, templates) as defined in the plan.
 
 6. Align template styling (optional):
 ```bash
@@ -124,8 +132,8 @@ This script:
 ├── examples.txt              # Generated code examples
 ├── offer_plan_claude.txt     # Implementation plan
 ├── generate_examples_from_template.py  # Generate examples
-├── generate_offer_plan_claude.py       # Multi-file approach
-├── generate_one_page_liquid_claude.py  # Single-file approach
+├── generate_offer_plan_claude.py       # Generate multi-file plan
+├── convert_plan_to_one_liquid_claude.py # Convert plan to single Liquid file
 ├── enhance_prompt.py         # Requirements enhancement
 ├── save_implementations.py   # Save files from plan
 └── align_template_styling.py # Align template styling with store design
@@ -133,17 +141,15 @@ This script:
 
 ## Notes
 
-- **Important**: Update `shopify_url` in both `generate_offer_plan_claude.py` and `generate_one_page_liquid_claude.py` to your store's URL
-- For both generation scripts, you'll need `AZURE_OPENAI_API_KEY` in your `.env` file
-- Both approaches use the same examples from `examples.txt` if available
-- Both approaches follow the same process:
-  1. Generate a plan in `offer_plan_claude.txt`
-  2. Use `save_implementations.py` to create the files
-- The only difference is what files they generate in the plan:
-  - Multi-file approach: Creates separate files for sections, snippets, and templates
-  - Single-file approach: Creates a single template file
-- The multi-file approach is recommended for complex pages as it provides more flexibility
-- The single-file approach is simpler but may be less flexible for complex requirements
+- Update `shopify_url` in `generate_offer_plan_claude.py` to your store's URL.
+- Environment variables:
+  - For both generation scripts, you'll need `ANTHROPIC_API_KEY` in your `.env` file
+- The flow uses the same examples from `examples.txt` if available.
+- Recommended flow:
+  1. Generate a multi-file plan in `offer_plan_claude.txt`
+  2. Convert it to a one-file template into `one_page_offer_from_plan.txt`
+  3. Save implementations with `save_implementations.py` (default uses the converted plan)
+- If you prefer to create multiple Liquid files instead of a single file, run `save_implementations.py --source main` to save from the original multi-file plan.
 
 # Code Editing Workflow
 

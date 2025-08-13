@@ -250,14 +250,9 @@ async def generate_offer_plan(shopify_url):
 
 # Run and output the structured plan
 if __name__ == "__main__":
-    required_env_vars = [
-        "AZURE_OPENAI_API_KEY",
-        "AZURE_OPENAI_ENDPOINT"
-    ]
-    
-    missing_vars = [var for var in required_env_vars if var not in os.environ]
-    if missing_vars:
-        raise EnvironmentError(f"❌ Missing required environment variables: {', '.join(missing_vars)}")
+    # Check for required environment variable
+    if "ANTHROPIC_API_KEY" not in os.environ:
+        raise EnvironmentError("❌ ANTHROPIC_API_KEY must be set")
     
     shopify_url = "https://test-wardrobe-ecomm.myshopify.com/"
     asyncio.run(generate_offer_plan(shopify_url)) 

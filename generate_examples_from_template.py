@@ -14,6 +14,8 @@ import re
 from pathlib import Path
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import HumanMessage
+from dotenv import load_dotenv
+load_dotenv()
 
 # Initialize LLM for keyword generation
 keyword_llm = ChatAnthropic(
